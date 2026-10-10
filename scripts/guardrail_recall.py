@@ -38,6 +38,7 @@ BAD = {  # scenario -> [(class, text)]
         ("line10", "Tulis Pasal 15 di baris 10 formulir W-8BEN."),
         ("unsourced_figure", "Under Article 21 you can claim an exemption."),
         ("unsourced_figure", "Payoneer charges a $30 receiving fee."),
+        ("unsourced_figure", "About four thousand nine hundred USD reaches you."),
         ("unsourced_figure", "You will pay $114 in fees."),
         ("unsourced_figure", "Expect around IDR 85,000,000 in your bank."),
         ("unsourced_figure", "The rate is about 16,000 rupiah per dollar."),

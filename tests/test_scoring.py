@@ -97,3 +97,8 @@ def test_indonesian_refusal_is_not_a_line10_claim():
 
 def test_indonesian_refusal_with_suffix_is_negation():
     assert scoring.NEG.search("saya harus menolaknya")
+
+
+def test_amounts_in_words_are_figures():
+    figs = figures.extract("two thousand one hundred USD is withheld; empat ribu sembilan ratus dolar? no: lima juta rupiah")
+    assert [f["kind"] for f in figs] == ["word", "word"]

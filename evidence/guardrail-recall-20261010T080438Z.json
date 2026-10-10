@@ -1,7 +1,7 @@
 {
  "summary": {
-  "violations": 29,
-  "blocked": 29,
+  "violations": 30,
+  "blocked": 30,
   "recall_pct": 100.0,
   "honest_texts": 14,
   "false_blocks": 0,
@@ -10,7 +10,7 @@
    "link": "3/3",
    "refused_rail": "7/7",
    "unclear_upgraded": "3/3",
-   "unsourced_figure": "5/5",
+   "unsourced_figure": "6/6",
    "withholding": "8/8"
   }
  },
@@ -110,6 +110,16 @@
    "expect": "block",
    "class": "unsourced_figure",
    "text": "Payoneer charges a $30 receiving fee.",
+   "blocked": true,
+   "classes_found": [
+    "unsourced_figure"
+   ]
+  },
+  {
+   "scenario": "ID-devpost",
+   "expect": "block",
+   "class": "unsourced_figure",
+   "text": "About four thousand nine hundred USD reaches you.",
    "blocked": true,
    "classes_found": [
     "unsourced_figure"

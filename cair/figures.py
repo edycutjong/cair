@@ -28,7 +28,12 @@ MONEY_RE = re.compile(
     rf"(?:(?:US)?\$|USD|USDC|IDR|Rp\.?|INR|₹|PHP|₱)\s?({_NUM})(?:\s?(?:juta|million|jt))?"
     rf"|({_NUM})\s?(?:USD|USDC|IDR|INR|PHP|dollars?|dolar|rupiah)\b", re.I)
 PCT_RE = re.compile(rf"({_NUM})\s?(?:%|percent|per cent|pct|persen)", re.I)
-# A rate written in words is never in a tool output, so it is always a new figure.
+# A rate or an amount written in words is never in a tool output, so it is always a new figure.
+_WORDNUM = (r"(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|"
+            r"sixty|seventy|eighty|ninety|hundred|thousand|million|satu|dua|tiga|empat|lima|enam|tujuh|delapan|"
+            r"sembilan|sepuluh|seratus|seribu|ratus|ribu|juta|puluh|belas)")
+WORD_MONEY_RE = re.compile(rf"\b{_WORDNUM}(?:[\s-]+(?:and\s+)?{_WORDNUM})*\s+(?:US\s)?(?:dollars?|USD|USDC|rupiah|IDR|rupees?|INR|pesos?|PHP)\b",
+                           re.I)
 WORD_PCT_RE = re.compile(r"\b(?:zero|nol|one|two|three|four|five|ten|fifteen|twenty|thirty|forty|fifty|satu|dua|tiga|lima|"
                          r"sepuluh|lima belas|dua puluh|tiga puluh)(?:[- ](?:one|two|five|puluh|belas))?\s?"
                          r"(?:%|percent|per cent|persen)", re.I)
@@ -76,7 +81,7 @@ def extract(text: str) -> list[dict]:
                 val *= 1_000_000
             found.append({"kind": kind, "value": val, "raw": m.group(0).strip()})
             spans.append(m.span())
-    for m in WORD_PCT_RE.finditer(text):
+    for m in list(WORD_PCT_RE.finditer(text)) + list(WORD_MONEY_RE.finditer(text)):
         if not taken(*m.span()):
             found.append({"kind": "word", "value": m.group(0), "raw": m.group(0)})
             spans.append(m.span())
