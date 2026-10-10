@@ -20,3 +20,13 @@ AGENTS.md
 CLAUDE.md
 graphify-out/
 .DS_Store
+# test / coverage / performance artefacts
+!.env.example
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+test-results/
+playwright-report/
+.lighthouseci/

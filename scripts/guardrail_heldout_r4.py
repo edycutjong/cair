@@ -6,13 +6,15 @@ also checked embedded inside an honest paragraph. Kept verbatim as written, so i
 """
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 import neatlogs
+
 from cair import guardrail, llm, planner
+
 SC = {
  "D": ("ID-devpost", dict(payer="devpost", country="ID", amount_usd=7000, rails_offered=["payoneer","wise"], exchange=None)),
  "N": ("IN-devpost", dict(payer="devpost", country="IN", amount_usd=2000, rails_offered=["payoneer","wise"], exchange=None)),
@@ -207,7 +209,7 @@ def main():
     summary = {"violations": total, "blocked": blocked, "blocked_embedded": blocked_embedded,
                "recall_pct": round(100 * blocked / total, 1), "honest_texts": len(H), "false_blocks": len(false_blocks),
                "false_block_pct": round(100 * len(false_blocks) / len(H), 1), "per_class": per_class}
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     out = ROOT / "evidence" / f"guardrail-heldout-r4-{stamp}.json"
     out.write_text(json.dumps({"summary": summary, "misses": misses, "false_blocks": false_blocks}, indent=1,
                               ensure_ascii=False) + "\n")

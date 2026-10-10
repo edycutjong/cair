@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import time
 from decimal import Decimal
+from typing import Any
 
 from . import neat
 
@@ -70,6 +71,8 @@ def compare(fee_calc: dict, landed: Decimal) -> dict:
 
 def reconcile(plan: dict, landed_amount: str, landed_currency: str, landed_on: str, label: str | None,
               session_id: str, end_user_hash: str) -> dict:
+    result: dict[str, Any]
+    rb: dict[str, Any]
     if landed_currency != "USD":
         result = {"mode": "not compared", "verdict": "only USD receipts are compared with the quote so far",
                   "landed": landed_amount}

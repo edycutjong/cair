@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import json
 import re
-from functools import lru_cache
+from functools import cache
 
 from rank_bm25 import BM25Okapi
 
@@ -20,7 +20,7 @@ def _tok(s: str) -> list[str]:
     return re.findall(r"[a-z]+", s.lower())
 
 
-@lru_cache(maxsize=None)
+@cache
 def index(country: str):
     path = DATA / "treaties" / f"{country.lower()}.json"
     if not path.exists():

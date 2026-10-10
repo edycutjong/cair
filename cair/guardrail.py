@@ -15,7 +15,6 @@ import neatlogs
 
 from . import claims, figures, rules
 
-
 FOLLOW_UP = re.compile(r"\b(it|that one|this one|that|itu|ini|tersebut|anyway|saja)\b", re.I)
 BOUND = re.compile(r"at most|up to|maximum|\bbefore\b|sebelum|paling banyak|maksimal|hingga|batas atas|upper bound|"
                    r"UNCLEAR|tidak jelas|belum (?:termasuk|dipotong)|excluding|not including|\bminus\b|not stated", re.I)
@@ -155,7 +154,7 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
 
 def run(text: str, tool_outputs: list, card: dict, attempt: int, question: str = "") -> dict:
     """GUARDRAIL span around check(); passed/score set as neatlogs.guardrail.* attributes, verdict in the output."""
-    with neatlogs.trace(f"provenance_guardrail", kind="GUARDRAIL") as sp:
+    with neatlogs.trace("provenance_guardrail", kind="GUARDRAIL") as sp:
         verdict = check(text, tool_outputs, card, question)
         verdict["attempt"] = attempt
         sp.set_attribute("neatlogs.guardrail.passed", verdict["passed"])

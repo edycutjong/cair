@@ -46,6 +46,7 @@ def fee_calc(gross_usd: str, unit: str, w8ben_applies: str, withholding_default:
         out["withheld"] = UNCLEAR
 
     fee = _num(receiving_fee_usd)
+    bound: Decimal | None
     if after is not None and fee is not None and after - fee >= 0:
         landed = after - fee
         out["landed_usd"] = q(landed, unit)
@@ -71,6 +72,7 @@ def fee_calc(gross_usd: str, unit: str, w8ben_applies: str, withholding_default:
         out["landed_local"] = UNCLEAR
         if rate is not None and unit == "USD":
             base = landed if landed is not None else bound
-            out["upper_bound_local"] = q(base * rate, local_ccy)
-            out["upper_bound_local_note"] = "at the ECB reference rate, before the provider's conversion margin"
+            if base is not None:  # always true here: bound is set whenever landed is None
+                out["upper_bound_local"] = q(base * rate, local_ccy)
+                out["upper_bound_local_note"] = "at the ECB reference rate, before the provider's conversion margin"
     return out

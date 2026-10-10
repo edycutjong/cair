@@ -17,7 +17,7 @@ import subprocess
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -170,7 +170,7 @@ def main() -> int:
     git_dirty = bool(git("status", "--porcelain", "--", "cair", "scripts", "data"))
     neatlogs.init(api_key=config.NEATLOGS_API_KEY, endpoint=config.NEATLOGS_ENDPOINT, workflow_name="payout-plan",
                   tags=["eval", args.run, "frozen-set-v1"])
-    started = datetime.now(timezone.utc)
+    started = datetime.now(UTC)
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         rows = list(pool.map(lambda r: run_one(r, args), recs))
     neatlogs.flush()
@@ -181,7 +181,7 @@ def main() -> int:
             "forced_failure": args.fail, "model": config.LLM_MODEL, "temperature": TEMPERATURE, "extra_body": llm.EXTRA_BODY,
             "llm_endpoint": "Qwen Cloud (OpenAI-compatible)", "sheet_version": rules.sheet().version,
             "frozen_set_sha256": digest, "git_sha": git_sha, "git_dirty": git_dirty, "started_utc": started.isoformat(timespec="seconds"),
-            "finished_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"), "errors": sum(1 for r in rows if r["error"])}
+            "finished_utc": datetime.now(UTC).isoformat(timespec="seconds"), "errors": sum(1 for r in rows if r["error"])}
     stamp = started.strftime("%Y%m%dT%H%M%SZ")
     out = ROOT / "evidence" / f"eval-{args.run}{('-' + args.tag) if args.tag else ''}-{stamp}.json"
     out.write_text(json.dumps({"meta": meta, "aggregate": agg, "scenarios": rows}, indent=1, ensure_ascii=False) + "\n")

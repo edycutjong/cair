@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -153,7 +153,7 @@ def main() -> int:
                "recall_pct": round(100 * sum(r["blocked"] for r in bad) / len(bad), 1),
                "honest_texts": len(good), "false_blocks": sum(r["blocked"] for r in good),
                "per_class": {k: f"{v[0]}/{v[1]}" for k, v in sorted(per_class.items())}}
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     out = ROOT / "evidence" / f"guardrail-recall-{stamp}.json"
     out.write_text(json.dumps({"summary": summary, "cases": rows}, indent=1, ensure_ascii=False) + "\n")
     print(json.dumps({"file": str(out.relative_to(ROOT)), **summary}, indent=1))

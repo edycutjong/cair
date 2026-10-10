@@ -183,7 +183,7 @@ def verify_rows(plans: list) -> tuple[list[dict], str]:
     try:
         if tids:
             res = neat.mcp([("get_trace_context", {"trace_id": t}) for t in tids], timeout=45)
-            ctxs = {t: r for t, r in zip(tids, res) if isinstance(r, dict)}
+            ctxs = {t: r for t, r in zip(tids, res, strict=False) if isinstance(r, dict)}
     except Exception:
         source = "DB copy — neatlogs read-back unavailable right now"
     rows = []

@@ -22,7 +22,7 @@ def main() -> None:
     results = neat.mcp([("get_trace_context", {"trace_id": tid}) for _, tid in pairs], timeout=90)
     out_dir = ROOT / "evidence" / "traces"
     out_dir.mkdir(parents=True, exist_ok=True)
-    for (name, tid), ctx in zip(pairs, results):
+    for (name, tid), ctx in zip(pairs, results, strict=False):
         text = re.sub(r"(/[\w.-]+)+/(cair|scripts)/", r"<repo>/\2/", json.dumps(ctx, indent=1, ensure_ascii=False))
         (out_dir / f"{name}.json").write_text(text + "\n")
         spans = ctx.get("spans", []) if isinstance(ctx, dict) else []

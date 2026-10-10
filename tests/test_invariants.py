@@ -230,6 +230,7 @@ def test_fees_larger_than_amount_never_land_negative():
 
 def test_old_fx_snapshot_is_not_used(fixed_fx, monkeypatch):
     import json
+
     from cair import fx
     fx.SNAPSHOT.write_text(json.dumps({"IDR": {"quote": "IDR", "rate": "15000", "as_of": "2020-01-02", "source": "ECB"}}))
     assert fx.cached("IDR") is None

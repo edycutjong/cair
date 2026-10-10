@@ -26,7 +26,7 @@ EXTRA_BODY = {"enable_thinking": False}
 
 def chat(messages: list[dict], temperature: float = 0.0, max_tokens: int = 2000) -> str:
     resp = client().chat.completions.create(
-        model=config.LLM_MODEL, messages=messages, temperature=temperature, max_tokens=max_tokens,
+        model=config.LLM_MODEL, messages=messages, temperature=temperature, max_tokens=max_tokens,  # type: ignore[arg-type]  # plain role/content dicts
         extra_body=EXTRA_BODY,
     )
     acc = USAGE.get()

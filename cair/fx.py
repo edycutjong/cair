@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 import os
 import threading
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 
 import httpx
 
@@ -32,7 +32,7 @@ def live(quote: str, timeout: float = 5.0) -> dict:
     body = r.json()
     out = {"base": "USD", "quote": quote, "rate": str(body["rate"]), "as_of": body["date"],
            "source": "ECB reference rate via api.frankfurter.dev/v2/providers/ecb", "stale": False,
-           "fetched_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+           "fetched_at": datetime.now(UTC).isoformat(timespec="seconds")}
     _save(out)
     return out
 

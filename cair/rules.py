@@ -73,7 +73,7 @@ class Sheet:
 
     def exchange_rows(self, exchange: str) -> dict[str, Fact]:
         out = {}
-        for (c, p, r, f), v in self.facts.items():
+        for (_c, p, r, f), v in self.facts.items():
             if p == "_exchange" and f == "deliverable" and r.startswith(f"{exchange}:usdc:"):
                 out[r.split(":", 2)[2]] = v
         return out

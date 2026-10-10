@@ -11,7 +11,7 @@ import statistics
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -33,7 +33,7 @@ def main() -> int:
     recs = [json.loads(ln) for ln in (ROOT / "data" / "frozen_set.jsonl").read_text().splitlines()]
     neatlogs.init(api_key=config.NEATLOGS_API_KEY, endpoint=config.NEATLOGS_ENDPOINT, workflow_name="payout-plan",
                   tags=["eval", "bench", "frozen-set-v1"])
-    started = datetime.now(timezone.utc)
+    started = datetime.now(UTC)
     rows = []
     for i, rec in enumerate([recs[0]] + recs):
         t0 = time.perf_counter()

@@ -12,7 +12,8 @@ from __future__ import annotations
 
 import json
 import sys
-from decimal import ROUND_HALF_UP, Decimal as D
+from decimal import ROUND_HALF_UP
+from decimal import Decimal as D
 
 IN_PER_M, OUT_PER_M = D("2"), D("6")
 EC2_HOUR, HOURS_PER_MONTH = D("0.0209"), D("730")
