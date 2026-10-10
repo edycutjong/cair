@@ -74,3 +74,7 @@ def test_unclear_payer_saying_no_withholding_is_P():
            "w8ben": "UNCLEAR", "unclear_fields": ["landed", "w8ben"]}}
     text = "RECOMMENDED RAIL: USDC on Base\nW-8BEN LINE 10: NOT NEEDED\nWITHHOLDING: NONE\nLANDED (USD): UNCLEAR\nLANDED (LOCAL): UNCLEAR"
     assert scoring.score(rec, text, [])["P"]
+
+
+def test_fx_rate_unit_is_not_a_figure():
+    assert [f["value"] for f in figures.extract("1 USD = 17881 IDR")] == [Decimal("17881")]

@@ -17,6 +17,7 @@ _ALLOW = [
     r"\b\d+\s*(?:business\s+)?(?:days?|hari|weeks?|minggu|months?|bulan|hours?|jam|minutes?|menit)\b",
     r"\b\d+(?:st|nd|rd|th)\b", r"\bERC-?20\b", r"\bBEP-?20\b", r"\bTRC-?20\b", r"\b[A-Z]\d\b", r"\b\d{1,2}:\d{2}\b",
     r"\b(?:Q[1-4]|h\d+)\b", r"\bfrozen-set-v\d\b", r"\bv\d\b",
+    r"\b1\s?(?:USD|USDC|US\$)\s?=",  # the unit side of an exchange rate ("1 USD = 17881 IDR")
 ]
 ALLOW_RE = re.compile("|".join(_ALLOW), re.I)
 
