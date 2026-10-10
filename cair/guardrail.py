@@ -28,6 +28,7 @@ BOUND = re.compile(r"at most|up to|maximum|\bbefore\b|sebelum|paling banyak|maks
 TAXWORD = re.compile(r"withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak|tarif|treaty rate", re.I)
 LINK = re.compile(r"https?://\S+|\bwww\.\S+|\b[\w.+-]+@[\w-]+\.[\w.]+|\b0x[0-9a-fA-F]{6,}|\b[1-9A-HJ-NP-Za-km-z]{32,44}\b")
 MAX_CHARS = 1600
+LINE10_OK = re.compile(r"\bUNCLEAR\b|\bblank\b|kosong|no source|tidak ada sumber", re.I)  # describing, not claiming
 
 
 def _strings(x) -> list[str]:
@@ -70,7 +71,7 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
             claim("refused_rail", f"endorses the refused rail by reference: {sent[:140]}")
         prev_refused = bool(named)
         if (re.search(r"line\s*10|baris\s*10", sent, re.I) and figures.ARTICLE_RE.search(sent)
-                and not line10.startswith("ARTICLE") and not REFUSAL.search(sent)):
+                and not line10.startswith("ARTICLE") and not REFUSAL.search(sent) and not LINE10_OK.search(sent)):
             claim("line10", f"article on line 10 while the tools say {line10}: {sent[:140]}")
         if TAXWORD.search(sent):
             for f in figures.extract(sent):
