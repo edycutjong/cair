@@ -4,7 +4,6 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
-import re
 import threading
 import time
 from collections import defaultdict, deque
@@ -12,9 +11,10 @@ from contextlib import asynccontextmanager
 from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 
+import markdown
 import neatlogs
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
@@ -48,6 +48,9 @@ app.mount("/static", StaticFiles(directory=str(config.ROOT / "cair" / "static"))
 
 # --- per-IP rate limits: /api/plan fronts a paid LLM key -------------------------------------------------------
 _hits: dict[tuple[str, str], deque] = defaultdict(deque)
+# largest receipt accepted per currency (about USD 10M each): a sanity bound, not a business rule
+MAX_RECEIPT = {"USD": Decimal(10_000_000), "IDR": Decimal(200_000_000_000), "INR": Decimal(1_000_000_000),
+               "PHP": Decimal(600_000_000)}
 LIMITS = {"plan": (20, 600), "write": (60, 600), "plan_global": (600, 86400)}
 _hits_lock = threading.Lock()
 
@@ -144,6 +147,13 @@ def rules_csv():
     return HTMLResponse((config.DATA / "rules_sheet.csv").read_text(), media_type="text/csv")
 
 
+@app.get("/judge", response_class=HTMLResponse)
+def judge(request: Request):
+    """For the judge: claim, 30-second path, receipts, honest limits. Rendered from JUDGE.md; no login, no cookie."""
+    body = markdown.markdown((config.ROOT / "JUDGE.md").read_text(), extensions=["tables"])
+    return TEMPLATES.TemplateResponse(request, "judge.html", {"body": body})
+
+
 @app.get("/healthz")
 def healthz() -> dict:
     return {"ok": True, "rules_version": rules.sheet().version}
@@ -229,15 +239,15 @@ async def api_receipt(request: Request):
     row = db.get_plan(str(body.get("plan_id", "")))
     if not row:
         return JSONResponse({"error": "no such plan"}, 404)
+    currency = str(body.get("currency", "USD")).upper()
+    if currency not in MAX_RECEIPT:
+        return JSONResponse({"error": "unsupported currency"}, 400)
     try:
         amount = Decimal(str(body.get("landed_amount", "")).replace(",", ""))
-        if not amount.is_finite() or amount <= 0 or amount > Decimal(10_000_000):
+        if not amount.is_finite() or amount <= 0 or amount > MAX_RECEIPT[currency]:
             raise InvalidOperation
     except (InvalidOperation, ValueError):
         return JSONResponse({"error": "Enter the amount that landed, e.g. 4897.00"}, 400)
-    currency = str(body.get("currency", "USD")).upper()
-    if currency not in {"USD", "IDR", "INR", "PHP"}:
-        return JSONResponse({"error": "unsupported currency"}, 400)
     try:
         landed = date.fromisoformat(str(body.get("landed_on") or date.today().isoformat()))
     except ValueError:
