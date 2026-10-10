@@ -1,0 +1,148 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Cancel in-progress runs for the same PR/branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ── STAGE 1: Code quality (parallel with Stage 2) ─────────
+  quality:
+    name: "Stage 1 · Quality (ruff · mypy · pytest)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - name: Lint (ruff)
+        run: ruff check --output-format=github .
+      - name: Typecheck (mypy)
+        run: mypy cair
+      - name: Tests + coverage (deterministic core, no keys, no network)
+        run: pytest -q --cov --cov-report=term-missing --cov-report=xml
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.xml
+          retention-days: 7
+
+  # ── STAGE 2: Security gate (parallel with Stage 1) ────────
+  dependency-audit:
+    name: "Stage 2 · Dependency audit (pip-audit)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pip-audit
+      - name: pip-audit
+        run: pip-audit -r requirements.txt
+      # Secret scanning over full history runs in its own workflow: gitleaks.yml. CodeQL: codeql.yml.
+
+  # ── STAGE 3: Build verification ───────────────────────────
+  build:
+    name: "Stage 3 · Build verification (boot + smoke)"
+    needs: [quality]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - run: pip install -r requirements.txt
+      - name: Boot the app with no keys and probe it
+        env:
+          CAIR_SECURE_COOKIES: "0"
+        run: |
+          python -m uvicorn cair.app:app --port 8000 &
+          for i in $(seq 1 40); do curl -sf localhost:8000/healthz >/dev/null && break; sleep 0.5; done
+          curl -sf localhost:8000/healthz
+          for p in / /rules /rules.csv /verify /judge /static/cair.css; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "localhost:8000$p"); echo "$p -> $code"; [ "$code" = 200 ]
+          done
+
+  # ── STAGE 4: Browser E2E ──────────────────────────────────
+  e2e:
+    name: "Stage 4 · E2E (Playwright)"
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: playwright install --with-deps chromium
+      - name: Run E2E tests (the test boots the app itself)
+        run: pytest e2e -q
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # ── STAGE 5: Performance (advisory) ───────────────────────
+  performance:
+    name: "Stage 5 · Performance (Lighthouse CI)"
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - run: pip install -r requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Lighthouse CI
+        run: npx --yes @lhci/cli@0.14 autorun
+        continue-on-error: true # advisory: web fonts and the runner's network make scores noisy
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: .lighthouseci/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # ── STAGE 6: Deploy gate (main only) ──────────────────────
+  deploy-gate:
+    name: "Stage 6 · Deploy gate"
+    needs: [build, e2e, performance, dependency-audit]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: All gates passed
+        run: |
+          echo "All CI gates passed."
+          echo "  Stage 1 — ruff, mypy, pytest + coverage"
+          echo "  Stage 2 — pip-audit (gitleaks and CodeQL run as their own workflows)"
+          echo "  Stage 3 — boot with no keys + smoke"
+          echo "  Stage 4 — Playwright E2E"
+          echo "  Stage 5 — Lighthouse CI (advisory)"
