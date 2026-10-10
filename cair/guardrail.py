@@ -24,7 +24,7 @@ REFUSAL = re.compile(
     r"\bjangan\b|ditolak|menolak\w*|tak bisa|bukan pilihan|berisiko|\blose\b|\bhilang", re.I)
 FOLLOW_UP = re.compile(r"\b(it|that one|this one|that|itu|ini|tersebut|anyway|saja)\b", re.I)
 BOUND = re.compile(r"at most|up to|maximum|\bbefore\b|sebelum|paling banyak|maksimal|hingga|batas atas|upper bound|"
-                   r"UNCLEAR|tidak jelas|belum (?:termasuk|dipotong)|excluding|not including|\bminus\b", re.I)
+                   r"UNCLEAR|tidak jelas|belum (?:termasuk|dipotong)|excluding|not including|\bminus\b|not stated", re.I)
 RECEIVE = re.compile(r"\b(receiv\w*|land\w*|arriv\w*|get|gets|end up|in your (?:account|bank|wallet)|menerima|diterima|"
                      r"terima|masuk|sampai|mendapat\w*|dapat)\b", re.I)
 TAXWORD = re.compile(r"withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak|tarif|treaty rate", re.I)

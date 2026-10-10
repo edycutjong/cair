@@ -51,3 +51,11 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
 - **2026-10-10** — bench: p50 5.49 s, p95 6.83 s per plan, 857 tokens per plan (`evidence/bench-20261010T073454Z.json`).
   Tests: 53 passing. Entire graph outputs in `evidence/entire/`. Business-plan numbers in `docs/BUSINESS-PLAN.md`
   (cfo.ai model pending).
+- **2026-10-10 afternoon** — independent review of the agent code (loop QA round 1). It found phrasings that slipped
+  past the guardrail and a scorer that mixed two kinds of tax error. Closed with tests first; the guardrail now has a
+  standing recall check (30/30 scripted violations blocked, 0/14 honest texts blocked). Re-running the frozen set on
+  the stricter rules exposed over-blocking (29/48 explanations replaced by the template), found from the guardrail
+  fields in the evidence file and fixed (`evidence/rca-01.md`, second half).
+- **2026-10-10** — final runs: v2 U 0 / P 0 / UNCLEAR 143/143 / figures 310/310 (`eval-v2-r5`); a new baseline,
+  one LLM call with the whole rules sheet in its prompt (`eval-v1s-r1`), still had U 2, P 11, UNCLEAR 110/143.
+  v1 repeated 3 times: U 18 every run. Tests: 74.

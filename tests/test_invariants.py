@@ -242,3 +242,17 @@ def test_gross_amount_and_other_rails_are_not_false_blocks(fixed_fx, llm_says): 
                  "Wise is refused for Indonesian addresses. The recommended rail is Payoneer, which delivers funds."):
         v = guardrail.check(text, card["tool_outputs"], card)
         assert v["passed"], v
+
+
+def test_gross_sentence_mentioning_landed_is_not_a_false_block(fixed_fx, llm_says):
+    llm_says("Ok.")
+    card = card_for(payer="us_client_services", country="PH", amount_usd=7000)
+    text = "The gross amount is 7,000 USD, but the final landed amount in USD is not stated."
+    assert guardrail.check(text, card["tool_outputs"], card)["passed"]
+
+
+def test_receiving_the_gross_is_still_an_upgrade(fixed_fx, llm_says):
+    llm_says("Ok.")
+    card = card_for(payer="us_client_services", country="PH", amount_usd=7000)
+    v = guardrail.check("You will receive the full 7,000 USD in Payoneer.", card["tool_outputs"], card)
+    assert not v["passed"] and "unclear_upgraded" in v["violation_classes"]

@@ -44,13 +44,15 @@ for HTTP traces).
 python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
 export NEATLOGS_API_KEY=... QWEN_API_KEY=... QWEN_BASE_URL=https://dashscope-intl.aliyuncs.com/compatible-mode/v1 QWEN_MODEL=qwen3.8-max
 
-.venv/bin/python -m pytest -q                                   # deterministic core: 53 tests, no network
+.venv/bin/python -m pytest -q                                   # deterministic core: 74 tests, no network
 .venv/bin/python scripts/make_frozen_set.py --check             # the set matches tag frozen-set-v1
 .venv/bin/python scripts/eval.py --planner v1                   # baseline: one tool-less LLM call
+.venv/bin/python scripts/eval.py --planner v1s                  # baseline: one call with the whole rules sheet
 .venv/bin/python scripts/eval.py --planner v2                   # the agent
 .venv/bin/python scripts/eval.py --planner v2 --no-guardrail    # ablation
 .venv/bin/python scripts/eval.py --planner v2 --fail fx_quote   # forced tool failure (recovery)
 .venv/bin/python scripts/bench.py                               # p50/p95 per plan, tokens per plan
+.venv/bin/python scripts/guardrail_recall.py                    # guardrail vs scripted violations (no LLM)
 .venv/bin/python scripts/eval.py --rescore evidence/<file>.json # re-score stored answers, no LLM calls
 ```
 

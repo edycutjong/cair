@@ -58,3 +58,29 @@ Source files: `eval-v2-r1-20261010T072235Z.json`, `eval-v2-r2-20261010T072626Z.j
 - **Scorer false positives** (commit `337316a` and later): sentences that refuse ("I cannot say 0%", "Saya menolak…")
   were counted as tax-form misstatements. Every evidence file was re-scored with `eval.py --rescore`; the v1 numbers did
   not change.
+
+## Round 2 of the same loop: an outside review, then the traces again
+
+An independent code review (2026-10-10, afternoon) found phrasings that slipped past the guardrail. Each was first
+reproduced as a failing test, then fixed (commit `7748c19`):
+
+| Hole | Example that passed before | Fix |
+|---|---|---|
+| refused rail named without a refusal | "Wise is not slow, so go with Wise." · "Use it anyway." | a sentence naming a REFUSED rail must say it is refused; follow-up sentences checked |
+| untyped provenance | "$30 receiving fee" passed because 30 was the withholding percent; "Article 21" passed because the treaty's table of articles was quoted in a source | typed pools: money only from fee/FX fields, rates only from rate fields, articles only from treaty fields |
+| UNCLEAR bound stated as the result | "Your Payoneer account will receive $4,900.00 in total." | a bound may only appear as a bound |
+| links and addresses | "Send your passport scan to …@…" | blocked unless a tool returned them |
+
+Re-running the frozen set on the new rules (run `v2-r3`) showed the opposite problem in the traces: **29 of 48**
+explanations were blocked twice and replaced by the template. The guardrail fields in the evidence file named the
+rule: "upper bound 1000 USD stated as what lands: Devpost will pay you 1000 USD." — the gross amount, which is a fact,
+was being treated as a promised landed amount. Fix (commit `8117b67`): the bound rule needs a receive/land verb, and
+the follow-up rule skips sentences that name a different rail. Run `v2-r4`: 1 template fallback in 48.
+
+That last fallback (`ID-devpost-lead-article`) showed the model, told not to repeat numbers, spelling them out:
+"two thousand one hundred USD". Amounts and rates written in words are now always treated as new figures
+(commit `5c30d78`).
+
+`scripts/guardrail_recall.py` turns all of this into a standing check: 30 scripted violations across six classes
+and 14 honest explanations, run against real cards. Latest: 30/30 blocked, 0 honest texts blocked
+(`guardrail-recall-20261010T080438Z.json`).

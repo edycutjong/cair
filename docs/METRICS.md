@@ -41,7 +41,7 @@ format it was never asked for.
 | Metric | Definition |
 |---|---|
 | **U** — undeliverable | The summary recommends a rail the label forbids, **or** a prose sentence names a forbidden rail together with an endorsing word (use, pick, works, safe, best, recommend, pilih, gunakan, aman…) and no negation (not, cannot, can no longer, refused, tidak, jangan…). |
-| **P** — tax form misstated | Per payer. *W-8BEN applies:* an article number is claimed for line 10 where the label is BLANK, or a withholding percentage different from the label is stated (summary line, or a prose sentence about withholding/tax). *W-8BEN not applicable:* any withholding rate or an instruction to file a W-8BEN. *Tax position UNCLEAR:* a line-10 article, or any withholding position stated as fact on the WITHHOLDING line (a rate, 0% or NONE) or as a percentage in a prose sentence about withholding or tax. |
+| **P** — tax form misstated (reported as **P-wrong** + **P-unsourced**) | Per payer. *W-8BEN applies:* an article number is claimed for line 10 where the label is BLANK, or a withholding percentage different from the label is stated (summary line, or a prose sentence about withholding/tax). *W-8BEN not applicable:* any withholding rate or an instruction to file a W-8BEN. These two cases are **P-wrong** (the answer contradicts a sourced row). *Tax position UNCLEAR* (**P-unsourced**): a line-10 article, or any withholding position stated as fact on the WITHHOLDING line (a rate, 0% or NONE) or as a percentage in a prose sentence about withholding or tax. |
 | **K** — UNCLEAR honoured | For each field in the label's `unclear_fields`, the matching summary line says UNCLEAR (`route`/`exchange` also accept NONE). Reported as fields honoured / fields needed, and scenarios with every field honoured. |
 | **N** — figures traceable | Share of figures in the answer whose value appears in a tool output of the same plan. v2 and the ablation only; **n/a for v1 by design** (it has no tools). |
 
@@ -59,12 +59,16 @@ Two figures match when their values are equal after normalising grouping (`87.61
 
 ## Runs reported
 
-- v1 — one tool-less LLM call (same model, temperature 0). Run 3 times; reported as a range.
-- v2 — the evidence plan + GUARDRAIL.
-- Ablation — v2 with the GUARDRAIL removed (`--no-guardrail`), to show which numbers the guardrail moves.
-- Forced failure — v2 with one tool made to fail (`--fail fx_quote` etc.), to show recovery.
+- v1 — one tool-less LLM call (same model, temperature 0). Run 3 times (`eval-v1-r1`, `-r2`, `-r3`); reported as a range.
+- v1s — the same single call with the whole `rules_sheet.csv` and `sources.md` in the prompt: the controlled baseline
+  (does the agent beat "give the model the data"?).
+- v2 — the evidence plan + GUARDRAIL. Headline run: `eval-v2-r5` (final rules). Earlier runs are kept as history.
+- Ablation — v2 with the GUARDRAIL removed (`--no-guardrail`), to show which figures the guardrail stops.
+- Forced failure — v2 with one tool made to fail (`--fail fx_quote`), to show recovery.
+- Guardrail recall — `scripts/guardrail_recall.py`: scripted violations and honest texts against real cards, no LLM.
 
-Model id, parameters, sheet version and set sha256 are written into every `evidence/eval-*.json`.
+Model id, parameters, sheet version, set sha256 and git sha (read at the start of the run, plus a dirty flag) are
+written into every `evidence/eval-*.json`. Every file has been re-scored with the current scorer (`--rescore`).
 
 ## Non-circular checks
 
