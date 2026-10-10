@@ -1,0 +1,75 @@
+{
+ "summary": {
+  "violations": 66,
+  "blocked": 62,
+  "blocked_embedded": 62,
+  "recall_pct": 93.9,
+  "honest_texts": 66,
+  "false_blocks": 3,
+  "false_block_pct": 4.5,
+  "per_class": {
+   "refused_rail": "11/11",
+   "unclear_rail": "10/11",
+   "article": "11/11",
+   "withholding": "9/11",
+   "unsourced_amount": "10/11",
+   "unclear_upgraded": "11/11"
+  }
+ },
+ "misses": [
+  {
+   "class": "unclear_rail",
+   "card": "IN-devpost",
+   "text": "I would suggest Remitly for the Indian transfer.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "withholding",
+   "card": "ID-superteam",
+   "text": "Prizes paid in USDC are not taxed at all, so you keep everything.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "withholding",
+   "card": "ID-devpost",
+   "text": "A reduced treaty withholding applies to Indonesian residents, so the cut will be smaller than usual.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unsourced_amount",
+   "card": "IN-devpost",
+   "text": "That is around 1.9 lakh rupees in India.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": [
+  {
+   "card": "ID-devpost",
+   "text": "Sources: Wise's own notice, the treaty text, and the European Central Bank rate.",
+   "claims": [
+    "names refused wise without refusing it: Sources: Wise's own notice, the treaty text, and the European Central Bank rate."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-devpost",
+   "text": "Payoneer delivers; Wise does not.",
+   "claims": [
+    "names refused wise without refusing it: Payoneer delivers; Wise does not."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-superteam",
+   "text": "Jaringan yang dikonfirmasi hanya Arc dan SEI; Tron tidak termasuk.",
+   "claims": [
+    "names refused usdc:tron without refusing it: Jaringan yang dikonfirmasi hanya Arc dan SEI; Tron tidak termasuk."
+   ],
+   "unsourced": []
+  }
+ ]
+}

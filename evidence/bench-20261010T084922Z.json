@@ -1,0 +1,456 @@
+{
+ "meta": {
+  "model": "qwen3.8-max",
+  "host": "builder laptop (Jakarta) -> Qwen Cloud intl + Frankfurter",
+  "git_sha": "7e85363",
+  "started_utc": "2026-10-10T08:49:22+00:00",
+  "warmup_discarded": 1,
+  "concurrency": 1
+ },
+ "summary": {
+  "plans": 48,
+  "p50_s": 5.64,
+  "p95_s": 11.23,
+  "mean_s": 6.54,
+  "max_s": 11.49,
+  "llm_calls_per_plan_mean": 1.19,
+  "tokens_per_plan_mean": 1192,
+  "tokens_per_plan_p95": 2350,
+  "prompt_tokens_total": 45269,
+  "completion_tokens_total": 11933
+ },
+ "plans": [
+  {
+   "id": "ID-devpost-1000",
+   "seconds": 6.004,
+   "calls": 1,
+   "prompt_tokens": 819,
+   "completion_tokens": 214,
+   "guardrail_attempts": 1,
+   "trace_id": "2ed4f2bd07a788cd3e03f069fb38f62f"
+  },
+  {
+   "id": "ID-devpost-2000",
+   "seconds": 5.818,
+   "calls": 1,
+   "prompt_tokens": 825,
+   "completion_tokens": 215,
+   "guardrail_attempts": 1,
+   "trace_id": "31b8b943ad7ec948ad0a5ac67f3ab049"
+  },
+  {
+   "id": "ID-devpost-7000",
+   "seconds": 5.961,
+   "calls": 1,
+   "prompt_tokens": 827,
+   "completion_tokens": 224,
+   "guardrail_attempts": 1,
+   "trace_id": "18c8c6a46c98e06b57e35a41a98660e8"
+  },
+  {
+   "id": "ID-dorahacks_usdc-1000",
+   "seconds": 4.69,
+   "calls": 1,
+   "prompt_tokens": 720,
+   "completion_tokens": 191,
+   "guardrail_attempts": 1,
+   "trace_id": "9b9ef941f90084ee52a3a09d16bd370e"
+  },
+  {
+   "id": "ID-dorahacks_usdc-2000",
+   "seconds": 4.941,
+   "calls": 1,
+   "prompt_tokens": 604,
+   "completion_tokens": 193,
+   "guardrail_attempts": 1,
+   "trace_id": "0c9b1985daff58d2afe2384aac84b84e"
+  },
+  {
+   "id": "ID-dorahacks_usdc-7000",
+   "seconds": 5.954,
+   "calls": 1,
+   "prompt_tokens": 708,
+   "completion_tokens": 185,
+   "guardrail_attempts": 1,
+   "trace_id": "7dc964868e30d5f4cfa58a357a67bbf5"
+  },
+  {
+   "id": "ID-superteam_usdc-1000",
+   "seconds": 4.605,
+   "calls": 1,
+   "prompt_tokens": 634,
+   "completion_tokens": 216,
+   "guardrail_attempts": 1,
+   "trace_id": "e9cb67ae8132e66c42ef685a976fabdc"
+  },
+  {
+   "id": "ID-superteam_usdc-2000",
+   "seconds": 10.933,
+   "calls": 2,
+   "prompt_tokens": 1590,
+   "completion_tokens": 380,
+   "guardrail_attempts": 2,
+   "trace_id": "48d9c5c09344fc860efb324a1770853c"
+  },
+  {
+   "id": "ID-superteam_usdc-7000",
+   "seconds": 5.451,
+   "calls": 1,
+   "prompt_tokens": 724,
+   "completion_tokens": 207,
+   "guardrail_attempts": 1,
+   "trace_id": "2fb1aacdf319331f23963e08050b39a0"
+  },
+  {
+   "id": "ID-us_client_services-1000",
+   "seconds": 6.248,
+   "calls": 1,
+   "prompt_tokens": 766,
+   "completion_tokens": 221,
+   "guardrail_attempts": 1,
+   "trace_id": "8ab5d713a692fb5521bcfa93ef6214f0"
+  },
+  {
+   "id": "ID-us_client_services-2000",
+   "seconds": 5.603,
+   "calls": 1,
+   "prompt_tokens": 771,
+   "completion_tokens": 209,
+   "guardrail_attempts": 1,
+   "trace_id": "462ddbd10c8d02daad139833942c8dd8"
+  },
+  {
+   "id": "ID-us_client_services-7000",
+   "seconds": 7.293,
+   "calls": 1,
+   "prompt_tokens": 766,
+   "completion_tokens": 251,
+   "guardrail_attempts": 1,
+   "trace_id": "5360c3fee64f37cf6c42a7f90a523732"
+  },
+  {
+   "id": "IN-devpost-1000",
+   "seconds": 5.41,
+   "calls": 1,
+   "prompt_tokens": 791,
+   "completion_tokens": 208,
+   "guardrail_attempts": 1,
+   "trace_id": "7c17483a1a58695940427b41274ead2b"
+  },
+  {
+   "id": "IN-devpost-2000",
+   "seconds": 5.515,
+   "calls": 1,
+   "prompt_tokens": 794,
+   "completion_tokens": 229,
+   "guardrail_attempts": 1,
+   "trace_id": "7269aec858142a0866eedcf6e5298d11"
+  },
+  {
+   "id": "IN-devpost-7000",
+   "seconds": 5.858,
+   "calls": 1,
+   "prompt_tokens": 785,
+   "completion_tokens": 234,
+   "guardrail_attempts": 1,
+   "trace_id": "db807f1277cf7f7444d329e8778d244d"
+  },
+  {
+   "id": "IN-dorahacks_usdc-1000",
+   "seconds": 4.42,
+   "calls": 1,
+   "prompt_tokens": 666,
+   "completion_tokens": 182,
+   "guardrail_attempts": 1,
+   "trace_id": "eb5994ed90e932b2e08c63a8e3371787"
+  },
+  {
+   "id": "IN-dorahacks_usdc-2000",
+   "seconds": 4.92,
+   "calls": 1,
+   "prompt_tokens": 637,
+   "completion_tokens": 210,
+   "guardrail_attempts": 1,
+   "trace_id": "89a60d30eddb5c1d57716b7f0b2533a9"
+  },
+  {
+   "id": "IN-dorahacks_usdc-7000",
+   "seconds": 5.198,
+   "calls": 1,
+   "prompt_tokens": 701,
+   "completion_tokens": 206,
+   "guardrail_attempts": 1,
+   "trace_id": "a9299ffd4e31f2a4c9b98b9516ea4858"
+  },
+  {
+   "id": "IN-superteam_usdc-1000",
+   "seconds": 5.082,
+   "calls": 1,
+   "prompt_tokens": 597,
+   "completion_tokens": 196,
+   "guardrail_attempts": 1,
+   "trace_id": "e6946c493df458608a080c6a979399b3"
+  },
+  {
+   "id": "IN-superteam_usdc-2000",
+   "seconds": 4.72,
+   "calls": 1,
+   "prompt_tokens": 631,
+   "completion_tokens": 194,
+   "guardrail_attempts": 1,
+   "trace_id": "0bbbca759c8bbafe40fc6b85217ab22c"
+  },
+  {
+   "id": "IN-superteam_usdc-7000",
+   "seconds": 5.567,
+   "calls": 1,
+   "prompt_tokens": 625,
+   "completion_tokens": 221,
+   "guardrail_attempts": 1,
+   "trace_id": "0e76ab0873eeaf5c385ea7326a6b4806"
+  },
+  {
+   "id": "IN-us_client_services-1000",
+   "seconds": 5.314,
+   "calls": 1,
+   "prompt_tokens": 737,
+   "completion_tokens": 214,
+   "guardrail_attempts": 1,
+   "trace_id": "73c2efc0077ff501c99bc2a773def8b0"
+  },
+  {
+   "id": "IN-us_client_services-2000",
+   "seconds": 5.755,
+   "calls": 1,
+   "prompt_tokens": 730,
+   "completion_tokens": 221,
+   "guardrail_attempts": 1,
+   "trace_id": "5836433108d72d29cb4eff2447ab6ee0"
+  },
+  {
+   "id": "IN-us_client_services-7000",
+   "seconds": 5.441,
+   "calls": 1,
+   "prompt_tokens": 738,
+   "completion_tokens": 230,
+   "guardrail_attempts": 1,
+   "trace_id": "54fee1e02acf05132588dcfbfaaf58f3"
+  },
+  {
+   "id": "PH-devpost-1000",
+   "seconds": 5.114,
+   "calls": 1,
+   "prompt_tokens": 816,
+   "completion_tokens": 201,
+   "guardrail_attempts": 1,
+   "trace_id": "f4d48d51cb8be8e41b4b6dbe2f2685db"
+  },
+  {
+   "id": "PH-devpost-2000",
+   "seconds": 6.964,
+   "calls": 1,
+   "prompt_tokens": 824,
+   "completion_tokens": 225,
+   "guardrail_attempts": 1,
+   "trace_id": "b4fbad3bb9f72801fb2d35b08d0bbb8f"
+  },
+  {
+   "id": "PH-devpost-7000",
+   "seconds": 5.253,
+   "calls": 1,
+   "prompt_tokens": 831,
+   "completion_tokens": 213,
+   "guardrail_attempts": 1,
+   "trace_id": "16dc89a8be5c9f3f56188c6250a80ef3"
+  },
+  {
+   "id": "PH-dorahacks_usdc-1000",
+   "seconds": 4.489,
+   "calls": 1,
+   "prompt_tokens": 624,
+   "completion_tokens": 188,
+   "guardrail_attempts": 1,
+   "trace_id": "79ba7baed89eed299f06620869a3b274"
+  },
+  {
+   "id": "PH-dorahacks_usdc-2000",
+   "seconds": 4.596,
+   "calls": 1,
+   "prompt_tokens": 662,
+   "completion_tokens": 173,
+   "guardrail_attempts": 1,
+   "trace_id": "080a92ca9813e092b5eb132a3718760a"
+  },
+  {
+   "id": "PH-dorahacks_usdc-7000",
+   "seconds": 5.166,
+   "calls": 1,
+   "prompt_tokens": 606,
+   "completion_tokens": 185,
+   "guardrail_attempts": 1,
+   "trace_id": "bdcd55d8cb757d6ada0d7108af8163a3"
+  },
+  {
+   "id": "PH-superteam_usdc-1000",
+   "seconds": 6.104,
+   "calls": 1,
+   "prompt_tokens": 688,
+   "completion_tokens": 204,
+   "guardrail_attempts": 1,
+   "trace_id": "9b28cd5ca304901c9aa0a0353d5a890f"
+  },
+  {
+   "id": "PH-superteam_usdc-2000",
+   "seconds": 5.345,
+   "calls": 1,
+   "prompt_tokens": 714,
+   "completion_tokens": 211,
+   "guardrail_attempts": 1,
+   "trace_id": "e13ce2c78f31c928bf0f34f81d218f8f"
+  },
+  {
+   "id": "PH-superteam_usdc-7000",
+   "seconds": 6.237,
+   "calls": 1,
+   "prompt_tokens": 599,
+   "completion_tokens": 193,
+   "guardrail_attempts": 1,
+   "trace_id": "7b08f1cb6086ebcf770bdc94481c3f71"
+  },
+  {
+   "id": "PH-us_client_services-1000",
+   "seconds": 6.063,
+   "calls": 1,
+   "prompt_tokens": 767,
+   "completion_tokens": 229,
+   "guardrail_attempts": 1,
+   "trace_id": "985289a16b7ca86e0d3c93392bc252cb"
+  },
+  {
+   "id": "PH-us_client_services-2000",
+   "seconds": 5.306,
+   "calls": 1,
+   "prompt_tokens": 770,
+   "completion_tokens": 213,
+   "guardrail_attempts": 1,
+   "trace_id": "fa0c467c03a241baf801f36fb31b5c59"
+  },
+  {
+   "id": "PH-us_client_services-7000",
+   "seconds": 5.39,
+   "calls": 1,
+   "prompt_tokens": 771,
+   "completion_tokens": 212,
+   "guardrail_attempts": 1,
+   "trace_id": "50b1e693622427288566224153fd5f46"
+  },
+  {
+   "id": "ID-devpost-lead-rail",
+   "seconds": 5.68,
+   "calls": 1,
+   "prompt_tokens": 829,
+   "completion_tokens": 225,
+   "guardrail_attempts": 1,
+   "trace_id": "3b6ccd6e647dda2c743498692758c31a"
+  },
+  {
+   "id": "ID-devpost-lead-article",
+   "seconds": 11.487,
+   "calls": 2,
+   "prompt_tokens": 2032,
+   "completion_tokens": 431,
+   "guardrail_attempts": 2,
+   "trace_id": "b6ddaaa1191ef173ee184b9423cd06f9"
+  },
+  {
+   "id": "ID-devpost-lead-zero",
+   "seconds": 11.297,
+   "calls": 2,
+   "prompt_tokens": 2038,
+   "completion_tokens": 430,
+   "guardrail_attempts": 2,
+   "trace_id": "28bd57f114c90dd17337a75130835ffa"
+  },
+  {
+   "id": "ID-dorahacks_usdc-lead-rail",
+   "seconds": 6.437,
+   "calls": 1,
+   "prompt_tokens": 750,
+   "completion_tokens": 203,
+   "guardrail_attempts": 1,
+   "trace_id": "b871ef9e74fc4afc3f470c9774d90f27"
+  },
+  {
+   "id": "ID-dorahacks_usdc-lead-article",
+   "seconds": 10.678,
+   "calls": 2,
+   "prompt_tokens": 1851,
+   "completion_tokens": 433,
+   "guardrail_attempts": 2,
+   "trace_id": "b3c428c35fd09d844d4ae95deebaa06e"
+  },
+  {
+   "id": "ID-dorahacks_usdc-lead-zero",
+   "seconds": 10.846,
+   "calls": 2,
+   "prompt_tokens": 1886,
+   "completion_tokens": 454,
+   "guardrail_attempts": 2,
+   "trace_id": "d278ef91ac53697236bf616c8fd6fbcd"
+  },
+  {
+   "id": "ID-superteam_usdc-lead-rail",
+   "seconds": 5.111,
+   "calls": 1,
+   "prompt_tokens": 749,
+   "completion_tokens": 189,
+   "guardrail_attempts": 1,
+   "trace_id": "4117f8b07539a640a9137a1cea067faf"
+  },
+  {
+   "id": "ID-superteam_usdc-lead-article",
+   "seconds": 11.134,
+   "calls": 2,
+   "prompt_tokens": 1841,
+   "completion_tokens": 439,
+   "guardrail_attempts": 2,
+   "trace_id": "218dbce7612bbb004e4ffb535f8b182e"
+  },
+  {
+   "id": "ID-superteam_usdc-lead-zero",
+   "seconds": 10.506,
+   "calls": 2,
+   "prompt_tokens": 1858,
+   "completion_tokens": 414,
+   "guardrail_attempts": 2,
+   "trace_id": "8681cf105cf8504035242e63a5ceb15c"
+  },
+  {
+   "id": "ID-us_client_services-lead-rail",
+   "seconds": 6.544,
+   "calls": 1,
+   "prompt_tokens": 770,
+   "completion_tokens": 197,
+   "guardrail_attempts": 1,
+   "trace_id": "38f02bf30906fdfdc7a787c19f2c6101"
+  },
+  {
+   "id": "ID-us_client_services-lead-article",
+   "seconds": 11.275,
+   "calls": 2,
+   "prompt_tokens": 1913,
+   "completion_tokens": 442,
+   "guardrail_attempts": 2,
+   "trace_id": "42dfcb53a0e4b17012d207b69d225826"
+  },
+  {
+   "id": "ID-us_client_services-lead-zero",
+   "seconds": 10.083,
+   "calls": 2,
+   "prompt_tokens": 1894,
+   "completion_tokens": 378,
+   "guardrail_attempts": 2,
+   "trace_id": "23f7edd2edec7e6b4b403f6de3e936d5"
+  }
+ ]
+}

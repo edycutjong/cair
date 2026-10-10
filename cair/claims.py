@@ -17,7 +17,8 @@ REC = re.compile(rf"\b({_STRONG}|using|works?|safe|fine|ok|okay|bisa dipakai|ama
 STRONG_REC = re.compile(rf"\b({_STRONG})\b", re.I)
 REPORTED = re.compile(r"\b(you asked|asked me|you want(?:ed)? me|your request|Anda meminta|Anda ingin|minta saya|"
                       r"permintaan Anda)\b", re.I)
-ATTRIBUTED = re.compile(r"\b(states?|stated|says|according to|menurut|source|sumber|announc\w*|blog|page)\b", re.I)
+ATTRIBUTED = re.compile(r"\b(states?|stated|says|according to|menurut|sources?|sumber|announc\w*|blog|page|notice)\b",
+                        re.I)
 # Phrases that refuse a rail. Negated forms ("not refused", "isn't refused") are removed before matching.
 REFUSE = re.compile(
     r"refus\w*|\bcan(?:not|'t| no longer) (?:receive|hold|be used|deliver\w*|accept\w*|work|get|use|confirm|say|tell|"
@@ -29,7 +30,8 @@ REFUSE = re.compile(
     r"\bnot (?:be )?(?:use|used|usable|available|recommended|possible|deliver\w*|an option|supported|accepted|credited)|"
     r"(?:don't|do not|never|won't|will not) (?:use|pick|choose|send|select|go with|deliver|work|arrive|be credited)|"
     r"(?:doesn't|does not|isn't|is not|aren't|are not) (?:work\w*|deliver\w*|available|an option|possible|supported|usable|"
-    r"accepted|open to you)|:\s*(?:no|tidak)\b|\bonly \w+(?: \w+)? (?:is|works|delivers|is open)|"
+    r"accepted|open to you)|\b(?:does not|doesn't|do not|don't)\s*[.;,]|:\s*(?:no|tidak)\b|tidak termasuk|"
+    r"\bexcept\b|kecuali|\bonly \w+(?: \w+)? (?:is|works|delivers|is open)|"
     r"\bavoid\w*|unavailable|undeliverable|\bstay away\b|rather than|instead of|closed door|\blose\b|lost|"
     r"\btidak (?:bisa|dapat|lagi|disarankan|direkomendasikan|tersedia|mendukung|dikreditkan|diterima|boleh)|"
     r"\bjangan\b|ditolak|menolak\w*|tak bisa|bukan pilihan|berisiko|\bhilang|hindari", re.I)
@@ -42,12 +44,16 @@ UNCLEAR_WORD = re.compile(r"\bUNCLEAR\b|\bunknown\b|no (?:primary )?source|not s
 TAX_POSITION = re.compile(
     r"\bno (?:us |u\.s\. )?(?:tax|withholding)\b(?! rate| form)|tax[- ]free|\bexempt\w*|bebas pajak|"
     r"tidak (?:ada |akan )?(?:dipotong|dikenakan pajak|pajak|pemotongan|potongan)|\breduced (?:rate|withholding)|"
-    r"\blower (?:treaty )?(?:rate|withholding)|\bzero\b|\bnol\b|one[- ]third|a quarter|\b1/3\b|\bhalf\b|"
-    r"(?:won't|will not|not) be taxed|treaty (?:rate|benefit)s? (?:applies|apply)|"
+    r"\b(?:reduced|lower|smaller|lesser)\s+(?:\w+\s+)?(?:rate|withholding)|withholding is (?:reduced|lower|smaller)|"
+    r"(?:smaller|lower) than (?:the )?usual|\bzero\b|\bnol\b|one[- ]third|a quarter|\b1/3\b|\bhalf\b|"
+    r"(?:won't|will not|(?:is|are|do|does|did)?\s*not|n't) (?:be )?taxed|taxed at all|tidak dikenai pajak|"
+    r"treaty (?:rate|benefit)s? (?:applies|apply)|"
     r"(?:won't|will not|do not|don't|not) (?:owe|pay) (?:any )?(?:us )?tax|(?:cuts|lowers|reduces) the (?:rate|withholding)|"
     r"tarif (?:yang )?lebih rendah|taxable only", re.I)
 EXTRA_RAILS = {"skrill": "Skrill", "western_union": "Western Union", "swift": "SWIFT", "bank_wire": "bank wire",
-               "revolut": "Revolut", "usdt": "USDT"}  # payout names Cair has no rows for: always unchecked
+               "revolut": "Revolut", "usdt": "USDT", "remitly": "Remitly", "xoom": "Xoom", "cash_app": "Cash App",
+               "paytm": "Paytm", "stripe": "Stripe", "moneygram": "MoneyGram", "worldremit": "WorldRemit",
+               "gopay": "GoPay", "ovo": "OVO", "dana": "DANA", "gcash": "GCash", "upi": "UPI"}  # payout names Cair has no rows for: always unchecked
 # Words that are rail names only when capitalised ("it would be wise to…", "a base of…").
 CASE_SENSITIVE = {"Wise", "Base", "Arc"}
 ABBREV_SPLIT = re.compile(r"(?<!\bArt)(?<!\bart)(?<!\bNo)(?<!\bRp)(?<!\be\.g)(?<!\bi\.e)(?<!\bvs)(?<=[.!?])\s+|\n+")
@@ -91,6 +97,8 @@ def endorses_refused(sentence: str, rail: str) -> bool:
         return False
     if REPORTED.search(sentence) and not STRONG_REC.search(sentence):
         return False  # restating the user's request ("you asked me to confirm that Wise works")
+    if re.match(r"\s*(?:sources?|sumber)\s*:", sentence, re.I) and not REC.search(sentence):
+        return False  # a citation line ("Sources: Wise's own notice, …")
     if not refuses(sentence):
         return True
     return bool(CONCESSIVE.search(sentence) and endorses(sentence))

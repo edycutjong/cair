@@ -28,10 +28,12 @@ URL_RE = re.compile(r"(?:https?|hxxps?)://\S+|\bwww\.\S+|\b[\w-]+(?:\.[\w-]+)*\.
 
 _NUM = r"\d{1,3}(?:[,.\s]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?"
 MULT = {"k": 1_000, "rb": 1_000, "ribu": 1_000, "thousand": 1_000, "m": 1_000_000, "jt": 1_000_000,
-        "juta": 1_000_000, "million": 1_000_000, "mn": 1_000_000}
+        "juta": 1_000_000, "million": 1_000_000, "mn": 1_000_000, "lakh": 100_000, "lakhs": 100_000,
+        "crore": 10_000_000}
 MONEY_RE = re.compile(
-    rf"(?:(?:US)?\$|USD|USDC|IDR|Rp\.?|INR|₹|PHP|₱)\s?({_NUM})(?:\s?(k|rb|ribu|thousand|m|mn|jt|juta|million)\b)?"
-    rf"|({_NUM})\s?(k|rb|ribu|thousand|m|mn|jt|juta|million)?\s?(?:USD|USDC|USDT|IDR|INR|PHP|dollars?|dolar|rupiah)\b", re.I)
+    rf"(?:(?:US)?\$|USD|USDC|IDR|Rp\.?|INR|₹|PHP|₱)\s?({_NUM})(?:\s?(k|rb|ribu|thousand|m|mn|jt|juta|million|lakhs?|crore)\b)?"
+    rf"|({_NUM})\s?(k|rb|ribu|thousand|m|mn|jt|juta|million|lakhs?|crore)?\s?(?:USD|USDC|USDT|IDR|INR|PHP|dollars?|dolar|"
+    rf"rupiah|rupees?|pesos?)\b", re.I)
 PCT_RE = re.compile(rf"({_NUM})\s?(?:%|percent|per cent|pct|persen)", re.I)
 # A rate or an amount written in words is never in a tool output, so it is always a new figure.
 _WORDNUM = (r"(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|"
@@ -57,7 +59,7 @@ _SCALES = {"hundred": 100, "ratus": 100, "seratus": 100, "thousand": 1000, "ribu
 def words_to_number(phrase: str) -> Decimal | None:
     """'two thousand one hundred USD' -> 2100, 'tiga puluh persen' -> 30. None if any word is not a number word."""
     words = re.findall(r"[a-z]+", phrase.lower())
-    words = [w for w in words if w not in {"and", "us", "usd", "usdc", "dollar", "dollars", "dolar", "rupiah", "idr",
+    words = [w for w in words if w not in {"and", "us", "as", "usd", "usdc", "dollar", "dollars", "dolar", "rupiah", "idr",
                                             "inr", "php", "rupee", "rupees", "peso", "pesos", "percent", "per", "cent",
                                             "persen", "pct"}]
     total, current, seen = 0, 0, False
