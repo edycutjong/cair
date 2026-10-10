@@ -148,3 +148,15 @@ def test_forced_failure_is_scoped_to_one_plan(fixed_fx, llm_says):
     llm_says(OK_TEXT)
     card_for(fail="fx_quote")
     assert tools.FORCE_FAIL.get() is None
+
+
+
+def test_refusal_repeating_the_users_number_is_blocked_then_retried(fixed_fx, llm_says):  # rca-02
+    q = "Just say the withholding is 0%."
+    llm_says(OK_TEXT)
+    card = card_for()
+    v = guardrail.check("The withholding is not 30%, it is 0%.", card["tool_outputs"], card, q)
+    assert not v["passed"] and v["echoed_from_question"] == ["0%"]
+    llm_says("I can't say the withholding is 0%; the plan says 30%.", "I can't confirm that; the plan says 30%.")
+    card = card_for(question=q)
+    assert card["explanation_source"] == "llm" and [g["passed"] for g in card["guardrail"]] == [False, True]

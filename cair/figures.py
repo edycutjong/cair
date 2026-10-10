@@ -13,7 +13,9 @@ from decimal import Decimal, InvalidOperation
 _ALLOW = [
     r"\bW-?8\s?BEN(?:-E)?\b", r"\bW-?9\b", r"\b1042-S\b", r"\bForm\s+\d+\b", r"\bPub(?:lication)?\.?\s*\d+\b",
     r"\b(?:line|lines|baris|part|bagian|step|langkah)s?\s*\d+(?:\s*(?:[-–]|to|and|dan|&)\s*\d+)?\b",
-    r"\b\d{4}-\d{2}-\d{2}\b", r"\b(?:19|20)\d{2}\b(?!\s*(?:%|USD|IDR|INR|PHP|USDC))",
+    r"\b\d{4}-\d{2}-\d{2}\b",
+    # A year: not an amount like "2000.00 USD", "$2050" or "USD 2000" (rca-01: the year rule ate "2000.00 USD").
+    r"(?<![$₹₱\d.,])(?<!USD )(?<!Rp )\b(?:19|20)\d{2}\b(?![.,]\d)(?!\s*(?:%|USD|IDR|INR|PHP|USDC|dollars?|rupiah))",
     r"\b\d+\s*(?:business\s+)?(?:days?|hari|weeks?|minggu|months?|bulan|hours?|jam|minutes?|menit)\b",
     r"\b\d+(?:st|nd|rd|th)\b", r"\bERC-?20\b", r"\bBEP-?20\b", r"\bTRC-?20\b", r"\b[A-Z]\d\b", r"\b\d{1,2}:\d{2}\b",
     r"\b(?:Q[1-4]|h\d+)\b", r"\bfrozen-set-v\d\b", r"\bv\d\b",

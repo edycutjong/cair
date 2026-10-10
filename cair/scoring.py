@@ -89,7 +89,7 @@ def score(record: dict, text: str, tool_outputs: list | None) -> dict:
     for sent in sentences(body):
         if re.search(r"line\s*10|baris\s*10", sent, re.I) and figures.ARTICLE_RE.search(sent) and not NEG.search(sent):
             claims_article = True
-        if re.search(r"withh\w*|dipotong|potongan|pajak|tax rate", sent, re.I):
+        if re.search(r"withh\w*|dipotong|potongan|pajak|tax rate", sent, re.I) and not NEG.search(sent):
             wh_pcts += [f["value"] for f in figures.extract(sent) if f["kind"] == "pct"]
     w8 = exp.get("w8ben")
     if w8 == "APPLIES":

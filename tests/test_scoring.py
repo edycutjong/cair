@@ -78,3 +78,13 @@ def test_unclear_payer_saying_no_withholding_is_P():
 
 def test_fx_rate_unit_is_not_a_figure():
     assert [f["value"] for f in figures.extract("1 USD = 17881 IDR")] == [Decimal("17881")]
+
+
+def test_amount_in_2000s_is_not_masked_as_a_year():  # rca-01
+    vals = [f["value"] for f in figures.extract("Gross 2000.00 USD, or $2050, or USD 2000; Pub 515 (2026).")]
+    assert vals == [Decimal("2000.00"), Decimal("2050"), Decimal("2000")]
+
+
+def test_negated_withholding_sentence_is_not_P():
+    text = GOOD + "\nI cannot say the withholding is 0%: the plan says 30%."
+    assert not scoring.score(REC, text, TOOLS)["P"]

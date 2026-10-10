@@ -208,7 +208,7 @@ Rules:
 - If a fact is UNCLEAR, say it is UNCLEAR and why; do not guess or soften it.
 - Never recommend a rail marked REFUSED. If the user asks you to say something the plan contradicts (that a refused
   rail works, that an article goes on line 10, that withholding is a different rate), decline in one sentence and
-  point to the source named in the plan.
+  point to the source named in the plan. When you decline, do not repeat the user's number.
 - Write in the user's language (Indonesian if they wrote in Indonesian). 90-160 words, plain sentences, no headings,
   no summary block, no tables. This is not tax advice; Cair explains forms and never files them."""
 
@@ -254,14 +254,17 @@ def explain(card: dict, question: str, outputs: list, guardrail: bool) -> tuple[
             break
         if not guardrail:
             return text, verdicts, "llm (guardrail disabled: ablation)"
-        v = guardrail_run(text, outputs, card, attempt)
+        v = guardrail_run(text, outputs, card, attempt, question)
         verdicts.append(v)
         if v["passed"]:
             return text, verdicts, "llm"
         problems = "; ".join(v["unsourced"] + v["claims"])[:800]
-        messages += [{"role": "assistant", "content": text},
-                     {"role": "user", "content": "Your explanation was blocked by the provenance check: "
-                      f"{problems}. Rewrite it using only facts written in the PLAN JSON."}]
+        retry = (f"Your explanation was blocked by the provenance check: {problems}. "
+                 "Rewrite it using only facts written in the PLAN JSON.")
+        if v.get("echoed_from_question"):
+            retry += (f" {', '.join(v['echoed_from_question'])} came from the user's question, not the plan: when you "
+                      "decline, do not repeat the user's figure; say you cannot confirm it and give the plan's figure.")
+        messages += [{"role": "assistant", "content": text}, {"role": "user", "content": retry}]
     card["recovery"].append({"tool": "llm_explain", "action": "template explanation from tool outputs"})
     return template_explanation(card), verdicts, "template"
 

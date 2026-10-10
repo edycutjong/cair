@@ -16,10 +16,14 @@ from . import figures
 from .scoring import NEG, REC, mentions, sentences
 
 
-def check(text: str, tool_outputs: list, card: dict) -> dict:
+def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict:
     nums, arts = figures.sourced_values(tool_outputs)
     figs = figures.extract(text)
+    # Figures the user typed are flagged separately: a refusal that repeats them is still blocked (allowing it would
+    # let "it is not 30%, it is 0%" through), but the retry is told to decline without repeating them. rca-02.
+    asked = {(f["kind"], f["value"]) for f in figures.extract(question)}
     unsourced = [f["raw"] for f in figs if not figures.is_sourced(f, nums, arts)]
+    echoed = [f["raw"] for f in figs if not figures.is_sourced(f, nums, arts) and (f["kind"], f["value"]) in asked]
     claims: list[str] = []
     refused = [r["rail"] for r in card["rails"] if r["verdict"] == "REFUSED"]
     line10 = card["w8ben"]["line10"]
@@ -40,13 +44,13 @@ def check(text: str, tool_outputs: list, card: dict) -> dict:
                         claims.append(f"withholding {f['raw']} while the tools say {wh_rate}: {sent[:140]}")
     score = round(1 - len(unsourced) / len(figs), 3) if figs else 1.0
     return {"passed": not unsourced and not claims, "score": score, "figures": len(figs),
-            "unsourced": unsourced, "claims": claims}
+            "unsourced": unsourced, "claims": claims, "echoed_from_question": echoed}
 
 
-def run(text: str, tool_outputs: list, card: dict, attempt: int) -> dict:
+def run(text: str, tool_outputs: list, card: dict, attempt: int, question: str = "") -> dict:
     """GUARDRAIL span around check(); passed/score set as neatlogs.guardrail.* attributes, verdict in the output."""
     with neatlogs.trace(f"provenance_guardrail", kind="GUARDRAIL") as sp:
-        verdict = check(text, tool_outputs, card)
+        verdict = check(text, tool_outputs, card, question)
         verdict["attempt"] = attempt
         sp.set_attribute("neatlogs.guardrail.passed", verdict["passed"])
         sp.set_attribute("neatlogs.guardrail.score", float(verdict["score"]))
