@@ -23,7 +23,7 @@
   ![neatlogs](https://img.shields.io/badge/neatlogs-traces-black?style=flat)
   ![Entire](https://img.shields.io/badge/Entire-code_graph-black?style=flat)
   ![Qwen Cloud](https://img.shields.io/badge/Qwen_Cloud-615CED?style=flat)
-  ![Tests](https://img.shields.io/badge/tests-92_passing-brightgreen?style=flat)
+  ![Tests](https://img.shields.io/badge/tests-93_passing-brightgreen?style=flat)
   [![CI](https://github.com/edycutjong/cair/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/cair/actions/workflows/ci.yml)
   [![Release](https://img.shields.io/github/v/release/edycutjong/cair?sort=semver)](https://github.com/edycutjong/cair/releases/latest)
   [![CodeQL](https://github.com/edycutjong/cair/actions/workflows/codeql.yml/badge.svg)](https://github.com/edycutjong/cair/actions/workflows/codeql.yml)
@@ -189,7 +189,7 @@ Python 3.12. To run the app or the eval against Qwen Cloud, set the variables li
 
 ```bash
 python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m pytest -q        # 92 tests
+.venv/bin/python -m pytest -q        # 93 tests
 ```
 
 Full reproduce steps (eval, ablation, forced failure, bench) and things to try on the live site: [DEMO.md](DEMO.md).
@@ -208,15 +208,16 @@ such a run ([DEMO.md](DEMO.md) §3).
 
 | Layer | What runs | Result |
 |---|---|---|
-| Unit + invariants | `pytest` — 92 tests; regressions are named for the defect they pin (`test_amount_in_2000s_is_not_masked_as_a_year`, `test_idr_receipt_in_the_tens_of_millions_is_accepted`) | 92 passing, 89% line+branch coverage |
-| Exhaustive check | every payer × country × option set × amount band (**2,448 scenarios**) through the real planner: no refused or unclear route is recommended, no article on line 10 without a W-8BEN and a source, no landed amount above the gross, and the fallback template passes its own provenance guardrail | 0 violations (`tests/test_exhaustive.py`; deliberately breaking the route rule makes 2,256 of them fail) |
+| Unit + invariants | `pytest` — 93 tests; regressions are named for the defect they pin (`test_amount_in_2000s_is_not_masked_as_a_year`, `test_idr_receipt_in_the_tens_of_millions_is_accepted`) | 93 passing, 89% line+branch coverage |
+| Exhaustive check | every payer × country × option set × amount band (**2,448 scenarios**) through the real planner and tools (only the ECB rate and the wording call are fixed, since the decisions under test are code-only); a self-consistency check on the card, with the sourced ground truth pinned in `test_labels.py` and `test_invariants.py`: no refused or unclear route is recommended, no article on line 10 without a W-8BEN and a source, no landed amount above the gross, and the fallback template passes its own provenance guardrail | 0 violations (`tests/test_exhaustive.py`; deliberately breaking the route rule produces 2,256 violations across the set) |
 | Permission boundary | no public route returns a key or token; the public plan API carries no raw tool errors; the builder-only origin cannot be forged (`tests/test_boundary.py`) | passing |
 | Browser E2E | Playwright (Chromium): the hero plan, an unlisted country, a bad amount, `/judge` with no session, no horizontal overflow at 375 / 768 / 1440 px | 23 passing |
-| Lighthouse (local, desktop) | `/`, `/judge`, `/rules` | accessibility 100, best practices 100, SEO 100, performance 91–100 |
+| Lighthouse (local, desktop, 2 runs each) | `/`, `/judge`, `/rules` | accessibility 100, best practices 100, SEO 100, performance 91–100 ([`evidence/lighthouse-2026-10-10.json`](evidence/lighthouse-2026-10-10.json)) |
 | Security | CodeQL (python) · gitleaks over full history · pip-audit · Dependabot (pip + actions) · secret scanning with push protection | CodeQL's first run found 2 issues: one fixed (and pinned by a test), one dismissed as a false positive with the reason recorded; 0 open. gitleaks, pip-audit, Dependabot alerts: 0 |
 
 The pipeline ([`ci.yml`](.github/workflows/ci.yml)) runs quality and dependency audit in parallel, then a boot-and-smoke
-build, then E2E and Lighthouse (advisory), with a deploy gate on `main`. A judge-facing summary with the receipts:
+build, then E2E and Lighthouse (advisory), with a gate-summary stage on `main`; a release is tagged from the
+Angular-style commit messages only after that pipeline passes. A judge-facing summary with the receipts:
 [JUDGE.md](JUDGE.md), served at [/judge](https://app.cair.edycu.dev/judge).
 
 ## 📽️ Demo Materials

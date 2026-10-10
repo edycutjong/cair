@@ -1,0 +1,66 @@
+{
+ "tool": "Lighthouse CI 0.14, desktop preset, local uvicorn, 2 runs per URL",
+ "note": "measured on the pages as of the CI commit, before the later CodeQL fixes (no template or CSS change since)",
+ "runs": [
+  {
+   "url": "http://<local app>/",
+   "fetched": "2026-10-10T09:24:06.067Z",
+   "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   }
+  },
+  {
+   "url": "http://<local app>/",
+   "fetched": "2026-10-10T09:24:16.744Z",
+   "scores": {
+    "performance": 99,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   }
+  },
+  {
+   "url": "http://<local app>/judge",
+   "fetched": "2026-10-10T09:24:27.066Z",
+   "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   }
+  },
+  {
+   "url": "http://<local app>/judge",
+   "fetched": "2026-10-10T09:24:37.334Z",
+   "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   }
+  },
+  {
+   "url": "http://<local app>/rules",
+   "fetched": "2026-10-10T09:24:47.554Z",
+   "scores": {
+    "performance": 91,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   }
+  },
+  {
+   "url": "http://<local app>/rules",
+   "fetched": "2026-10-10T09:24:57.938Z",
+   "scores": {
+    "performance": 91,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   }
+  }
+ ]
+}
