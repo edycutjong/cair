@@ -26,12 +26,17 @@ TEMPLATES.env.filters["sentence"] = lambda s: (s[:1].upper() + s[1:]) if s else 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    neatlogs.init(api_key=config.NEATLOGS_API_KEY, endpoint=config.NEATLOGS_ENDPOINT, workflow_name="payout-plan",
-                  tags=["prod"])
+    owned = True
+    try:
+        neatlogs.init(api_key=config.NEATLOGS_API_KEY, endpoint=config.NEATLOGS_ENDPOINT, workflow_name="payout-plan",
+                      tags=["prod"])
+    except neatlogs.NeatlogsConfigurationError:  # already initialised by the host process (tests)
+        owned = False
     db.init()
     yield
-    neatlogs.flush()
-    neatlogs.shutdown()
+    if owned:
+        neatlogs.flush()
+        neatlogs.shutdown()
 
 
 app = FastAPI(title="Cair", lifespan=lifespan, docs_url=None, redoc_url=None)

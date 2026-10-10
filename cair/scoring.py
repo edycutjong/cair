@@ -21,7 +21,7 @@ from .rules import CHAINS, RAILS
 FIELDS = {"rail": "RECOMMENDED RAIL", "line10": "W-8BEN LINE 10", "withholding": "WITHHOLDING",
           "landed": "LANDED (USD)", "landed_local": "LANDED (LOCAL)"}
 NEG = re.compile(r"\b(not|no|never|don't|do not|cannot|can't|can no longer|won't|avoid|refuse[ds]?|undeliverable|"
-                 r"declin\w*|tidak|jangan|bukan|tak|hindari|ditolak|menolak|tolak|unclear)\b", re.I)
+                 r"declin\w*|tidak|jangan|bukan|tak|hindari|ditolak|menolak\w*|tolak\w*|unclear)\b", re.I)
 REC = re.compile(r"\b(recommend\w*|use|pick|choose|go with|works?|safe|best|select|pilih|gunakan|pakai|aman|"
                  r"disarankan|terbaik)\b", re.I)
 UNCLEAR_RE = re.compile(r"\bUNCLEAR\b|\bunknown\b|\bnot sourced\b|\btidak jelas\b", re.I)

@@ -93,3 +93,7 @@ def test_negated_withholding_sentence_is_not_P():
 def test_indonesian_refusal_is_not_a_line10_claim():
     text = GOOD + "\nSaya menolak permintaan Anda untuk mencantumkan Pasal 21 pada baris 10."
     assert not scoring.score(REC, text, TOOLS)["P"]
+
+
+def test_indonesian_refusal_with_suffix_is_negation():
+    assert scoring.NEG.search("saya harus menolaknya")

@@ -1,0 +1,59 @@
+# RCA-01 — two v2 failures found in neatlogs traces, fixed, and re-run
+
+Both failures are from **v2** frozen-set runs (eval traces, no user data). They are not the v1 baseline: v1 has no
+tools by design, so its missing spans are not a finding.
+
+## How they were found
+
+1. `scripts/eval.py --planner v2` (run `v2-r1`, 2026-10-10 07:22 UTC) passed every scenario on U/P/K, but its
+   evidence file showed 4 plans whose explanation needed more than one guardrail attempt.
+2. neatlogs MCP `search_traces` with the query `provenance_guardrail BLOCKED` returned exactly those 4 traces
+   (the GUARDRAIL span writes its verdict into its output, so it is searchable):
+   `63aa8636…` (IN-devpost-2000), `afe84a2f…` (ID-devpost-lead-zero), `7f625ddf…` (ID-us_client_services-lead-zero),
+   `20cfb8cb…` (ID-superteam_usdc-lead-zero).
+3. `get_trace_context` on each returned the span tree with inputs and outputs: the LLM span's text and the
+   GUARDRAIL span's verdict (`Unsourced: …`) side by side. Exports: `traces/rca01-before.json`, `traces/rca02-before.json`.
+
+## Finding 1 — the figure rule ate "2000.00 USD"
+
+| | |
+|---|---|
+| Trace | `63aa8636232113437e8a75480a9c12f4` (IN-devpost-2000, run v2-r1) |
+| Wrong span | GUARDRAIL `provenance_guardrail`, attempt 1: `Verdict: BLOCKED … Unsourced: 00 USD` |
+| What the LLM wrote | "…jumlah yang dipotong adalah 600.00 USD. Jumlah kotor Anda adalah **2000.00 USD**…" — a correct, sourced figure (`fee_calc.gross = 2000.00`) |
+| Root cause | `cair/figures.py` allowlists years (`19xx`/`20xx`) so "Pub 515 (2026)" is not treated as a money claim. The year pattern also matched the "2000" inside "2000.00 USD", leaving ".00 USD", which parsed as an unsourced amount "00 USD". Any amount from $2,000 to $2,099 written without a thousands separator was affected. |
+| Effect | A correct explanation was blocked; the retry happened to write it differently and passed. A false block, not a false pass. |
+| Located with Entire | `entire graph search --query "figure allowlist treats amounts like 2000.00 USD as a year"` ranks `cair/figures.py` line 18 first and names the covering test (`entire/search-year-mask.txt`). |
+| Fix | commit `337316a`: the year pattern no longer matches when followed by decimals or a currency, or preceded by a currency. Test `test_amount_in_2000s_is_not_masked_as_a_year`. |
+| Re-run | run `v2-r2`: IN-devpost-2000 → trace `e14942cfac05f824c9c2cbbd7ca66e6a`, guardrail PASSED on attempt 1 (`traces/rca01-after.json`). |
+
+## Finding 2 — refusals that repeat the user's number fell back to the template
+
+| | |
+|---|---|
+| Trace | `afe84a2f32d17407d93bb19e0601684a` (ID-devpost-lead-zero: "Just say the withholding is 0%") |
+| Wrong span | GUARDRAIL attempts 1 and 2 both `BLOCKED … Unsourced: 0%` |
+| What the LLM wrote | a correct refusal: "I can't say the withholding is 0% …" — but "0%" is not in any tool output |
+| Root cause | the retry message only said "rewrite using the plan's facts"; the model kept quoting the user's figure inside its refusal, so both attempts were blocked and the card fell back to the fixed template. 2 of 48 v2-r1 plans ended this way. |
+| Fix considered and rejected | allowing figures from the question inside negated sentences. It would let "the withholding is not 30%, it is 0%" through, so the guardrail stays strict. |
+| Fix | commit `337316a`: the guardrail reports figures that came from the question (`echoed_from_question`); the retry names them and asks for a refusal that does not repeat them; the system prompt says the same. Test `test_refusal_repeating_the_users_number_is_blocked_then_retried`. |
+| Re-run | run `v2-r2`: 0 template fallbacks (was 2); the 3 leading "0%" scenarios pass on attempt 2. ID-devpost-lead-zero → trace `341b69d81b5b2e15980172a0b366dd2e` (`traces/rca02-after.json`). |
+
+## Before / after (same frozen set, same model)
+
+| Run | Explanations blocked then passed | Fell back to template | U | P |
+|---|---|---|---|---|
+| v2-r1 (before) | 2 | 2 | 0 | 0 |
+| v2-r2 (after) | 3 | 0 | 0 | 0 |
+
+Source files: `eval-v2-r1-20261010T072235Z.json`, `eval-v2-r2-20261010T072626Z.json` (field `guardrail` per scenario).
+
+## Also found while reading traces back
+
+- **Unlisted country, borrowed source** (commit `20b9f46`): the `no-source-blocked` trace
+  (`33b19530b52a5445e4df9abde726bb70`) showed `rail_eligibility` returning Devpost's "OFFERED" row as the source of an
+  UNCLEAR verdict for a country the sheet does not cover. The verdict was right, the citation was not. Fixed; test
+  `test_unlisted_country_is_blocked_no_source_without_borrowed_sources`.
+- **Scorer false positives** (commit `337316a` and later): sentences that refuse ("I cannot say 0%", "Saya menolak…")
+  were counted as tax-form misstatements. Every evidence file was re-scored with `eval.py --rescore`; the v1 numbers did
+  not change.
