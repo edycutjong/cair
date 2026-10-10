@@ -10,6 +10,27 @@ UNCLEAR = rules.UNCLEAR
 OTHER = "OTHER"
 
 
+INPUT_MESSAGES = {
+    "payer": "Pick who is paying you.",
+    "country": "Pick where you live.",
+    "amount_format": "Enter the amount in USD, e.g. 7000.",
+    "amount_range": "Enter an amount between 1 and 1,000,000.",
+    "chain": "Pick the network your organizer pays on (it is in the event's rules).",
+    "exchange": "Pick where you will receive the USDC.",
+    "rails_dup": "Tick the payout options your form shows you (each once).",
+    "rails_none": "Tick the payout options your form shows you.",
+}
+
+
+class InputError(ValueError):
+    """A form field the user must fix. The code maps to a fixed message in INPUT_MESSAGES; no exception text is ever
+    sent to the browser."""
+
+    def __init__(self, code: str) -> None:
+        super().__init__(code)
+        self.code = code
+
+
 def form_options(card: dict | None = None) -> dict:
     return {"payers": rules.PAYERS, "countries": {**rules.COUNTRIES, OTHER: "Somewhere else (not in the rules sheet)"},
             "rails": rules.RAILS, "chains": rules.CHAINS, "exchanges": {**rules.EXCHANGES, "other": "Self-custody / other"},
@@ -19,34 +40,34 @@ def form_options(card: dict | None = None) -> dict:
 def validate(body: dict) -> dict:
     payer = str(body.get("payer", ""))
     if payer not in rules.PAYERS:
-        raise ValueError("Pick who is paying you.")
+        raise InputError("payer")
     country = str(body.get("country", ""))
     if country not in rules.COUNTRIES and country != OTHER:
-        raise ValueError("Pick where you live.")
+        raise InputError("country")
     try:
         amount = Decimal(str(body.get("amount", "")).replace(",", "").strip())
     except InvalidOperation:
-        raise ValueError("Enter the amount in USD, e.g. 7000.") from None
+        raise InputError("amount_format") from None
     if not amount.is_finite() or not (Decimal(1) <= amount <= Decimal(1_000_000)):
-        raise ValueError("Enter an amount between 1 and 1,000,000.")
+        raise InputError("amount_range")
     amount = amount.quantize(Decimal("0.01"))
     exchange = None
     if payer in rules.USDC_PAYERS:
         chain = str(body.get("chain", ""))
         if chain not in rules.CHAINS:
-            raise ValueError("Pick the network your organizer pays on (it is in the event's rules).")
+            raise InputError("chain")
         exchange = str(body.get("exchange", "other"))
         if exchange not in rules.EXCHANGES and exchange != "other":
-            raise ValueError("Pick where you will receive the USDC.")
+            raise InputError("exchange")
         rails = [f"usdc:{chain}"]
     else:
         raw = body.get("rails", [])
         rails = [r for r in (raw if isinstance(raw, list) else []) if isinstance(r, str) and r in rules.RAILS]
         if not isinstance(raw, list) or len(rails) != len(raw) or len(set(rails)) != len(rails):
-            raise ValueError("Tick the payout options your form shows you (each once).")
+            raise InputError("rails_dup")
         rails = list(dict.fromkeys(rails))
         if not rails:
-            raise ValueError("Tick the payout options your form shows you.")
+            raise InputError("rails_none")
     question = str(body.get("question", "")).strip()[:500]
     if not question:
         where = rules.COUNTRIES.get(country, "a country Cair has no sources for")

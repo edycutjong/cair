@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import re
 import threading
 import time
 from collections import defaultdict, deque
@@ -99,9 +100,18 @@ def _unsign(raw: str | None) -> str | None:
     return v if hmac.compare_digest(_sign(v), raw) else None
 
 
+_ULID_RE = re.compile(r"[0-9A-HJKMNP-TV-Z]{26}")
+
+
+def _ulid_or_new(raw: str | None) -> str:
+    """A signed cookie is ours, but only a well-formed id is ever written back to a cookie."""
+    v = _unsign(raw)
+    return v if v and _ULID_RE.fullmatch(v) else str(ULID())
+
+
 def identity(request: Request) -> tuple[str, str, str, dict]:
-    sid = _unsign(request.cookies.get("cair_sid")) or str(ULID())
-    uid = _unsign(request.cookies.get("cair_uid")) or str(ULID())
+    sid = _ulid_or_new(request.cookies.get("cair_sid"))
+    uid = _ulid_or_new(request.cookies.get("cair_uid"))
     origin = _unsign(request.cookies.get("cair_origin"))
     origin = origin if origin in ORIGINS else "external"
     return sid, hashlib.sha256(uid.encode()).hexdigest()[:16], origin, {"cair_sid": sid, "cair_uid": uid}
@@ -164,8 +174,8 @@ def healthz() -> dict:
 async def api_plan(request: Request):
     try:
         inp = view.validate(await _json_dict(request))
-    except ValueError as e:
-        return JSONResponse({"error": str(e)}, 400)
+    except view.InputError as e:
+        return JSONResponse({"error": view.INPUT_MESSAGES.get(e.code, "Check the form and try again.")}, 400)
     if limited(request, "plan"):  # counted after validation: only requests that reach the LLM use the budget
         return JSONResponse({"error": "Too many plans from this address — try again in a few minutes."}, 429)
     sid, uhash, origin, cookies = identity(request)

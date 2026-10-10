@@ -64,3 +64,19 @@ def test_a_plan_id_that_does_not_exist_is_a_404_not_a_leak(client):
     for path in ("/plan/nope", "/api/plan/nope"):
         r = client.get(path)
         assert r.status_code == 404 and "Traceback" not in r.text
+
+
+def test_input_errors_are_fixed_messages_not_exception_text(client):
+    """CodeQL py/stack-trace-exposure: an exception's text must never be the response body."""
+    r = client.post("/api/plan", json={"payer": "devpost", "amount": "abc", "country": "ID", "rails": ["wise"]})
+    assert r.status_code == 400 and r.json()["error"] == "Enter the amount in USD, e.g. 7000."
+    r = client.post("/api/plan", json={"payer": "nobody", "amount": "5", "country": "ID"})
+    assert r.json()["error"] == "Pick who is paying you."
+
+
+def test_a_validly_signed_but_malformed_cookie_is_never_written_back(client):
+    """CodeQL py/cookie-injection: only a well-formed id is echoed into Set-Cookie, even when the HMAC is valid."""
+    from cair import app as appmod
+    client.cookies.set("cair_sid", appmod._sign("evil; Path=/; Domain=x"))
+    r = client.get("/")
+    assert "evil" not in r.headers.get("set-cookie", "") and "Domain=x" not in r.headers.get("set-cookie", "")
