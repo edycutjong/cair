@@ -86,3 +86,9 @@ def test_responses_carry_basic_security_headers_and_a_non_ascii_builder_token_is
     r = client.get("/judge")
     assert r.headers["x-content-type-options"] == "nosniff" and r.headers["x-frame-options"] == "DENY"
     assert client.get("/?b=é").status_code == 200  # hmac.compare_digest on str would raise TypeError
+
+
+def test_head_requests_on_pages_are_200_not_405(client):
+    """Defect: link checkers, uptime pingers and `curl -I` use HEAD; GET-only routes answered 405."""
+    for path in ("/", "/rules", "/rules.csv", "/judge", "/healthz", "/verify"):
+        assert client.head(path).status_code == 200, path

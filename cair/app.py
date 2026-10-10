@@ -133,7 +133,7 @@ def set_cookies(resp, cookies: dict) -> None:
 
 
 # --- pages -------------------------------------------------------------------------------------------------------
-@app.get("/", response_class=HTMLResponse)
+@app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
 def index(request: Request, src: str | None = None, b: str | None = None):
     resp = TEMPLATES.TemplateResponse(request, "index.html", {"form": view.form_options(), "card": None})
     _, _, _, cookies = identity(request)
@@ -145,7 +145,7 @@ def index(request: Request, src: str | None = None, b: str | None = None):
     return resp
 
 
-@app.get("/plan/{plan_id}", response_class=HTMLResponse)
+@app.api_route("/plan/{plan_id}", methods=["GET", "HEAD"], response_class=HTMLResponse)
 def plan_page(request: Request, plan_id: str):
     row = db.get_plan(plan_id)
     if not row:
@@ -155,25 +155,25 @@ def plan_page(request: Request, plan_id: str):
         "form": view.form_options(card), "card": view.card_view(card, db.confirms(plan_id), db.receipts(plan_id))})
 
 
-@app.get("/rules", response_class=HTMLResponse)
+@app.api_route("/rules", methods=["GET", "HEAD"], response_class=HTMLResponse)
 def rules_page(request: Request):
     sheet = rules.sheet()
     return TEMPLATES.TemplateResponse(request, "rules.html", {"rows": view.rules_rows(sheet), "version": sheet.version})
 
 
-@app.get("/rules.csv")
+@app.api_route("/rules.csv", methods=["GET", "HEAD"])
 def rules_csv():
     return HTMLResponse((config.DATA / "rules_sheet.csv").read_text(), media_type="text/csv")
 
 
-@app.get("/judge", response_class=HTMLResponse)
+@app.api_route("/judge", methods=["GET", "HEAD"], response_class=HTMLResponse)
 def judge(request: Request):
     """For the judge: claim, 30-second path, receipts, honest limits. Rendered from JUDGE.md; no login, no cookie."""
     body = markdown.markdown((config.ROOT / "JUDGE.md").read_text(), extensions=["tables"])
     return TEMPLATES.TemplateResponse(request, "judge.html", {"body": body})
 
 
-@app.get("/healthz")
+@app.api_route("/healthz", methods=["GET", "HEAD"])
 def healthz() -> dict:
     return {"ok": True, "rules_version": rules.sheet().version}
 
@@ -302,7 +302,7 @@ def _refresh_verify() -> None:
             _verify_cache.update(at=time.time(), rows=rows, source=source)
 
 
-@app.get("/verify", response_class=HTMLResponse)
+@app.api_route("/verify", methods=["GET", "HEAD"], response_class=HTMLResponse)
 async def verify(request: Request):
     if time.time() - _verify_cache["at"] > 60 or _verify_cache["rows"] is None:
         await run_in_threadpool(_refresh_verify)
