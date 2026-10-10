@@ -87,7 +87,7 @@ primary source exists the answer is UNCLEAR, never a guess.
 
 Full detail: [ARCHITECTURE.md](ARCHITECTURE.md).
 
-## 🏆 neatlogs, Entire & cfo.ai Integration (cfo.ai model pending)
+## 🏆 neatlogs, Entire & cfo.ai Integration
 
 ### neatlogs — how it was used to build and improve Cair
 
@@ -102,7 +102,7 @@ Full detail: [ARCHITECTURE.md](ARCHITECTURE.md).
   page read traces back over MCP. First receipt: the builder's own $7,000 Devpost prize that landed (builder-reported) as $4,897 in
   Payoneer. Cair's quote was "at most $4,900 before the receiving fee (UNCLEAR)"; the reconciler read that bound back
   from the trace and recorded *within sourced bound, $3.00 not explained by the sourced rules* — a **replay of a known
-  outcome**, not a prediction (EVALUATOR trace `f5a47b9c…`).
+  outcome**, not a prediction (EVALUATOR trace [`f5a47b9c…`](https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=f5a47b9cba7cf056a800e136616e0013), neatlogs dashboard).
 - **HTTP write-back**: confirm and EVALUATOR spans are posted server-side to `/v1/trace`; the write key never reaches
   the browser.
 - Trace exports read back over MCP: [`evidence/traces/`](evidence/traces). What was hard or undocumented:
@@ -119,14 +119,26 @@ tagged. Outputs, with the
 commands: [`evidence/entire/`](evidence/entire). Entire checkpoints were deliberately not enabled: `entire enable` installs coding-agent hooks and settings into the
 repository and checkpoints keep the agent conversation, and this repository is public.
 
-### cfo.ai — business plan (model pending)
+### cfo.ai — business plan
 
-Measured tokens, priced at list: **$0.0033** of LLM per plan (1,186 tokens, 1.19 calls with guardrail retries). Measured
-latency: **p50 5.50 s / p95 10.31 s** per plan (bench on the builder's laptop at commit `0a8fc06`). Hosting: $15.26 / month,
-the t3.small list price, not a measured bill.
-Free planner (live); Freelancer Pro and a per-winner Payout Desk for organisers are planned, not built, at assumed
-prices — break-even at 4 Pro subscribers under those assumptions.
-→ [`docs/BUSINESS-PLAN.md`](docs/BUSINESS-PLAN.md) (cfo.ai model: pending — nothing here was produced by cfo.ai yet).
+The model is entered in cfo.ai and shared publicly: **[cfo.ai/s/PQ2HUGmiJl3P0RQB](https://cfo.ai/s/PQ2HUGmiJl3P0RQB)** (5 pages: Runway, Pricing,
+Unit economics, Monthly costs, Revenue scenarios); the spreadsheet export is [`docs/cfo/Runway.xlsx`](docs/cfo/Runway.xlsx).
+Its inputs are measured: **$0.0033** of LLM per plan (1,186 tokens, 1.19 calls with guardrail retries, priced at list) and
+hosting **$15.257 / month** (t3.small list price, $0.0209 × 730 h, not a measured bill); latency is **p50 5.50 s / p95 10.31 s**
+(bench on the builder's laptop at commit `0a8fc06`). Prices and volumes are assumptions (free planner; Freelancer Pro $4 / month;
+Payout Desk $2 per winner, both planned, not built).
+
+| cfo.ai, Main Scenario (1,000 free plans, 25 Pro subscribers) | Value |
+|---|---|
+| Revenue / month *(assumed)* | $100.00 |
+| Cost of revenue / month | $18.887 ($15.257 hosting + $3.63 inference on 1,100 plans) |
+| Operating profit / month | $81.113 |
+| Pre-revenue burn / month | $18.557 |
+| Runway on the $25 AWS credit, before revenue | 1.35 months |
+
+Where cfo.ai's figures differ from the first hand calculation (cost $18.94, burn $18.61), cfo.ai's are used: it takes the
+per-plan cost rounded to $0.0033, the script took the unrounded $0.003348.
+→ [`docs/BUSINESS-PLAN.md`](docs/BUSINESS-PLAN.md) (every sheet of the export rendered as tables).
 
 ## 📊 Engineering Rigor
 
@@ -161,6 +173,12 @@ The misses (numberless claims such as "not taxed at all") were then fixed, so th
 scripted cases in `scripts/guardrail_recall.py`. The guardrail is rule-based: expect new phrasings to slip through at
 about that rate, which is why the route, line 10 and every amount on the card are decided by code, not by the prose.
 
+The same question as seen in neatlogs: v1 is three steps, one model call that holds every figure; v2 is ten, with a TOOL or RETRIEVER span behind each figure and a GUARDRAIL after the model.
+
+| v1 — one call ([trace](https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=929a378107bdfbbc7533f63b085b3375), neatlogs dashboard) | v2 — Cair ([trace](https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=6ea01b70588b56884b9f4193c431f5ce), neatlogs dashboard) |
+|---|---|
+| <img src="docs/assets/neatlogs/process-929a378107bdfbbc7533f63b085b3375.png" alt="v1 trace: payout-plan, baseline agent, one qwen3.8-max call, 1,312 tokens, 23 s" width="420"> | <img src="docs/assets/neatlogs/process-6ea01b70588b56884b9f4193c431f5ce.png" alt="v2 trace: payout-plan, planner, platform_rails, rail_eligibility ×3, treaty_lookup, fx_quote, fee_calc, qwen3.8-max, provenance_guardrail — 10 steps, 6.9 s" width="420"> |
+
 Definitions: [`docs/METRICS.md`](docs/METRICS.md) · evidence (each scenario carries its neatlogs trace id):
 `evidence/eval-v1-r1…r3`, `eval-v1s-r1`, `eval-v2-r10`, `eval-ablation-r10`, `guardrail-heldout-r4-…`.
 
@@ -168,8 +186,12 @@ Definitions: [`docs/METRICS.md`](docs/METRICS.md) · evidence (each scenario car
 
 `scripts/eval.py --planner v2 --fail fx_quote` makes the FX tool fail on every call. In the 24 USD-payer scenarios
 (USDC plans never call it) the agent retried once, then fell back to the last ECB rate it had fetched, stamped STALE
-with its date, and finished the plan. All 48 plans completed: U 0, P 0, 350 / 350 figures sourced (run `fail-fx_quote-r9`). Trace `d1fa1ed7…` (first
+with its date, and finished the plan. All 48 plans completed: U 0, P 0, 350 / 350 figures sourced (run `fail-fx_quote-r9`). Trace [`d1fa1ed7…`](https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=d1fa1ed78810601ea4f2d6de5dfacec5) (neatlogs dashboard; first
 recovery run) shows the two ERROR spans and the fallback span. → [`evidence/recovery-01.md`](evidence/recovery-01.md)
+
+<img src="docs/assets/neatlogs/process-d1fa1ed78810601ea4f2d6de5dfacec5.png" alt="neatlogs step tree of the recovery run: fx_quote ERROR twice, fx_quote_fallback, fee_calc, the model call, provenance_guardrail" width="640">
+
+*The recovery run in the neatlogs dashboard: 12 steps, 2 tool errors recorded (`fx_quote` twice), plan completed via the fallback. The dashboard footer reads "ended with error" because it counts the two errored tool spans; the WORKFLOW and AGENT spans themselves succeeded.*
 
 ### Honest limits (5)
 
@@ -230,7 +252,8 @@ Angular-style commit messages only after that pipeline passes. A judge-facing su
 
 - Judges: [/judge](https://app.cair.edycu.dev/judge) · live app: [app.cair.edycu.dev](https://app.cair.edycu.dev) · traces read back: [/verify](https://app.cair.edycu.dev/verify) · rules sheet: [/rules](https://app.cair.edycu.dev/rules)
 - Website: [cair.edycu.dev](https://cair.edycu.dev) · pitch deck: [cair.edycu.dev/pitch](https://cair.edycu.dev/pitch/) (11 slides; arrow keys, P for speaker notes)
-- Reproduce the numbers: [DEMO.md](DEMO.md) · business plan: [docs/BUSINESS-PLAN.md](docs/BUSINESS-PLAN.md)
+- Reproduce the numbers: [DEMO.md](DEMO.md) · business plan: [docs/BUSINESS-PLAN.md](docs/BUSINESS-PLAN.md) · cfo.ai model: [cfo.ai/s/PQ2HUGmiJl3P0RQB](https://cfo.ai/s/PQ2HUGmiJl3P0RQB)
+- Built in public (#neatHack): [launch post](https://x.com/edycutjong/status/2108905407381213633) · [the recovery story](https://x.com/edycutjong/status/2108938150072705311) · build log: [hackathon.md](hackathon.md)
 
 ## 📄 License
 

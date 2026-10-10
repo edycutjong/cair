@@ -488,7 +488,7 @@ body.ov .overview { display: block; }
 
 <!-- 8 · Failure -->
 <section class="slide s-fail" aria-label="Slide 8 of 11: a run where an action failed">
-  <p class="label kicker"><span>Trace <span class="mono id">d1fa1ed7…</span> · run <span class="mono id">fail-fx_quote-r1</span></span></p>
+  <p class="label kicker"><span>Trace <a class="mono id" href="https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=d1fa1ed78810601ea4f2d6de5dfacec5" rel="noopener">d1fa1ed7…</a> <span class="nw">(neatlogs dashboard)</span> · run <span class="mono id">fail-fx_quote-r1</span></span></p>
   <h2>The rate API fails. The plan finishes.</h2>
   <div class="grid center">
     <ol class="slip steps">
@@ -509,17 +509,17 @@ body.ov .overview { display: block; }
 </section>
 
 <!-- 9 · Instruments -->
-<section class="slide s-inst" aria-label="Slide 9 of 11: neatlogs, Entire and cfo.ai (model pending)">
+<section class="slide s-inst" aria-label="Slide 9 of 11: neatlogs, Entire and cfo.ai">
   <h2>Three instruments.</h2>
   <div class="center inst">
     <div class="slip"><h3>neatlogs</h3><p>One trace per plan; <span class="mono">/verify</span> reads them back.</p><p class="proof"><span class="nw">search_traces →</span> <span class="nw">two real bugs, fixed</span></p></div>
     <div class="slip"><h3>Entire</h3><p>Graph search ranked the fixed rule first.</p><p class="proof"><span class="nw">checkpoints off:</span> <span class="nw">public repo</span></p></div>
-    <div class="slip"><h3>cfo.ai</h3><p>Inputs on file.</p><span class="pending">Model pending</span><p class="proof"><span class="nw">$0.0033 a plan ·</span> <span class="nw">$15.26 a month</span></p></div>
+    <div class="slip"><h3>cfo.ai</h3><p>Business plan, entered and shared.</p><p class="proof"><span class="nw">$0.0033 a plan ·</span> <span class="nw">1.35 months of credit</span></p></div>
   </div>
   <div class="foot"><span>rca-01.md · evidence/traces/ · evidence/entire/ · docs/BUSINESS-PLAN.md · costs at list price</span><span class="pg">09 / 11</span></div>
   <aside class="speaker-notes">neatlogs is where the failures were found: search_traces for blocked guardrails surfaced an amount parsed as a
     year and refusals repeating the user's zero percent — both fixed and re-run. Entire's local code graph was used while
-    building; its outputs are committed. The cfo.ai model is not entered yet; its inputs are on file: measured tokens and latency, list-price hosting, and labelled pricing assumptions.</aside>
+    building; its outputs are committed. The cfo.ai model is entered and shared: measured tokens priced at list, list-price hosting, and labelled pricing assumptions. Its base scenario costs $18.887 a month; before any revenue, the $25 AWS credit lasts 1.35 months.</aside>
 </section>
 
 <!-- 10 · Cost + limits -->

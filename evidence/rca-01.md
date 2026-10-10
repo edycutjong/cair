@@ -19,7 +19,7 @@ tools by design, so its missing spans are not a finding.
 
 | | |
 |---|---|
-| Trace | `63aa8636232113437e8a75480a9c12f4` (IN-devpost-2000, run v2-r1) |
+| Trace | [`63aa8636232113437e8a75480a9c12f4`](https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=63aa8636232113437e8a75480a9c12f4) (neatlogs dashboard; IN-devpost-2000, run v2-r1) |
 | Wrong span | GUARDRAIL `provenance_guardrail`, attempt 1: `Verdict: BLOCKED … Unsourced: 00 USD` |
 | What the LLM wrote | "…jumlah yang dipotong adalah 600.00 USD. Jumlah kotor Anda adalah **2000.00 USD**…" — a correct, sourced figure (`fee_calc.gross = 2000.00`) |
 | Root cause | `cair/figures.py` allowlists years (`19xx`/`20xx`) so "Pub 515 (2026)" is not treated as a money claim. The year pattern also matched the "2000" inside "2000.00 USD", leaving ".00 USD", which parsed as an unsourced amount "00 USD". Any amount from 1,900 to 2,099 written without a thousands separator was affected. |

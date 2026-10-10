@@ -49,7 +49,7 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   within the sourced bound, $3.00 unexplained — a replay of a known outcome.
 - **2026-10-10** — (superseded by the evening entry) bench: p50 5.49 s, p95 6.83 s per plan, 857 tokens per plan (`evidence/bench-20261010T073454Z.json`).
   Tests: 53 passing. Entire graph outputs in `evidence/entire/`. Business-plan numbers in `docs/BUSINESS-PLAN.md`
-  (cfo.ai model pending).
+  (cfo.ai model now exported: https://cfo.ai/s/PQ2HUGmiJl3P0RQB).
 - **2026-10-10 afternoon** — a separate read-only AI review pass over the agent code (loop QA round 1). It found phrasings that slipped
   past the guardrail and a scorer that mixed two kinds of tax error. Closed with tests first; the guardrail now has a
   standing recall check (at that time 30/30 scripted violations blocked, 0/14 honest texts blocked; superseded below). Re-running the frozen set on
@@ -71,3 +71,15 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   (`evidence/rca-01.md`, rounds 3–4). Final runs at `0a8fc06`: v2 U 0 / P 0 / UNCLEAR 143/143 / figures 359/359, no
   template fallbacks (`eval-v2-r10`); forced FX failure 48/48, 350/350 (`eval-fail-fx_quote-r9`); bench p50 5.50 s,
   p95 10.31 s, $0.0033 per plan (`evidence/bench-20261010T085809Z.json`). Tests: 76.
+- **2026-10-10 night** — hardening (enhance pass): ruff and mypy clean, unit tests and 23 browser tests in CI, CodeQL, gitleaks over
+  full history and pip-audit green, community profile 100%; an exhaustive 2,448-scenario check of the real planner found 0
+  violations (breaking the route rule gives 2,256). Testing found one real defect, fixed: receipt amounts were capped at 10M for
+  every currency, so IDR 87,616,900 was refused. A coverage pass then took the suite to 571 tests at 100% line+branch coverage.
+- **2026-10-10 night** — landing page https://cair.edycu.dev and an 11-slide pitch deck https://cair.edycu.dev/pitch/ (GitHub Pages
+  from `/docs`); every number on them is read from `evidence/`.
+- **2026-10-10 20:16** — cfo.ai: the business plan is entered and shared (https://cfo.ai/s/PQ2HUGmiJl3P0RQB); export in `docs/cfo/Runway.xlsx`, rendered in
+  `docs/BUSINESS-PLAN.md`. neatlogs dashboard traces are linked from the README and `evidence/`.
+
+## Built in public (#neatHack)
+- [Launch post](https://x.com/edycutjong/status/2108905407381213633) — Sat 10 Oct ~20:00 WIB.
+- [The recovery story](https://x.com/edycutjong/status/2108938150072705311) — Sat 10 Oct 22:10 WIB: the FX tool fails twice, the agent falls back and the plan finishes.

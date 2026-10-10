@@ -628,7 +628,7 @@ section { position: relative; }
         <div>
           <p class="label">Payout plan · specimen</p>
           <p class="slip-title">Devpost → Indonesia</p>
-          <p class="slip-meta">$7,000 prize · <span class="nw">one call: trace 929a3781…</span> <span class="nw">(eval v1-r1,</span> asked in Indonesian, PayPal also listed) · <span class="nw">Cair: trace 58636870…</span> <span class="nw">(live plan)</span></p>
+          <p class="slip-meta">$7,000 prize · <span class="nw">one call: trace <a href="https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=929a378107bdfbbc7533f63b085b3375" rel="noopener">929a3781…</a></span> <span class="nw">(eval v1-r1,</span> asked in Indonesian, PayPal also listed) · <span class="nw">Cair: trace <a href="https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=586368705f8d5aa5d97368e57b4d91b6" rel="noopener">58636870…</a></span> <span class="nw">(live plan)</span></p>
         </div>
       </div>
 
@@ -836,7 +836,7 @@ section { position: relative; }
     <div class="recovery-grid">
       <div class="slip returned" id="returned">
         <div class="returned-head">
-          <p class="label">Trace <span class="mono">d1fa1ed78810601ea4f2d6de5dfacec5</span> · run <span class="mono nw">fail-fx_quote-r1</span> · <span class="mono nw">ID-devpost-7000</span></p>
+          <p class="label">Trace <a class="mono" href="https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=d1fa1ed78810601ea4f2d6de5dfacec5" rel="noopener">d1fa1ed78810601ea4f2d6de5dfacec5</a> <span class="nw">(neatlogs dashboard)</span> · run <span class="mono nw">fail-fx_quote-r1</span> · <span class="mono nw">ID-devpost-7000</span></p>
           <span class="st-label">trace status: error · 2 errored spans · plan completed</span>
         </div>
         <ol class="steps-list">
@@ -937,7 +937,7 @@ section { position: relative; }
             <div><p class="label">Landed</p><p class="rf">$4,897.00</p><p class="vtext">builder-reported</p></div>
             <div><p class="label">Verdict</p><p class="rf blue"><span class="stamp landed">Landed</span></p><p class="vtext">within sourced bound</p></div>
           </div>
-          <p class="receipt-note">Landed <span class="nw">2026-09-23</span> · $3.00 not explained by the sourced rules · partial replay, because the fee is UNCLEAR · EVALUATOR trace <span class="mono">f5a47b9c…</span> · builder-reported, n = 1 (plus one <a href="https://github.com/edycutjong/cair/blob/main/evidence/receipts-live-2026-10-10.md">QA test receipt</a>)</p>
+          <p class="receipt-note">Landed <span class="nw">2026-09-23</span> · $3.00 not explained by the sourced rules · partial replay, because the fee is UNCLEAR · EVALUATOR trace <a class="mono" href="https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=f5a47b9cba7cf056a800e136616e0013" rel="noopener">f5a47b9c…</a> <span class="nw">(neatlogs dashboard)</span> · builder-reported, n = 1 (plus one <a href="https://github.com/edycutjong/cair/blob/main/evidence/receipts-live-2026-10-10.md">QA test receipt</a>)</p>
         </div>
       </article>
     </div>
@@ -947,8 +947,8 @@ section { position: relative; }
 <section class="sec" id="instruments" aria-labelledby="in">
   <div class="wrap">
     <div class="sec-head">
-      <p class="label kicker">Three instruments · cfo.ai pending</p>
-      <h2 class="h2" id="in">neatlogs to see it. Entire to search it. cfo.ai to cost it, once the model is in.</h2>
+      <p class="label kicker">Three instruments</p>
+      <h2 class="h2" id="in">neatlogs to see it. Entire to search it. cfo.ai to cost it.</h2>
     </div>
     <div class="instruments">
       <article class="slip inst inst-neat">
@@ -974,11 +974,11 @@ section { position: relative; }
         <div class="links"><a href="https://github.com/edycutjong/cair/tree/main/evidence/entire">evidence/entire/</a></div>
       </article>
       <article class="slip inst">
-        <div class="inst-head"><h3>cfo.ai</h3><span class="pending">Model pending</span></div>
-        <p>The business plan starts from our own numbers: <b>$0.0033</b> of LLM per plan (bench tokens at list price), <b>p50 5.50 s ·
+        <div class="inst-head"><h3>cfo.ai</h3><span class="role">business plan · exported</span></div>
+        <p>The business plan starts from our own numbers and is entered in cfo.ai: <b>$0.0033</b> of LLM per plan (bench tokens at list price), <b>p50 5.50 s ·
           p95 10.31 s</b> (bench, builder's laptop), hosting <b>$15.26 / month</b> (t3.small list price). At an assumed $4 a month, 4 Pro subscribers cover the server and their own plans (free-tier plans excluded).</p>
-        <p class="small">The cfo.ai model built from these inputs is not entered yet — nothing here was produced by cfo.ai.</p>
-        <div class="links"><a href="https://github.com/edycutjong/cair/blob/main/docs/BUSINESS-PLAN.md">BUSINESS-PLAN.md</a><a href="https://github.com/edycutjong/cair/blob/main/evidence/bench-20261010T085809Z.json">bench (p50 / p95)</a></div>
+        <p class="small">cfo.ai base scenario: cost $18.887 a month, operating profit $81.113 on assumed revenue of $100; before revenue, $25 of AWS credit lasts 1.35 months.</p>
+        <div class="links"><a href="https://cfo.ai/s/PQ2HUGmiJl3P0RQB" rel="noopener">cfo.ai model (5 pages)</a><a href="https://github.com/edycutjong/cair/blob/main/docs/BUSINESS-PLAN.md">BUSINESS-PLAN.md</a><a href="https://github.com/edycutjong/cair/blob/main/evidence/bench-20261010T085809Z.json">bench (p50 / p95)</a></div>
       </article>
     </div>
   </div>

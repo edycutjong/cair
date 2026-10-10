@@ -37,6 +37,7 @@ scenario in them carries its neatlogs trace id. Definitions: [`docs/METRICS.md`]
 | Cost and speed per plan (bench on the builder's laptop at commit `0a8fc06`; later planner commits are lint and type fixes, behaviour unchanged) | p50 5.50 s · p95 10.31 s · $0.0033 of LLM at list price |
 | Tests | 571 passing (100% line+branch coverage), no network or keys; many are named for the defect they pin (e.g. `test_amount_in_2000s_is_not_masked_as_a_year`) |
 | Exhaustive verification | 2,448 scenarios (every payer × country × option set × amount) run through the real planner against the protocol invariants: 0 violations |
+| cfo.ai business plan | entered and shared (5 pages): base scenario cost $18.887 / month, operating profit $81.113 on assumed revenue of $100, $25 AWS credit = 1.35 months before revenue ([cfo.ai/s/PQ2HUGmiJl3P0RQB](https://cfo.ai/s/PQ2HUGmiJl3P0RQB)) |
 | Permission boundary | tests prove no public route returns a key or token, `/verify` shows no raw amount, and the builder-only origin cannot be forged |
 
 ## Reproduce it (the real path)
@@ -63,5 +64,5 @@ product: `pytest` runs the deterministic core without network or keys, and the C
 
 [Live app](https://app.cair.edycu.dev) · [Verify](https://app.cair.edycu.dev/verify) ·
 [Rules sheet](https://app.cair.edycu.dev/rules) · [Website](https://cair.edycu.dev) ·
-[Pitch deck](https://cair.edycu.dev/pitch/) · [Repository](https://github.com/edycutjong/cair) ·
+[Pitch deck](https://cair.edycu.dev/pitch/) · [cfo.ai model](https://cfo.ai/s/PQ2HUGmiJl3P0RQB) · [Repository](https://github.com/edycutjong/cair) ·
 [README](https://github.com/edycutjong/cair#readme)
