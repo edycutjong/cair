@@ -1,0 +1,68 @@
+$ entire graph impact --symbol cair/guardrail.py:check --repo . --depth 2
+# 2026-10-10T09:07:53Z at 3dc69f4
+Index: cache-miss (1286ms) | Query: 16ms | Total: 1302ms
+Completeness: ok for this query (2 this query files failed to parse; 3 total diagnostics in this snapshot)
+- partial E_MINIFIED: evidence/traces/live-hero.json
+- partial E_MINIFIED: evidence/traces/rca01-after.json
+No exact match for "cair/guardrail.py:check". Closest 3 by identifier-token match:
+- Cair (README.md:5) [section]  --symbol Cair --file README.md --line 5
+- check (cair/guardrail.py:55) [function]  --symbol check --file cair/guardrail.py --line 55
+- check (cair/static/cair.css:54) [selector]  --symbol check --file cair/static/cair.css --line 54
+
+README.md:5-5 Cair [section]
+  5→ # Cair
+
+cair/guardrail.py:55-153 check [function]
+   55→ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict:
+   56→     pools = figures.sourced_values(tool_outputs)
+   57→     asked = {(f["kind"], str(f["value"])) for f in figures.extract(question)}
+   58→     claims_: list[str] = []
+   59→     classes: set[str] = set()
+   60→     unsourced: list[str] = []
+   61→     echoed: list[str] = []
+   62→     n_figs = 0
+   63→     refused = [r["rail"] for r in card["rails"] if r["verdict"] == "REFUSED"]
+   64→     unclear_rails = [r["rail"] for r in card["rails"] if r["verdict"] == "UNCLEAR"]
+   65→     line10 = card["w8ben"]["line10"]
+   66→     wh_rate = card["withholding"]["rate"]
+   67→     ld = card.get("landed") or {}
+   68→     landed_unclear = ld.get("landed_usd") == "UNCLEAR"
+   69→     known_text = " ".join(_strings(tool_outputs))
+   70→     prev_named = False
+   71→ 
+   72→     def sourced_money_in(sent: str) -> bool:
+   73→         return any(f["kind"] == "money" and figures.is_sourced(f, pools) for f in figures.extract(sent))
+   74→ 
+   75→     gross_or_withheld = {figures._dec(v) for v in (ld.get("gross"), ld.get("withheld")) if v and v != "UNCLEAR"}
+   76→     confirmed_chains = {f"usdc:{n}" for r in card["rails"] for n in r.get("sourced_yes_networks", [])}
+   77→ 
+   78→     def claim(cls: str, msg: str) -> None:
+   79→         classes.add(cls)
+   80→         claims_.append(msg)
+   81→ 
+   82→     for sent in claims.sentences(text):
+   83→         # --- figures: typed provenance, read in the sentence's context -------------------------------------------
+   84→         for f in figures.extract(sent):
+   85→             n_figs += 1
+   86→             ok = figures.is_sourced(f, pools)
+   87→             if ok and f["kind"] == "pct" and not (TAXWORD.search(sent) or MARGIN.search(sent) or RATE_CTX.search(sent)
+   88→                                                   or (SHARE_CTX.search(sent) and sourced_money_in(sent))):
+   89→                 ok = False  # a sourced rate is a withholding or margin rate; "Payoneer charges 30%" is not sourced
+   90→             if (not ok and f["kind"] == "number" and ARTICLE_CTX.search(sent)
+   91→                     and Decimal(f["value"]) == Decimal(f["value"]).to_integral_value()
+   92→                     and int(f["value"]) in pools.arts):
+   93→                 ok = True  # "the nearest articles (15, 16 and 17)"
+   94→             if not ok:
+   95→                 unsourced.append(f["raw"])
+   96→                 classes.add("unsourced_figure")
+   97→                 if (f["kind"], str(f["value"])) in asked:
+   98→                     echoed.append(f["raw"])
+   99→         # --- rails -------------------------------------------------------------------------------------------------
+  100→         named_refused = [r for r in refused if claims.mentions(sent, r)]
+  101→         for rail in named_refused:
+  102→             if claims.endorses_refused(sent, rail):
+  103→                 claim("refused_rail", f"names refused {rail} without refusing it: {sent[:140]}")
+  104→         for rail in unclear_rails:
+  105→             if claims.endorses_unclear(sent, rail):
+!output-truncated; use --format json
+# exit=0
