@@ -1,22 +1,7 @@
 import json
 
-import pytest
-from fastapi.testclient import TestClient
-
 from cair import app as appmod
 from cair import config, db, neat, view
-
-
-@pytest.fixture
-def client(tmp_path, monkeypatch, fixed_fx, llm_says):
-    monkeypatch.setattr(config, "DB_PATH", tmp_path / "cair.db")
-    monkeypatch.setattr(config, "SECURE_COOKIES", False)
-    monkeypatch.setattr(neat, "post_trace", lambda trace, timeout=15.0: {"success": True, "trace_id": "f" * 32})
-    llm_says("Use Payoneer. Wise is refused. Line 10 stays blank.")
-    db.init()
-    appmod._hits.clear()
-    with TestClient(appmod.app) as c:
-        yield c
 
 
 def test_plan_confirm_and_page(client):
@@ -95,3 +80,16 @@ def test_huge_number_in_question_is_not_a_crash(client, llm_says):  # round-2 N1
     r = client.post("/api/plan", json={"payer": "devpost", "amount": "100", "country": "ID", "rails": ["payoneer"],
                                        "question": "Is it 123456789012345678901234567890 USD?"})
     assert r.status_code == 200 and "template" in json.dumps(db.get_plan(r.json()["plan_id"])["card_json"]) or r.status_code == 200
+
+
+def test_judge_page_needs_no_session_and_states_the_claim(client):
+    r = client.get("/judge")  # a fresh client: no cookie, no login, no redirect
+    assert r.status_code == 200 and not r.history
+    assert "The payout route a chatbot can" in r.text
+    assert "{{" not in r.text  # every JUDGE.md slot is filled
+    assert "cair_sid" not in r.cookies  # the judge page sets no cookie
+
+
+def test_judge_md_has_no_unfilled_slots():
+    text = (config.ROOT / "JUDGE.md").read_text()
+    assert "{{" not in text and "TODO" not in text

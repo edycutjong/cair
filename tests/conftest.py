@@ -1,7 +1,9 @@
 import neatlogs
 import pytest
+from fastapi.testclient import TestClient
 
-from cair import fx, llm
+from cair import app as appmod
+from cair import config, db, fx, llm, neat
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -38,3 +40,15 @@ def llm_says(monkeypatch):
 
         monkeypatch.setattr(llm, "chat", chat)
     return setter
+
+
+@pytest.fixture
+def client(tmp_path, monkeypatch, fixed_fx, llm_says):
+    monkeypatch.setattr(config, "DB_PATH", tmp_path / "cair.db")
+    monkeypatch.setattr(config, "SECURE_COOKIES", False)
+    monkeypatch.setattr(neat, "post_trace", lambda trace, timeout=15.0: {"success": True, "trace_id": "f" * 32})
+    llm_says("Use Payoneer. Wise is refused. Line 10 stays blank.")
+    db.init()
+    appmod._hits.clear()
+    with TestClient(appmod.app) as c:
+        yield c
