@@ -1,6 +1,5 @@
 """Line + branch coverage for cair/neat.py: /v1/trace write-back, MCP session driving and result decoding. No network."""
 import asyncio
-import json
 import sys
 import types
 from types import SimpleNamespace
@@ -9,7 +8,6 @@ import httpx
 import pytest
 
 from cair import config, neat
-
 
 # ---------- post_trace ----------
 

@@ -1,7 +1,7 @@
 """Line + branch coverage for cair/claims.py: sentence-level reading of rail endorsements, refusals and sources."""
 import pytest
 
-from cair.claims import (endorses, endorses_refused, endorses_unclear, mentions, rail_names, refuses, sentences)
+from cair.claims import endorses, endorses_refused, endorses_unclear, mentions, rail_names, refuses, sentences
 
 
 # --- rail_names / mentions ------------------------------------------------------------------------------------

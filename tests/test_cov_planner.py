@@ -3,7 +3,7 @@ import copy
 
 import pytest
 
-from cair import guardrail, llm, planner, rules, tools
+from cair import llm, planner, rules, tools
 
 HERO = dict(plan_id="t-cov", payer="devpost", country="ID", amount_usd=7000,
             rails_offered=["payoneer", "paypal", "wise"], exchange=None, question="Which one?", origin="eval")
