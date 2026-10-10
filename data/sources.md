@@ -11,6 +11,7 @@ never fill a cell. This is open data: corrections with a primary source are welc
 URL: https://help.devpost.com/article/114-how-to-claim-your-hackathon-cash-prize-winners-only
 > Upload the relevant Tax Form. The options include: US residents: Upload a W-9. International winners who are claiming the prize as an individual: Upload a W-8BEN. International winners who are claiming the prize on behalf of an organization: Upload a W-8BEN-E.
 > If you choose Paypal, Payoneer, or Wise, fill out the email address associated with that payment method.
+> If your prize is undeliverable, you may incur fees that will be deducted from your prize, or be delaying or forfeiting receipt of the prize.
 
 Supports: Devpost `_payer` w8ben_applies = YES (individual international winners); Devpost offers PayPal, Payoneer and Wise.
 Also on the page: "Select a Payment Method. Note that payment method options vary based on the country of residence of the winner." — which rails appear for a given country is not listed publicly, so Cair asks which ones your form shows.
