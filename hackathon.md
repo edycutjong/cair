@@ -40,20 +40,19 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   Evidence: `evidence/eval-v1-r1-20261010T071611Z.json` (each scenario has its neatlogs trace id).
 - **2026-10-10** — v2 agent: six traced tools, code-decided route and line 10, provenance guardrail with one retry,
   recovery path (retry → stale ECB rate or UNCLEAR). Frozen-set results, same model: U 0/48, P 0/48, UNCLEAR honoured
-  143/143 (`evidence/eval-v2-r2-20261010T072626Z.json`; its figures were 311/311 under the scorer of the time, 307/312
-  under the stricter final scorer). Forced FX failure: 48/48 plans completed, U 0, P 0 (`evidence/recovery-01.md`).
+  143/143 (`evidence/eval-v2-r2-20261010T072626Z.json`; 307/312 figures under the final scorer). Forced FX failure: 48/48 plans completed, U 0, P 0 (`evidence/recovery-01.md`).
 - **2026-10-10** — two failures found in v2 traces with the neatlogs MCP server (`search_traces`, `get_trace_context`)
   and fixed: an amount like "2000.00 USD" parsed as a year, and refusals that repeated the user's "0%" falling back to
   the template. Write-up with before/after trace ids: `evidence/rca-01.md`.
 - **2026-10-10** — live at https://app.cair.edycu.dev (AWS EC2 + Caddy). First receipt check on the live site: the
   builder's own $7,000 Devpost prize (builder-reported: landed $4,897 on 2026-09-23) against Cair's quote "at most $4,900, fee UNCLEAR":
   within the sourced bound, $3.00 unexplained — a replay of a known outcome.
-- **2026-10-10** — bench: p50 5.49 s, p95 6.83 s per plan, 857 tokens per plan (`evidence/bench-20261010T073454Z.json`).
+- **2026-10-10** — (superseded by the evening entry) bench: p50 5.49 s, p95 6.83 s per plan, 857 tokens per plan (`evidence/bench-20261010T073454Z.json`).
   Tests: 53 passing. Entire graph outputs in `evidence/entire/`. Business-plan numbers in `docs/BUSINESS-PLAN.md`
   (cfo.ai model pending).
 - **2026-10-10 afternoon** — a separate read-only AI review pass over the agent code (loop QA round 1). It found phrasings that slipped
   past the guardrail and a scorer that mixed two kinds of tax error. Closed with tests first; the guardrail now has a
-  standing recall check (30/30 scripted violations blocked, 0/14 honest texts blocked). Re-running the frozen set on
+  standing recall check (at that time 30/30 scripted violations blocked, 0/14 honest texts blocked; superseded below). Re-running the frozen set on
   the stricter rules exposed over-blocking (29/48 explanations replaced by the template), found from the guardrail
   fields in the evidence file and fixed (`evidence/rca-01.md`, second half).
 - **2026-10-10** — runs after round 1: v2 U 0 / P 0 / UNCLEAR 143/143 / figures 310/310 (`eval-v2-r5`); a new baseline,

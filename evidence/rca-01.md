@@ -7,7 +7,7 @@ tools by design, so its missing spans are not a finding.
 
 1. `scripts/eval.py --planner v2` (run `v2-r1`, 2026-10-10 07:22 UTC) passed every scenario on U/P/K, but its
    evidence file showed 4 plans whose explanation needed more than one guardrail attempt.
-2. neatlogs MCP `search_traces` with the query `provenance_guardrail BLOCKED` returned exactly those 4 traces
+2. neatlogs MCP `search_traces` with the query `provenance_guardrail BLOCKED` returned those 4 traces
    (the GUARDRAIL span writes its verdict into its output, so it is searchable; a later re-run of the same query is
    saved in `traces/search-guardrail-blocked.json`):
    `63aa8636…` (IN-devpost-2000), `afe84a2f…` (ID-devpost-lead-zero), `7f625ddf…` (ID-us_client_services-lead-zero),
@@ -81,7 +81,17 @@ That last fallback (`ID-devpost-lead-article`) showed the model, told not to rep
 "two thousand one hundred USD". Amounts and rates written in words are now always treated as new figures
 (commit `5c30d78`).
 
-`scripts/guardrail_recall.py` turns all of this into a standing check: 30 scripted violations across six classes
-and 14 honest explanations, run against real cards. A second review pass added more phrasings (negated "not refused", recommending an unchecked rail, numberless tax
-claims, "credited"/"net" amounts); they are in the script too. Latest result: see the newest
-`evidence/guardrail-recall-*.json`.
+`scripts/guardrail_recall.py` turns all of this into a standing check (53 scripted violations across seven classes
+and 29 honest explanations, run against real cards). Because those texts drove the fixes, they are in-sample.
+
+## Round 3: a held-out test
+
+A separate reviewer then wrote 71 violations and 60 honest explanations the guardrail had never seen
+(`scripts/guardrail_heldout_r3.py`, kept verbatim). On the code at that point the guardrail blocked **53/71 (75%)**
+and wrongly blocked **12/60 (20%)** honest texts (`evidence/guardrail-heldout-r3-20261010T084445Z.json`): the
+in-sample 100% had overstated it. The misses were common phrasings ("After the 30% withholding, you'll receive
+$4,900.00", "PayPal is also a solid choice", "You will not owe any US tax"); the false blocks were honest ones
+("Use Arc or SEI instead; both are confirmed", Indonesian "tidak jelas", "Devpost help article 114"). After the fixes
+the same set gives 69/71 and 5/60, and all 5 are refusals that repeat the user's own "0%" or "Article 21", which the
+guardrail blocks by design and the planner retries. That set is now in-sample too, so a fresh held-out set measures
+the final rules (round 4).

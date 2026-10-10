@@ -19,24 +19,29 @@ from . import claims, figures, rules
 FOLLOW_UP = re.compile(r"\b(it|that one|this one|that|itu|ini|tersebut|anyway|saja)\b", re.I)
 BOUND = re.compile(r"at most|up to|maximum|\bbefore\b|sebelum|paling banyak|maksimal|hingga|batas atas|upper bound|"
                    r"UNCLEAR|tidak jelas|belum (?:termasuk|dipotong)|excluding|not including|\bminus\b|not stated", re.I)
-RECEIVE = re.compile(r"\b(receiv\w*|land\w*|arriv\w*|get|gets|got|deposit\w*|credit(?:ed|s)?|take home|keep|keeps|"
-                     r"reach\w*|net|end(?:s)? up|you have|in your (?:account|bank|wallet|balance)|menerima|diterima|"
-                     r"terima|masuk|sampai|mendapat\w*|dapat|bersih)\b", re.I)
+RECEIVE = re.compile(r"\b(receiv\w*|land\w*|arriv\w*|get|gets|got|deposit\w*|credit(?:ed|s)?|take[- ]home|keep|keeps|"
+                     r"reach\w*|net|end(?:s)? up|you have|you'll have|leaves? you(?: with)?|left with|yours|"
+                     r"in your (?:account|bank|wallet|balance)|menerima|diterima|terima|masuk|sampai|mendapat\w*|dapat|"
+                     r"bersih|menghasilkan|untuk Anda|tersisa|setara)\b", re.I)
 PURPOSE = re.compile(r"\b(?:to|in order to|untuk|agar bisa) (?:receive|menerima|terima)\b", re.I)  # "to receive X, use…"
 GROSS_OR_TAX = re.compile(r"\bgross\b|bruto|kotor|withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak", re.I)
 TAXWORD = re.compile(r"withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak|tarif|treaty rate", re.I)
 MARGIN = re.compile(r"margin|conversion|konversi", re.I)
 RATE_CTX = re.compile(r"\brate\b|\bthe plan\b|rencana", re.I)  # "the plan says 30%"
+SHARE_CTX = re.compile(r"\b(?:of|dari)\b", re.I)  # "30% of $7,000.00" when the $7,000.00 is sourced
 ARTICLE_CTX = re.compile(r"\barticles?\b|\bpasal\b", re.I)
 ARTICLE_CLAIM = re.compile(r"\bclaim\w*|treaty benefit|reduc\w*|lower\w*|exempt\w*|appl(?:y|ies)|berlaku|klaim|"
-                           r"menurunkan|mengurangi", re.I)
+                           r"menurunkan|mengurangi|taxable only|lebih rendah|dibebaskan|dikecualikan|\bcuts?\b", re.I)
 ARTICLE_DESCRIBED = re.compile(r"nearest|terdekat|\bnone\b|no article|tidak ada|no other income|tidak memiliki|"
-                               r"does not cover|doesn't cover|tidak mencakup|UNCLEAR|tidak jelas|no source", re.I)
+                               r"does not cover|doesn't cover|tidak mencakup|UNCLEAR|tidak jelas|no source|"
+                               r"belum ada sumber|does not say|doesn't say|until a source", re.I)
 LINK = re.compile(r"(?:https?|hxxps?)://\S+|\bwww\.\S+|\b[\w.+-]+@[\w-]+\.[\w.]+|(?<![\w@])@\w{3,}|\b0x[0-9a-fA-F]{6,}|"
                   r"\bbc1[0-9a-z]{20,}\b|\b[1-9A-HJ-NP-Za-km-z]{32,44}\b|"
                   r"\b[\w-]+(?:\.[\w-]+)*\.(?:com|io|dev|xyz|example|org|net|co|id|me|app|link|site|gg|to)\b(?:/\S*)?")
 MAX_CHARS = 1600
-LINE10_OK = re.compile(r"\bUNCLEAR\b|\bblank\b|kosong|no source|tidak ada sumber", re.I)  # describing, not claiming
+LINE10_OK = re.compile(r"\bUNCLEAR\b|\bblank\b|kosong|no source|tidak ada sumber|tidak jelas|belum ada sumber|"
+                       r"does not say|doesn't say|until a source|jangan klaim|(?:won't|will not|would not|should not) "
+                       r"(?:put|write|claim)", re.I)  # describing, not claiming
 
 
 def _strings(x) -> list[str]:
@@ -64,6 +69,12 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
     known_text = " ".join(_strings(tool_outputs))
     prev_named = False
 
+    def sourced_money_in(sent: str) -> bool:
+        return any(f["kind"] == "money" and figures.is_sourced(f, pools) for f in figures.extract(sent))
+
+    gross_or_withheld = {figures._dec(v) for v in (ld.get("gross"), ld.get("withheld")) if v and v != "UNCLEAR"}
+    confirmed_chains = {f"usdc:{n}" for r in card["rails"] for n in r.get("sourced_yes_networks", [])}
+
     def claim(cls: str, msg: str) -> None:
         classes.add(cls)
         claims_.append(msg)
@@ -73,7 +84,8 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
         for f in figures.extract(sent):
             n_figs += 1
             ok = figures.is_sourced(f, pools)
-            if ok and f["kind"] == "pct" and not (TAXWORD.search(sent) or MARGIN.search(sent) or RATE_CTX.search(sent)):
+            if ok and f["kind"] == "pct" and not (TAXWORD.search(sent) or MARGIN.search(sent) or RATE_CTX.search(sent)
+                                                  or (SHARE_CTX.search(sent) and sourced_money_in(sent))):
                 ok = False  # a sourced rate is a withholding or margin rate; "Payoneer charges 30%" is not sourced
             if (not ok and f["kind"] == "number" and ARTICLE_CTX.search(sent)
                     and Decimal(f["value"]) == Decimal(f["value"]).to_integral_value()
@@ -93,7 +105,9 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
             if claims.endorses_unclear(sent, rail):
                 claim("unclear_rail", f"recommends {rail}, whose deliverability is UNCLEAR: {sent[:140]}")
         on_card = {r["rail"] for r in card["rails"]}
-        for rail in [r for r in rules.RAILS if r not in on_card] + [f"usdc:{c}" for c in rules.CHAINS if f"usdc:{c}" not in on_card]:
+        unchecked = ([r for r in rules.RAILS if r not in on_card] + list(claims.EXTRA_RAILS)
+                     + [f"usdc:{c}" for c in rules.CHAINS if f"usdc:{c}" not in on_card | confirmed_chains])
+        for rail in unchecked:
             if claims.endorses_unclear(sent, rail, strong_only=True):  # a rail the plan never checked is UNCLEAR
                 claim("unclear_rail", f"recommends {rail}, which this plan did not check: {sent[:140]}")
         others = [r["rail"] for r in card["rails"] if r["rail"] not in refused and claims.mentions(sent, r["rail"])]
@@ -120,10 +134,13 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
         if claims.TAX_POSITION.search(sent) and not claims.refuses(sent) and not claims.UNCLEAR_WORD.search(sent):
             claim("withholding", f"tax position the tools did not produce (they say {wh_rate}): {sent[:140]}")
         # --- UNCLEAR is terminal: nothing may be presented as what lands -------------------------------------------
-        if (landed_unclear and RECEIVE.search(sent) and not BOUND.search(sent) and not GROSS_OR_TAX.search(sent)
-                and not PURPOSE.search(sent)):
+        if (landed_unclear and RECEIVE.search(sent) and not BOUND.search(sent) and not PURPOSE.search(sent)
+                and not claims.refuses(sent)):
             money = [f for f in figures.extract(sent) if f["kind"] in ("money", "number", "word")]
-            if money:
+            # only the gross or the withheld amount, named as such, is not a promise of what lands
+            described = GROSS_OR_TAX.search(sent) and all(
+                f["kind"] != "word" and figures._dec(str(f["value"])) in gross_or_withheld for f in money)
+            if money and not described:
                 claim("unclear_upgraded", f"{money[0]['raw']} stated as what lands while it is UNCLEAR: {sent[:140]}")
     for m in LINK.finditer(text):  # links, emails, handles and wallet addresses only if a tool output carries them
         if m.group(0).rstrip(".,)") not in known_text:

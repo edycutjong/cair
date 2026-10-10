@@ -248,12 +248,19 @@ def _facts_for_llm(card: dict) -> dict:
     if w8["applies"] == "YES":
         facts["nearest_treaty_articles"] = [f"Article {a['article']} {a['title']}" for a in w8["nearest_articles"]]
         facts["withholding_rate"] = card["withholding"]["rate"]
-        facts["withheld"] = card["withholding"]["amount"]
+        facts["withheld"] = _money(card["withholding"]["amount"], card["unit"])
     ld = card["landed"]
-    facts["landed"] = {k: v for k, v in ld.items() if k in {"gross", "after_withholding", "landed_usd", "upper_bound_usd",
-                       "upper_bound_note", "landed_local", "upper_bound_local", "upper_bound_local_note"}}
+    local = card.get("currency") or ""
+    unit_of = {"gross": card["unit"], "after_withholding": card["unit"], "landed_usd": card["unit"],
+               "upper_bound_usd": card["unit"], "landed_local": local, "upper_bound_local": local}
+    # Amounts reach the model already formatted as the card shows them, so the prose matches the card.
+    facts["landed"] = {k: (_money(v, unit_of[k]) if k in unit_of else v) for k, v in ld.items()
+                       if k in {"gross", "after_withholding", "landed_usd", "upper_bound_usd", "upper_bound_note",
+                                "landed_local", "upper_bound_local", "upper_bound_local_note"}}
     if card.get("fx"):
         facts["fx"] = {k: card["fx"].get(k) for k in ("rate", "as_of", "stale")}
+        if facts["fx"].get("rate") not in (None, UNCLEAR):
+            facts["fx"]["rate"] = f"1 USD = {Decimal(facts['fx']['rate']):,} {card['fx'].get('quote', '')}".strip()
     if card["payer"] in rules.USDC_PAYERS:
         facts["networks_this_exchange_accepts_sourced"] = sorted(
             {rules.CHAINS.get(n, n) for r in card["rails"] for n in r.get("sourced_yes_networks", [])})

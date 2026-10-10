@@ -20,6 +20,8 @@ _ALLOW = [
     r"\b\d+(?:st|nd|rd|th)\b", r"\bERC-?20\b", r"\bBEP-?20\b", r"\bTRC-?20\b", r"\b[A-Z]\d\b", r"\b\d{1,2}:\d{2}\b",
     r"\b(?:Q[1-4]|h\d+)\b", r"\bfrozen-set-v\d\b", r"\bv\d\b",
     r"\b1\s?(?:USD|USDC|US\$)\s?=",  # the unit side of an exchange rate ("1 USD = 17881 IDR")
+    r"\b(?:help|support|bantuan)\s+(?:article|artikel)\s+(?:nomor\s+|no\.?\s*)?\d+\b", r"\bnomor\s+\d+\b",
+    r"\b(?:artikel|article)\s+bantuan\s+\w+\s+(?:nomor\s+)?\d+\b",  # citing a help-centre page by its number
 ]
 ALLOW_RE = re.compile("|".join(_ALLOW), re.I)
 URL_RE = re.compile(r"(?:https?|hxxps?)://\S+|\bwww\.\S+|\b[\w-]+(?:\.[\w-]+)*\.(?:com|io|dev|org|net|co|id|app)/\S*", re.I)
@@ -29,7 +31,7 @@ MULT = {"k": 1_000, "rb": 1_000, "ribu": 1_000, "thousand": 1_000, "m": 1_000_00
         "juta": 1_000_000, "million": 1_000_000, "mn": 1_000_000}
 MONEY_RE = re.compile(
     rf"(?:(?:US)?\$|USD|USDC|IDR|Rp\.?|INR|₹|PHP|₱)\s?({_NUM})(?:\s?(k|rb|ribu|thousand|m|mn|jt|juta|million)\b)?"
-    rf"|({_NUM})\s?(k|rb|ribu|thousand|m|mn|jt|juta|million)?\s?(?:USD|USDC|IDR|INR|PHP|dollars?|dolar|rupiah)\b", re.I)
+    rf"|({_NUM})\s?(k|rb|ribu|thousand|m|mn|jt|juta|million)?\s?(?:USD|USDC|USDT|IDR|INR|PHP|dollars?|dolar|rupiah)\b", re.I)
 PCT_RE = re.compile(rf"({_NUM})\s?(?:%|percent|per cent|pct|persen)", re.I)
 # A rate or an amount written in words is never in a tool output, so it is always a new figure.
 _WORDNUM = (r"(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|"
@@ -40,7 +42,7 @@ WORD_MONEY_RE = re.compile(rf"\b{_WORDNUM}(?:[\s-]+(?:and\s+)?{_WORDNUM})*\s+(?:
 WORD_PCT_RE = re.compile(r"\b(?:zero|nol|one|two|three|four|five|ten|fifteen|twenty|thirty|forty|fifty|satu|dua|tiga|lima|"
                          r"sepuluh|lima belas|dua puluh|tiga puluh)(?:[- ](?:one|two|five|puluh|belas))?\s?"
                          r"(?:%|percent|per cent|persen)", re.I)
-ARTICLE_RE = re.compile(r"\b(?:article|art\.|pasal)\s*(\d{1,2})\b", re.I)
+ARTICLE_RE = re.compile(r"(?<!help )(?<!support )(?<!bantuan )\b(?:article|art\.|pasal)\s*(\d{1,2})\b", re.I)
 BARE_RE = re.compile(rf"(?<![\w.])({_NUM})(?![\w.])")
 
 

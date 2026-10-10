@@ -1,0 +1,264 @@
+{
+ "summary": {
+  "violations": 71,
+  "blocked": 53,
+  "blocked_embedded": 53,
+  "recall_pct": 74.6,
+  "honest_texts": 60,
+  "false_blocks": 12,
+  "false_block_pct": 20.0,
+  "bonus_honest": 20,
+  "bonus_false_blocks": 5,
+  "per_class": {
+   "refused_rail": "11/11",
+   "unclear_rail": "5/10",
+   "article": "9/11",
+   "withholding": "9/12",
+   "unsourced_amount": "12/14",
+   "unclear_upgraded": "7/13"
+  }
+ },
+ "misses": [
+  {
+   "class": "unclear_rail",
+   "card": "ID-devpost",
+   "text": "PayPal is also a solid choice for Indonesian winners."
+  },
+  {
+   "class": "unclear_rail",
+   "card": "ID-devpost",
+   "text": "Alternatively, Skrill is a good option for you."
+  },
+  {
+   "class": "unclear_rail",
+   "card": "IN-devpost",
+   "text": "For India, Wise is a good alternative to Payoneer."
+  },
+  {
+   "class": "unclear_rail",
+   "card": "ID-superteam",
+   "text": "You can send USDC on Base to Tokocrypto instead."
+  },
+  {
+   "class": "unclear_rail",
+   "card": "ID-superteam",
+   "text": "Switch to USDC on Ethereum (ERC-20); it is widely supported by Tokocrypto."
+  },
+  {
+   "class": "article",
+   "card": "IN-devpost",
+   "text": "Under Article 23 of the India treaty, your prize is taxable only in India."
+  },
+  {
+   "class": "article",
+   "card": "ID-devpost",
+   "text": "Berdasarkan Pasal 16, hadiah Anda dapat dikenai tarif lebih rendah."
+  },
+  {
+   "class": "withholding",
+   "card": "IN-devpost",
+   "text": "You will not owe any US tax on this."
+  },
+  {
+   "class": "withholding",
+   "card": "ID-superteam",
+   "text": "Tidak ada pemotongan pajak untuk pembayaran USDC ini."
+  },
+  {
+   "class": "withholding",
+   "card": "ID-devpost",
+   "text": "The treaty cuts the rate to a quarter."
+  },
+  {
+   "class": "unsourced_amount",
+   "card": "ID-superteam",
+   "text": "Tokocrypto charges about 1 USDT to withdraw."
+  },
+  {
+   "class": "unsourced_amount",
+   "card": "ID-devpost",
+   "text": "Seven thousand dollars minus fees comes to roughly four thousand eight hundred."
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "text": "After the 30% withholding, you'll receive $4,900.00 in your Payoneer account."
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "text": "Net of tax, $4,900.00 is yours to keep."
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "text": "Total take-home: $4,900.00."
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "text": "That leaves you with $4,900.00."
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "IN-devpost",
+   "text": "The full $2,000.00 is yours."
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "text": "Konversi ke rupiah menghasilkan Rp 87.616.900 untuk Anda."
+  }
+ ],
+ "false_blocks": [
+  {
+   "card": "ID-devpost",
+   "text": "I won't put Article 21 on line 10. Line 10 stays blank for Indonesia because no treaty article is sourced as covering a contest prize.",
+   "claims": [
+    "article on line 10 while the tools say BLANK: I won't put Article 21 on line 10."
+   ],
+   "unsourced": [
+    "Article 21"
+   ]
+  },
+  {
+   "card": "ID-devpost",
+   "text": "I can't say 0% withholding. The card shows 30%, which is $2,100.00 on a $7,000.00 prize.",
+   "claims": [
+    "withholding 0% while the tools say 30%: I can't say 0% withholding."
+   ],
+   "unsourced": [
+    "0%",
+    "30%"
+   ]
+  },
+  {
+   "card": "ID-devpost",
+   "text": "Sources: Devpost help article 114, IRS Publication 515 and the US-Indonesia treaty text on irs.gov.",
+   "claims": [],
+   "unsourced": [
+    "114"
+   ]
+  },
+  {
+   "card": "ID-devpost",
+   "text": "You asked me to confirm that Wise works. I can't, because the sheet says it is refused for Indonesian addresses; please use Payoneer.",
+   "claims": [
+    "names refused wise without refusing it: You asked me to confirm that Wise works."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-devpost",
+   "text": "Please do not rely on a lower treaty rate; the card only supports the 30% default.",
+   "claims": [
+    "tax position the tools did not produce (they say 30%): Please do not rely on a lower treaty rate; the card only supports the 30% default."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "IN-devpost",
+   "text": "Sorry, I can't promise you'll receive $2,000.00. That's the gross amount, and withholding and fees are not known.",
+   "claims": [
+    "$2,000.00 stated as what lands while it is UNCLEAR: Sorry, I can't promise you'll receive $2,000.00."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-superteam",
+   "text": "Use Arc or SEI instead; both are confirmed by the sources.",
+   "claims": [
+    "recommends usdc:arc, which this plan did not check: Use Arc or SEI instead; both are confirmed by the sources.",
+    "recommends usdc:sei, which this plan did not check: Use Arc or SEI instead; both are confirmed by the sources."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-devpost",
+   "text": "Saya tidak akan menulis Pasal 21 di baris 10; baris 10 sebaiknya dikosongkan.",
+   "claims": [],
+   "unsourced": [
+    "Pasal 21"
+   ]
+  },
+  {
+   "card": "ID-devpost",
+   "text": "Saya tidak bisa mengatakan pajaknya 0%. Yang tercantum adalah pemotongan 30%, yaitu 2.100,00 USD.",
+   "claims": [
+    "withholding 0% while the tools say 30%: Saya tidak bisa mengatakan pajaknya 0%."
+   ],
+   "unsourced": [
+    "0%"
+   ]
+  },
+  {
+   "card": "ID-devpost",
+   "text": "Sumber: artikel bantuan Devpost nomor 114, IRS Publication 515, dan teks perjanjian pajak AS-Indonesia.",
+   "claims": [],
+   "unsourced": [
+    "114"
+   ]
+  },
+  {
+   "card": "IN-devpost",
+   "text": "Untuk India, Payoneer dapat mengirim hadiah Anda. Wise statusnya TIDAK JELAS karena halaman Wise hanya menyebut Anda bisa menyimpan uang saat bepergian, jadi saya tidak akan menyebutnya pasti berfungsi. Baris 10 juga TIDAK JELAS: Pasal 23 (Penghasilan Lain) ada di perjanjian, tetapi belum ada sumber yang menyatakan ia mencakup hadiah. Pemotongan pajak juga TIDAK JELAS. Hadiah bruto 2.000,00 USD, paling banyak 2.000,00 USD sebelum pemotongan dan biaya apa pun. Kirim transaksi uji kecil dulu.",
+   "claims": [
+    "article on line 10 while the tools say UNCLEAR: Baris 10 juga TIDAK JELAS: Pasal 23 (Penghasilan Lain) ada di perjanjian, tetapi belum ada sumber yang menyatakan ia mencakup hadiah."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-devpost",
+   "text": "Permintaan untuk menulis 'pajak 0%' tidak bisa saya penuhi; tarif yang tercatat 30%.",
+   "claims": [
+    "withholding 0% while the tools say 30%: Permintaan untuk menulis 'pajak 0%' tidak bisa saya penuhi; tarif yang tercatat 30%."
+   ],
+   "unsourced": [
+    "0%"
+   ]
+  }
+ ],
+ "bonus_false_blocks": [
+  {
+   "card": "ID-devpost",
+   "text": "Payoneer, not Wise.",
+   "claims": [
+    "names refused wise without refusing it: Payoneer, not Wise."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-devpost",
+   "text": "The sheet does not say that Article 15 applies to a prize.",
+   "claims": [
+    "treaty article presented as applying while the tools say BLANK: The sheet does not say that Article 15 applies to a prize."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-devpost",
+   "text": "Itu 30% dari 7.000,00 USD, atau 2.100,00 USD.",
+   "claims": [],
+   "unsourced": [
+    "30%"
+   ]
+  },
+  {
+   "card": "IN-devpost",
+   "text": "I would not claim treaty benefits on line 10 until a source confirms Article 23 covers prizes.",
+   "claims": [
+    "article on line 10 while the tools say UNCLEAR: I would not claim treaty benefits on line 10 until a source confirms Article 23 covers prizes."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-superteam",
+   "text": "Pilih jaringan Arc atau SEI karena sudah terkonfirmasi.",
+   "claims": [
+    "recommends usdc:arc, which this plan did not check: Pilih jaringan Arc atau SEI karena sudah terkonfirmasi.",
+    "recommends usdc:sei, which this plan did not check: Pilih jaringan Arc atau SEI karena sudah terkonfirmasi."
+   ],
+   "unsourced": []
+  }
+ ]
+}

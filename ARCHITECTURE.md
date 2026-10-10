@@ -89,6 +89,6 @@ end_user_metadata={"origin": …})`. Confirms and receipt checks are separate tr
 
 ## Hosting
 
-Per the deployment notes: AWS EC2 t3.small (us-east-1), Ubuntu 24.04, `uvicorn` behind Caddy (automatic HTTPS) at
-`https://app.cair.edycu.dev`, systemd unit, secrets in `/etc/cair/cair.env` (never in the repo). neatlogs is
+`uvicorn` behind Caddy (automatic HTTPS) on an AWS EC2 t3.small at `https://app.cair.edycu.dev`; secrets come from
+an environment file outside the repository. neatlogs is
 initialised once in the FastAPI lifespan and flushed once at shutdown.

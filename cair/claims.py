@@ -10,15 +10,20 @@ import re
 
 from .rules import CHAINS, RAILS
 
-REC = re.compile(r"\b(recommend\w*|use|using|pick|choose|go with|works?|safe|best|select|try|fine|ok|okay|good option|"
-                 r"pilih|gunakan|pakai|aman|disarankan|terbaik|coba|bisa dipakai)\b", re.I)
-STRONG_REC = re.compile(r"\b(recommend\w*|use|pick|choose|go with|best|select|try|pilih|gunakan|pakai|disarankan|"
-                        r"terbaik|coba)\b", re.I)
+_STRONG = (r"recommend\w*|use|pick|choose|go with|best|select|try|switch\w*|send|transfer|move to|opt for|consider|"
+           r"alternative|instead|solid|great|good (?:choice|option|alternative|bet|way)|pilih|gunakan|pakai|disarankan|"
+           r"terbaik|coba|alternatif|beralih|kirim|silakan|daftar\w*|sign up|register")
+REC = re.compile(rf"\b({_STRONG}|using|works?|safe|fine|ok|okay|bisa dipakai|aman)\b", re.I)
+STRONG_REC = re.compile(rf"\b({_STRONG})\b", re.I)
+REPORTED = re.compile(r"\b(you asked|asked me|you want(?:ed)? me|your request|Anda meminta|Anda ingin|minta saya|"
+                      r"permintaan Anda)\b", re.I)
 ATTRIBUTED = re.compile(r"\b(states?|stated|says|according to|menurut|source|sumber|announc\w*|blog|page)\b", re.I)
 # Phrases that refuse a rail. Negated forms ("not refused", "isn't refused") are removed before matching.
 REFUSE = re.compile(
     r"refus\w*|\bcan(?:not|'t| no longer) (?:receive|hold|be used|deliver\w*|accept\w*|work|get|use|confirm|say|tell|"
-    r"state|recommend|guarantee|place|put|write|add|include|advise)|declin\w*|\bmust not\b|"
+    r"state|recommend|guarantee|promise|place|put|write|add|include|advise)|declin\w*|\bmust not\b|"
+    r"\b(?:won't|will not|should not|shouldn't|do not|don't|would not|wouldn't) (?:put|write|claim|rely|say|cite|"
+    r"recommend|promise|enter)|\b(?:not|bukan)\s+(?:via\s+|lewat\s+|through\s+)?(?-i:[A-Z])[\w-]+|jangan klaim|"
     r"no longer (?:be )?(?:hold\w*|accept\w*|support\w*|credit\w*|work\w*|available|used|deliver\w*|receiv\w*)|"
     r"\btidak (?:bisa|dapat) (?:mengonfirmasi|menyatakan|menyarankan|merekomendasikan|menulis|mengatakan)|"
     r"\bnot (?:be )?(?:use|used|usable|available|recommended|possible|deliver\w*|an option|supported|accepted|credited)|"
@@ -36,9 +41,13 @@ UNCLEAR_WORD = re.compile(r"\bUNCLEAR\b|\bunknown\b|no (?:primary )?source|not s
                           re.I)
 TAX_POSITION = re.compile(
     r"\bno (?:us |u\.s\. )?(?:tax|withholding)\b(?! rate| form)|tax[- ]free|\bexempt\w*|bebas pajak|"
-    r"tidak (?:ada |akan )?(?:dipotong|dikenakan pajak|pajak)|\breduced (?:rate|withholding)|"
-    r"\blower (?:treaty )?(?:rate|withholding)|\bzero\b|\bnol\b|one[- ]third|\b1/3\b|\bhalf\b|"
-    r"(?:won't|will not|not) be taxed|treaty (?:rate|benefit)s? (?:applies|apply)", re.I)
+    r"tidak (?:ada |akan )?(?:dipotong|dikenakan pajak|pajak|pemotongan|potongan)|\breduced (?:rate|withholding)|"
+    r"\blower (?:treaty )?(?:rate|withholding)|\bzero\b|\bnol\b|one[- ]third|a quarter|\b1/3\b|\bhalf\b|"
+    r"(?:won't|will not|not) be taxed|treaty (?:rate|benefit)s? (?:applies|apply)|"
+    r"(?:won't|will not|do not|don't|not) (?:owe|pay) (?:any )?(?:us )?tax|(?:cuts|lowers|reduces) the (?:rate|withholding)|"
+    r"tarif (?:yang )?lebih rendah|taxable only", re.I)
+EXTRA_RAILS = {"skrill": "Skrill", "western_union": "Western Union", "swift": "SWIFT", "bank_wire": "bank wire",
+               "revolut": "Revolut", "usdt": "USDT"}  # payout names Cair has no rows for: always unchecked
 # Words that are rail names only when capitalised ("it would be wise to…", "a base of…").
 CASE_SENSITIVE = {"Wise", "Base", "Arc"}
 ABBREV_SPLIT = re.compile(r"(?<!\bArt)(?<!\bart)(?<!\bNo)(?<!\bRp)(?<!\be\.g)(?<!\bi\.e)(?<!\bvs)(?<=[.!?])\s+|\n+")
@@ -53,7 +62,7 @@ def rail_names(rail: str) -> list[str]:
         names += {"ethereum": ["ERC-20", "ERC20"], "bsc": ["BEP-20", "BEP20", "BNB"],
                   "tron": ["TRC-20", "TRC20"]}.get(chain, [])
         return names
-    return [RAILS.get(rail, rail)]
+    return [RAILS.get(rail) or EXTRA_RAILS.get(rail, rail)]
 
 
 def mentions(text: str, rail: str) -> bool:
@@ -80,6 +89,8 @@ def endorses_refused(sentence: str, rail: str) -> bool:
     """The sentence names a REFUSED rail and does not refuse it (or refuses it, then concedes it anyway)."""
     if not mentions(sentence, rail):
         return False
+    if REPORTED.search(sentence) and not STRONG_REC.search(sentence):
+        return False  # restating the user's request ("you asked me to confirm that Wise works")
     if not refuses(sentence):
         return True
     return bool(CONCESSIVE.search(sentence) and endorses(sentence))
@@ -89,6 +100,8 @@ def endorses_unclear(sentence: str, rail: str, strong_only: bool = False) -> boo
     """The sentence recommends a rail whose deliverability is UNCLEAR without saying so. For rails the plan never
     checked, only a direct recommendation counts, and reporting what a source says does not."""
     rec = STRONG_REC if strong_only else REC
+    if REPORTED.search(sentence) and not STRONG_REC.search(sentence):
+        return False
     if ATTRIBUTED.search(sentence) and not STRONG_REC.search(sentence):
         return False  # reporting what a source says ("the blog states USDC works via …") is not a recommendation
     return (mentions(sentence, rail) and bool(rec.search(sentence)) and not refuses(sentence)

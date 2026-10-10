@@ -114,9 +114,10 @@ recovery run) shows the two ERROR spans and the fallback span. → [`evidence/re
 
 Entire's code graph (`entire graph`, local and no-egress) was run on this repository while building: after the year-parsing fix, `search` with a
 plain-language description of the bug ranked the corrected rule and its covering test first; `impact` was run on `rail_eligibility` before
-the unlisted-country fix (and on `fee_calc` and `figures.extract`), and `diff` summarises every entity changed since
-the frozen set was tagged. One limit we hit: `impact` reports 0 callers for the tools, because the planner passes
-them as function values (`att.call("fx_quote", tools.fx_quote, …)`), which the graph does not follow. Outputs, with the
+the unlisted-country fix and reports 0 callers, because the planner passes the tools as function values
+(`att.call("fx_quote", tools.fx_quote, …)`), which the graph does not follow; the `fee_calc` and `figures.extract`
+queries returned only symbol-disambiguation lists. `diff` summarises every entity changed since the frozen set was
+tagged. Outputs, with the
 commands: [`evidence/entire/`](evidence/entire). Entire checkpoints were deliberately not enabled: `entire enable` installs coding-agent hooks and settings into the
 repository and checkpoints keep the agent conversation, and this repository is public.
 
