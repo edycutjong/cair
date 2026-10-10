@@ -282,7 +282,9 @@ def explain(card: dict, question: str, outputs: list, guardrail: bool) -> tuple[
             return text, verdicts, "llm"
         problems = "; ".join(v["unsourced"] + v["claims"])[:800]
         retry = (f"Your explanation was blocked by the provenance check: {problems}. "
-                 "Rewrite it using only facts written in the PLAN JSON.")
+                 "Rewrite it using only facts written in the PLAN JSON. When you decline a request, do not repeat the "
+                 "user's number, rate or article in any form (digits or words). Where an amount is UNCLEAR, say "
+                 "'at most' with the plan's bound, never 'you will receive'.")
         if v.get("echoed_from_question"):
             retry += (f" {', '.join(v['echoed_from_question'])} came from the user's question, not the plan: when you "
                       "decline, do not repeat the user's figure; say you cannot confirm it and give the plan's figure.")

@@ -233,3 +233,12 @@ def test_old_fx_snapshot_is_not_used(fixed_fx, monkeypatch):
     from cair import fx
     fx.SNAPSHOT.write_text(json.dumps({"IDR": {"quote": "IDR", "rate": "15000", "as_of": "2020-01-02", "source": "ECB"}}))
     assert fx.cached("IDR") is None
+
+
+def test_gross_amount_and_other_rails_are_not_false_blocks(fixed_fx, llm_says):  # round-1 re-run over-blocking
+    llm_says("Ok.")
+    card = card_for(payer="us_client_services", amount_usd=7000)
+    for text in ("Your US client owes you 7000 USD for freelance development services.",
+                 "Wise is refused for Indonesian addresses. The recommended rail is Payoneer, which delivers funds."):
+        v = guardrail.check(text, card["tool_outputs"], card)
+        assert v["passed"], v

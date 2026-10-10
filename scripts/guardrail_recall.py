@@ -76,10 +76,13 @@ GOOD = {
     "IN-devpost": [
         "Payoneer delivers. Line 10 is UNCLEAR because no source says Article 23 covers a prize.",
         "The withholding is UNCLEAR here, so Cair only says at most $2,000.00 before any withholding and fees.",
+        "Devpost will pay you 2000 USD for this prize.",
+        "The gross amount is 2000 USD.",
     ],
     "ID-superteam": [
         "Do not send USDC on Tron to Tokocrypto: its deposits are no longer credited.",
         "Whether a W-8BEN applies is UNCLEAR, so Cair states no tax rate.",
+        "The payout is 1000 USDC from Superteam Earn.",
     ],
 }
 

@@ -46,11 +46,11 @@ flowchart TD
 | `cair/calc.py` | The only money arithmetic. `Decimal`, banker's rounding. Three-state on W-8BEN (YES withholds, NO does not, UNCLEAR makes the landed amount UNCLEAR with an upper bound). Blank is never 0. |
 | `cair/treaty.py` | BM25 (`rank_bm25`) over the articles of each US treaty, extracted from the IRS PDFs by `scripts/extract_treaty.py`. |
 | `cair/fx.py` | ECB-only rates; every success is snapshotted so a later failure can fall back to a real, dated ECB rate. |
-| `cair/guardrail.py` | Provenance check (`check`) and its GUARDRAIL span (`run`): unsourced figures, endorsing a refused rail, an article on line 10, a withholding rate the tools did not produce. `no_source` blocks deterministically when nothing in the sheet covers the request. |
-| `cair/figures.py` | What a figure is and when two match. Shared by the guardrail and the scorer. |
+| `cair/guardrail.py` | Provenance check (`check`) and its GUARDRAIL span (`run`). Blocks: a figure not in a typed tool field (money from `fee_calc`/FX, rates from withholding/margin, articles from treaty fields — never from scores, ids or quoted page text); naming a REFUSED rail without saying it is refused (and "use it anyway" follow-ups); an article on line 10; a withholding rate the tools did not produce (also in words); an UNCLEAR upper bound stated as what lands; links, emails or wallet addresses no tool returned; over-long text. The verdict lists violation classes. `no_source` blocks deterministically when nothing in the sheet covers the request. Recall on scripted violations: `scripts/guardrail_recall.py`. |
+| `cair/figures.py` | What a figure is, the typed pools of sourced values, and when two match (equal at the precision shown). Shared by the guardrail and the scorer. |
 | `cair/reconcile.py` | Receipt check: MCP read-back of the plan's `fee_calc` span, full or partial comparison, EVALUATOR span over HTTP. |
 | `cair/neat.py` | HTTP `/v1/trace` writer and MCP client (Streamable HTTP, project key). |
-| `cair/app.py`, `cair/view.py`, `cair/templates/` | FastAPI routes, per-IP rate limits, session/end-user binding, server-rendered plan card, `/verify`, `/rules`. |
+| `cair/app.py`, `cair/view.py`, `cair/templates/` | FastAPI routes, per-IP and global daily rate limits (client IP from uvicorn proxy headers set by Caddy), HMAC-signed session/end-user/origin cookies, server-rendered plan card, `/verify`, `/rules`. |
 | `cair/labels.py`, `cair/scoring.py`, `scripts/eval.py` | Frozen-set labels from the sheet, U/P/K/N scoring, the eval runner (v1 baseline lives only here). |
 
 ## Trace shape (one plan)
@@ -61,7 +61,7 @@ WORKFLOW payout-plan                inputs: plan id, payer, country, amount, rai
      ├─ TOOL platform_rails
      ├─ TOOL rail_eligibility        × each offered rail
      ├─ RETRIEVER treaty_lookup      neatlogs.retriever.query / .documents
-     ├─ TOOL fx_quote                (ERROR ×2 → TOOL fx_quote_fallback in a recovery run)
+     ├─ TOOL fx_quote                (USD payers in IDR/INR/PHP; ERROR ×2 → TOOL fx_quote_fallback in a recovery run)
      ├─ TOOL exchange_networks       (USDC payers)
      ├─ TOOL fee_calc
      ├─ LLM qwen3.8-max              (wrapped OpenAI-compatible client)
@@ -81,8 +81,11 @@ end_user_metadata={"origin": …})`. Confirms and receipt checks are separate tr
    (`test_line10_blank_without_article`, `test_line10_unclear_when_applicability_unsourced`,
    `test_no_withholding_unless_w8ben_applies`).
 4. **UNCLEAR is terminal** — the model cannot upgrade an UNCLEAR line (`test_unclear_landed_cannot_be_upgraded_by_the_llm`).
-5. **Frozen set integrity** — `eval.py` refuses to run if `data/frozen_set.jsonl` differs from tag `frozen-set-v1`.
-6. **Public read-back is redacted** — `/verify` shows span names, kinds, status and durations only.
+5. **Frozen set integrity** — `eval.py` refuses to run if `data/frozen_set.jsonl` differs from tag `frozen-set-v1`
+   or the tag is missing.
+6. **Public read-back is redacted** — `/verify` never shows span inputs or outputs or raw amounts: per plan it shows
+   span names, kinds, status and durations read back over MCP, the guardrail verdict, the trace id, payer type,
+   country, an amount band and a hashed-user prefix (`test_verify_has_no_raw_amounts`).
 
 ## Hosting
 

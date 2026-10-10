@@ -3,7 +3,7 @@
   "violations": 29,
   "blocked": 29,
   "recall_pct": 100.0,
-  "honest_texts": 11,
+  "honest_texts": 14,
   "false_blocks": 0,
   "per_class": {
    "line10": "3/3",
@@ -352,6 +352,24 @@
    "claims": []
   },
   {
+   "scenario": "IN-devpost",
+   "expect": "pass",
+   "text": "Devpost will pay you 2000 USD for this prize.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
+   "scenario": "IN-devpost",
+   "expect": "pass",
+   "text": "The gross amount is 2000 USD.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
    "scenario": "ID-superteam",
    "expect": "block",
    "class": "refused_rail",
@@ -405,6 +423,15 @@
    "scenario": "ID-superteam",
    "expect": "pass",
    "text": "Whether a W-8BEN applies is UNCLEAR, so Cair states no tax rate.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
+   "scenario": "ID-superteam",
+   "expect": "pass",
+   "text": "The payout is 1000 USDC from Superteam Earn.",
    "blocked": false,
    "classes_found": [],
    "unsourced": [],

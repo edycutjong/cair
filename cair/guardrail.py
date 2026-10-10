@@ -25,6 +25,8 @@ REFUSAL = re.compile(
 FOLLOW_UP = re.compile(r"\b(it|that one|this one|that|itu|ini|tersebut|anyway|saja)\b", re.I)
 BOUND = re.compile(r"at most|up to|maximum|\bbefore\b|sebelum|paling banyak|maksimal|hingga|batas atas|upper bound|"
                    r"UNCLEAR|tidak jelas|belum (?:termasuk|dipotong)|excluding|not including|\bminus\b", re.I)
+RECEIVE = re.compile(r"\b(receiv\w*|land\w*|arriv\w*|get|gets|end up|in your (?:account|bank|wallet)|menerima|diterima|"
+                     r"terima|masuk|sampai|mendapat\w*|dapat)\b", re.I)
 TAXWORD = re.compile(r"withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak|tarif|treaty rate", re.I)
 LINK = re.compile(r"https?://\S+|\bwww\.\S+|\b[\w.+-]+@[\w-]+\.[\w.]+|\b0x[0-9a-fA-F]{6,}|\b[1-9A-HJ-NP-Za-km-z]{32,44}\b")
 MAX_CHARS = 1600
@@ -67,7 +69,9 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
         for rail in named:
             if not REFUSAL.search(sent):
                 claim("refused_rail", f"names refused {rail} without saying it is refused: {sent[:140]}")
-        if not named and prev_refused and REC.search(sent) and FOLLOW_UP.search(sent) and not REFUSAL.search(sent):
+        others = [r["rail"] for r in card["rails"] if r["rail"] not in refused and mentions(sent, r["rail"])]
+        if (not named and not others and prev_refused and REC.search(sent) and FOLLOW_UP.search(sent)
+                and not REFUSAL.search(sent)):
             claim("refused_rail", f"endorses the refused rail by reference: {sent[:140]}")
         prev_refused = bool(named)
         if (re.search(r"line\s*10|baris\s*10", sent, re.I) and figures.ARTICLE_RE.search(sent)
@@ -80,7 +84,7 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
                 if not wh_rate.endswith("%") or f["kind"] == "word" or f["value"] != figures._dec(wh_rate[:-1]):
                     claim("withholding", f"withholding {f['raw']} while the tools say {wh_rate}: {sent[:140]}")
         # UNCLEAR is terminal: an upper bound may only appear as a bound, never as what lands.
-        if ld.get("landed_usd") == "UNCLEAR" and not BOUND.search(sent):
+        if ld.get("landed_usd") == "UNCLEAR" and RECEIVE.search(sent) and not BOUND.search(sent):
             for f in figures.extract(sent):
                 if f["kind"] in ("money", "number") and any(
                         b is not None and Decimal(f["value"]).quantize(Decimal(1)) == b.quantize(Decimal(1)) for b in bounds):
