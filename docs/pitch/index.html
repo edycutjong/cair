@@ -20,9 +20,8 @@
 <meta property="og:image:alt" content="Cair — Choose Wise struck through and stamped REFUSED; Payoneer, at most $4,900, fee UNCLEAR">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="../assets/fonts/gloock-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/public-sans.woff2" as="font" type="font/woff2" crossorigin>
 <!--
   Cair pitch deck — 11 slides on a fixed 1920×1080 stage, scaled to fit any screen (never stacked).
   Keys:  → / Space / PageDown next · ← / PageUp previous · Home / End · Esc slide overview · P presenter notes · C contrast debug
@@ -36,6 +35,11 @@
   The QR on slide 11 is generated for https://app.cair.edycu.dev (inline SVG).
 -->
 <style>
+/* Self-hosted faces (SIL OFL 1.1; licences beside the files). */
+@font-face { font-family: "Gloock"; font-style: normal; font-weight: 400; font-display: swap; src: url("../assets/fonts/gloock-400.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Public Sans"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("../assets/fonts/public-sans.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Public Sans"; font-style: italic; font-weight: 400; font-display: swap; src: url("../assets/fonts/public-sans-italic.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Spline Sans Mono"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("../assets/fonts/spline-sans-mono.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* Tokens: the project's design contract, verbatim — identical to the landing page. */
 :root {
   --bg:      #E5EDE7;  /* mint security paper */
@@ -317,12 +321,12 @@ body.ov .overview { display: block; }
     </div>
     <div class="slip readback">
       <p class="label">neatlogs read-back</p>
-      <p class="cmd">get_trace_context 6ea01b70…</p>
+      <p class="cmd">get_trace_context 58636870…</p>
       <ol>
         <li class="typing" style="--n:0"><span class="k">TOOL</span><span>rail_eligibility · wise <b class="red">NO</b></span></li>
         <li class="typing" style="--n:1"><span class="k">RETRIEVER</span><span>treaty_lookup · no Other Income article</span></li>
         <li class="typing" style="--n:2"><span class="k">TOOL</span><span>fee_calc · at most 4900.00</span></li>
-        <li class="typing" style="--n:3"><span class="k">GUARDRAIL</span><span><b class="blue">PASSED</b> · 359 / 359<span class="cursor" aria-hidden="true"></span></span></li>
+        <li class="typing" style="--n:3"><span class="k">GUARDRAIL</span><span><b class="blue">PASSED</b> · 7 sourced<span class="cursor" aria-hidden="true"></span></span></li>
       </ol>
     </div>
   </div>
@@ -369,7 +373,7 @@ body.ov .overview { display: block; }
       <p class="verdict">≤ $4,900.00 <span class="stamp unclear">Unclear</span></p>
     </div>
     <figure class="slip card-shot" style="margin:0">
-      <img src="../assets/shots/plan-card.webp" width="1100" height="1435" alt="Cair — the live plan card: Payoneer delivers, Wise refused with Wise's sentence, line 10 blank, at most $4,900.00 stamped UNCLEAR, every line footnoted">
+      <img src="../assets/shots/plan-card-660.webp" srcset="../assets/shots/plan-card-660.webp 1x, ../assets/shots/plan-card.webp 2x" width="660" height="861" alt="Cair — the live plan card: Payoneer delivers, Wise refused with Wise's sentence, line 10 blank, at most $4,900.00 stamped UNCLEAR, every line footnoted">
       <figcaption class="card-cap">the live card, 10 Oct 2026</figcaption>
     </figure>
   </div>
@@ -404,7 +408,7 @@ body.ov .overview { display: block; }
     <div class="frame">
       <div class="frame-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="url">app.cair.edycu.dev/plan/01M4JNMB…</span></div>
       <div class="shot">
-        <img src="../assets/shots/plan-pair.webp" width="1600" height="1067" alt="Cair — the live app: the payout form and the plan for Devpost, $7,000, Indonesia">
+        <img src="../assets/shots/plan-pair-1160.webp" srcset="../assets/shots/plan-pair-1160.webp 1x, ../assets/shots/plan-pair.webp 2x" width="1160" height="773" alt="Cair — the live app: the payout form and the plan for Devpost, $7,000, Indonesia">
         <span class="callout" style="left:37.9%;top:22.2%">1</span>
         <span class="callout r" style="left:37.9%;top:28.6%">2</span>
         <span class="callout" style="left:37.9%;top:62%">3</span>
@@ -418,7 +422,7 @@ body.ov .overview { display: block; }
         <li><span class="callout">3</span><span>Line 10: leave blank</span></li>
         <li><span class="callout o">4</span><span>At most $4,900.00, fee unclear</span></li>
       </ol>
-      <div class="verify-mini"><img src="../assets/shots/verify-top.webp" width="1600" height="911" alt="Cair — /verify: plans read back from neatlogs over MCP, redacted"></div>
+      <div class="verify-mini"><img src="../assets/shots/verify-top-560.webp" srcset="../assets/shots/verify-top-560.webp 1x, ../assets/shots/verify-top-1120.webp 2x" width="560" height="319" alt="Cair — /verify: plans read back from neatlogs over MCP, redacted"></div>
       <p class="verify-cap">/verify · traces read back over MCP</p>
     </div>
   </div>
@@ -456,7 +460,7 @@ body.ov .overview { display: block; }
 
 <!-- 8 · Failure -->
 <section class="slide s-fail" aria-label="Slide 8 of 11: a run where an action failed">
-  <p class="label kicker">Returned item · trace d1fa1ed7…</p>
+  <p class="label kicker">Trace d1fa1ed7… · run r1</p>
   <h2>The rate API fails. The plan finishes.</h2>
   <div class="grid center">
     <ol class="slip steps">
@@ -470,7 +474,7 @@ body.ov .overview { display: block; }
       <div class="slip tally"><b>350 / 350</b><span>figures sourced</span></div>
     </div>
   </div>
-  <div class="foot"><span>scripts/eval.py --fail fx_quote · eval-fail-fx_quote-r9</span><span class="pg">08 / 11</span></div>
+  <div class="foot"><span>scripts/eval.py --fail fx_quote · tallies: eval-fail-fx_quote-r9 · trace from run r1</span><span class="pg">08 / 11</span></div>
   <aside class="speaker-notes">We forced the FX tool to fail on every call. The agent retried once, fell back to the last ECB rate it had
     fetched, stamped it stale with its date, and finished the plan. All 48 plans completed; 24 used the fallback — every USD
     payer. It never asks the model for a rate.</aside>
@@ -482,7 +486,7 @@ body.ov .overview { display: block; }
   <div class="center inst">
     <div class="slip"><h3>neatlogs</h3><p>One trace per plan. <span class="mono">search_traces</span> found two real bugs; <span class="mono">/verify</span> reads traces back.</p><p class="ev">rca-01.md · evidence/traces/</p></div>
     <div class="slip"><h3>Entire</h3><p>Graph search ranked the fixed rule first. Checkpoints off: public repo.</p><p class="ev">evidence/entire/</p></div>
-    <div class="slip"><h3>cfo.ai</h3><p>Inputs measured: cost, speed, hosting.</p><span class="pending">Model pending</span><p class="ev">docs/BUSINESS-PLAN.md</p></div>
+    <div class="slip"><h3>cfo.ai</h3><p>Inputs on file.</p><span class="pending">Model pending</span><p class="ev">docs/BUSINESS-PLAN.md</p></div>
   </div>
   <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">09 / 11</span></div>
   <aside class="speaker-notes">neatlogs is where the failures were found: search_traces for blocked guardrails surfaced an amount parsed as a
@@ -497,17 +501,17 @@ body.ov .overview { display: block; }
     <div class="ledger">
       <div class="row"><b>$0.0033</b><span>of LLM per plan</span></div>
       <div class="row"><b>5.50 s</b><span>median · p95 10.31 s</span></div>
-      <div class="row"><b>$15.26</b><span>hosting per month</span></div>
+      <div class="row"><b>$15.26</b><span>hosting a month, list price</span></div>
     </div>
     <div class="slip limits">
       <ul>
         <li>Three countries fully sourced; others UNCLEAR.</li>
         <li>Forward receipts from real users: n = 0.</li>
-        <li>Explains forms; never files them.</li>
+        <li>Explains forms, never files.</li>
       </ul>
     </div>
   </div>
-  <div class="foot"><span>bench-20261010T085809Z · BUSINESS-PLAN.md · README honest limits</span><span class="pg">10 / 11</span></div>
+  <div class="foot"><span>timings and cost: bench-20261010T085809Z (48 plans, one at a time) · BUSINESS-PLAN.md · README limits</span><span class="pg">10 / 11</span></div>
   <aside class="speaker-notes">A plan costs about a third of a cent of model time and takes five and a half seconds at the median. The limits
     are on the slide because a tool that refuses unsourced claims shouldn't hide its own: three fully sourced countries, no
     forward receipts from real users yet, and it is not tax advice.</aside>
@@ -534,8 +538,7 @@ body.ov .overview { display: block; }
   </div>
   <div class="foot"><span>Cair · Edy Team · neatHack 2026 · v0.1.2</span><span class="pg">11 / 11</span></div>
   <aside class="speaker-notes">Open it next to a real payout form: Devpost, seven thousand, Indonesia, tick Payoneer and Wise. You'll see
-    Wise refused in Wise's own words and every number footnoted. In Indonesian, money that has finally been paid out is said to
-    be "cair". That's the goal.</aside>
+    Wise refused in Wise's own words and every number footnoted.</aside>
 </section>
 
 </main>

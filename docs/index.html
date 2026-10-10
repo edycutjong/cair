@@ -25,14 +25,18 @@
 <meta name="twitter:image" content="https://cair.edycu.dev/assets/og-1200.png?v=1">
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon-512.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/gloock-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/public-sans.woff2" as="font" type="font/woff2" crossorigin>
 <script>
   /* Motion is opt-in: content renders in its final state; this class only enables the authored moments. */
   if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
 </script>
 <style>
+/* Self-hosted faces (SIL OFL 1.1; licences beside the files). */
+@font-face { font-family: "Gloock"; font-style: normal; font-weight: 400; font-display: swap; src: url("assets/fonts/gloock-400.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Public Sans"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("assets/fonts/public-sans.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Public Sans"; font-style: italic; font-weight: 400; font-display: swap; src: url("assets/fonts/public-sans-italic.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Spline Sans Mono"; font-style: normal; font-weight: 400 500; font-display: swap; src: url("assets/fonts/spline-sans-mono.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* Tokens: the project's design contract, verbatim. Every colour and face below is a var(). */
 :root {
   --bg:      #E5EDE7;  /* mint security paper: the tinted stock cheques and remittance slips are printed on */
@@ -294,6 +298,9 @@ section { position: relative; }
 .try .steps { color: var(--muted); }
 .try .steps b { color: var(--ink); font-weight: 600; }
 
+.ask-how { margin: -14px 0 26px; font-size: 15.5px; color: var(--muted); }
+.ask-how b { color: var(--ink); font-weight: 600; }
+
 /* ---------- measured: one call vs the agent ---------- */
 .metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
 .metric { padding: clamp(20px, 2.2vw, 28px); }
@@ -333,8 +340,9 @@ section { position: relative; }
 .steps-list .st.err { color: var(--before); } .steps-list .st.ok { color: var(--after); } .steps-list .st.stale { color: var(--unclear); }
 .steps-list .what { grid-column: 2 / -1; font-size: 15px; color: var(--muted); }
 .steps-list li.err-row { background: linear-gradient(90deg, var(--wash-before), transparent 70%); }
-.motion .returned.armed .steps-list li { opacity: .25; transition: opacity .35s var(--ease); }
-.motion .returned.armed .steps-list li.on { opacity: 1; }
+.steps-list li.s-err { --c: var(--before); } .steps-list li.s-stale { --c: var(--unclear); } .steps-list li.s-ok { --c: var(--after); }
+.motion .returned.armed .steps-list li::before { transition: background-color .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease); }
+.returned .steps-list li.on::before, .returned:not(.armed) .steps-list li::before { background: var(--c); border-color: var(--c); color: var(--paper); }
 .card-line { margin: 16px 0 0; padding: 12px 14px; background: color-mix(in srgb, var(--unclear) 7%, var(--paper));
   border-left: 3px solid var(--unclear); font: 400 13px/1.55 var(--font-data); color: var(--ink); overflow-wrap: anywhere; }
 .tally { display: grid; gap: 14px; }
@@ -463,6 +471,7 @@ section { position: relative; }
 .kchip.k-ref { color: var(--before); } .kchip.k-unc { color: var(--unclear); }
 .kchip.k-no { color: var(--before); border-width: 1px; border-color: color-mix(in srgb, var(--before) 45%, transparent); }
 .rules-rows { display: grid; gap: 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); overflow: hidden; }
+.rr-list { list-style: none; margin: 0; padding: 0; }
 .rr { padding: 12px 14px; border-bottom: 1px dashed var(--rule); }
 .rr p { margin: 0; }
 .rules-rows .rr-key { display: flex; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap; font: 500 12.5px/1.4 var(--font-data); }
@@ -601,7 +610,7 @@ section { position: relative; }
         <div>
           <p class="label">Payout plan · specimen</p>
           <p class="slip-title">Devpost → Indonesia</p>
-          <p class="slip-meta">$7,000 prize · traces 929a3781… · 6ea01b70…</p>
+          <p class="slip-meta">$7,000 prize · one call: trace 929a3781… (eval v1-r1) · Cair: trace 58636870… (live plan)</p>
         </div>
       </div>
 
@@ -633,12 +642,12 @@ section { position: relative; }
         <div class="lands">
           <p class="label">In your Payoneer — at most</p>
           <div class="amount-line">
-            <span class="amount" id="hero-amount">$4,900.00</span><a class="src" href="https://github.com/edycutjong/cair/blob/main/evidence/traces/v2-hero.json" data-tip="fee_calc · Decimal arithmetic on sourced cells; no figure comes from the model">fee_calc</a>
+            <span class="amount" id="hero-amount">$4,900.00</span><a class="src" href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json" data-tip="fee_calc · Decimal arithmetic on sourced cells; no figure comes from the model">fee_calc</a>
             <span class="stamp unclear" style="--d:.75s">Unclear</span>
           </div>
           <p class="small">$7,000.00 minus 30% US withholding ($2,100.00<a class="src" href="https://www.irs.gov/publications/p515" rel="noopener" data-tip="treaty_lookup · IRS-P515-30 · IRS Publication 515 · read 2026-10-10">IRS-P515-30</a>), before a receiving fee Payoneer does not publish.</p>
         </div>
-        <p class="guard"><span>provenance_guardrail · <b>PASSED</b></span><span>11 spans · 6,869 ms</span></p>
+        <p class="guard"><span>provenance_guardrail · <b>PASSED</b></span><span>10 spans · 7,063 ms</span></p>
       </div>
     </figure>
   </div>
@@ -692,11 +701,12 @@ section { position: relative; }
       <h2 class="h2" id="sp">One question, asked the way winners ask it.</h2>
     </div>
     <p class="ask-quote">I'm in Jakarta. I won $7,000 in a Devpost hackathon. The claim form lets me pick Payoneer or Wise. Which one, and what do I write on the <span class="nw">W-8BEN</span>?</p>
+    <p class="ask-how">Asked on the form as <b>Devpost · 7000 · Indonesia · Payoneer and Wise</b>. Below: the plan it returned, and that plan's own trace.</p>
     <div class="pair">
       <figure class="frame">
-        <a class="frame-link" href="https://app.cair.edycu.dev/plan/01M4JNMBJK2S7PAD46EE3W412A" rel="noopener" aria-label="Open this plan on the live app">
+        <a class="frame-link" href="https://app.cair.edycu.dev/plan/01M4JNMBJK2S7PAD46EE3W412A" rel="noopener">
         <div class="frame-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="url">app.cair.edycu.dev/plan/01M4JNMBJK2S7PAD46EE3W412A</span></div>
-        <img src="assets/shots/plan-card.webp" width="1100" height="1435" loading="lazy" decoding="async"
+        <img src="assets/shots/plan-card.webp" srcset="assets/shots/plan-card-560.webp 560w, assets/shots/plan-card.webp 1100w" sizes="(max-width: 1100px) 92vw, 560px" width="1100" height="1435" loading="lazy" decoding="async"
           alt="Cair — the live plan for Devpost, $7,000, Indonesia: Payoneer delivers, Wise refused with Wise's own sentence, line 10 left blank, at most $4,900.00 stamped UNCLEAR">
         </a>
         <figcaption>The live app, 10 Oct 2026. Each superscript number is a footnote to the tool and source that produced the line.</figcaption>
@@ -704,26 +714,26 @@ section { position: relative; }
 
       <div class="slip readback" id="readback">
         <div class="rb-head">
-          <p class="label">Read back from neatlogs over MCP</p>
-          <p class="rb-cmd">get_trace_context 6ea01b70588b56884b9f4193c431f5ce</p>
+          <p class="label">The same plan, read back from neatlogs over MCP</p>
+          <p class="rb-cmd">get_trace_context 586368705f8d5aa5d97368e57b4d91b6</p>
         </div>
-        <ol class="spans" aria-label="Spans of the hero trace">
-          <li><span class="kind">WORKFLOW</span><span class="nm">payout-plan</span><span class="ms">6,869 ms</span></li>
-          <li><span class="kind d1">AGENT</span><span class="nm">planner</span><span class="ms">6,865 ms</span></li>
-          <li><span class="kind d2">TOOL</span><span class="nm">platform_rails</span><span class="ms">4.3 ms</span><span class="out">devpost offers payoneer, paypal, wise · <span class="nw">W-8BEN</span> applies · DP114</span></li>
-          <li><span class="kind d2">TOOL</span><span class="nm">rail_eligibility ×3</span><span class="ms">0.2 ms</span><span class="out">wise <span class="no">NO</span> WISE-ID · payoneer <span class="ok">YES</span> PAYO-ID · paypal <span class="un">UNCLEAR</span></span></li>
-          <li><span class="kind d2">RETRIEVER</span><span class="nm">treaty_lookup</span><span class="ms">6.8 ms</span><span class="out">no Other Income article · TRTY-ID</span></li>
-          <li><span class="kind d2">TOOL</span><span class="nm">fx_quote</span><span class="ms">309.3 ms</span><span class="out">1 USD = 17881 IDR · ECB reference rate · as of 2026-10-09</span></li>
-          <li><span class="kind d2">TOOL</span><span class="nm">fee_calc</span><span class="ms">0.2 ms</span><span class="out">withheld 2100.00 · at most 4900.00 · at most IDR 87616900</span></li>
-          <li><span class="kind d2">LLM</span><span class="nm">qwen3.8-max</span><span class="ms">6,463 ms</span><span class="out">words the card from the tool outputs</span></li>
-          <li><span class="kind d2">GUARDRAIL</span><span class="nm">provenance_guardrail</span><span class="ms">12.7 ms</span><span class="out"><span class="ok">PASSED</span> · every figure is in a tool output<span class="cursor" aria-hidden="true"></span></span></li>
+        <ol class="spans" aria-label="Spans of this plan's trace">
+          <li><span class="kind">WORKFLOW</span><span class="nm">payout-plan</span><span class="ms">7,063 ms</span></li>
+          <li><span class="kind d1">AGENT</span><span class="nm">planner</span><span class="ms">7,061 ms</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">platform_rails</span><span class="ms">0.2 ms</span><span class="out">devpost offers payoneer, paypal, wise · <span class="nw">W-8BEN</span> applies · DP114</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">rail_eligibility ×2</span><span class="ms">0.3 ms</span><span class="out">payoneer <span class="ok">YES</span> PAYO-ID · wise <span class="no">NO</span> WISE-ID</span></li>
+          <li><span class="kind d2">RETRIEVER</span><span class="nm">treaty_lookup</span><span class="ms">2.8 ms</span><span class="out">treaty text searched → line 10 blank, no Other Income article · TRTY-ID</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">fx_quote</span><span class="ms">314.0 ms</span><span class="out">1 USD = 17881 IDR · ECB reference rate · as of 2026-10-09</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">fee_calc</span><span class="ms">0.3 ms</span><span class="out">withheld 2100.00 · at most 4900.00 · at most IDR 87616900</span></li>
+          <li><span class="kind d2">LLM</span><span class="nm">qwen3.8-max</span><span class="ms">5,791 ms</span><span class="out">words the card from the tool outputs</span></li>
+          <li><span class="kind d2">GUARDRAIL</span><span class="nm">provenance_guardrail</span><span class="ms">11.6 ms</span><span class="out"><span class="ok">PASSED</span> · 7 figures, all in tool outputs<span class="cursor" aria-hidden="true"></span></span></li>
         </ol>
-        <div class="rb-foot"><span>11 spans · status success</span><a href="https://github.com/edycutjong/cair/blob/main/evidence/traces/v2-hero.json"><code>evidence/traces/v2-hero.json</code></a></div>
+        <div class="rb-foot"><span>10 spans · status success · exported 2026-10-10 11:21 UTC</span><a href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json"><code>evidence/traces/live-plan-ee3w412a.json</code></a></div>
       </div>
     </div>
     <div class="try">
       <a class="btn btn-blue" href="https://app.cair.edycu.dev" rel="noopener">Run it yourself <span class="arr" aria-hidden="true">→</span></a>
-      <span class="steps">Choose <b>Devpost · 7000 · Indonesia</b>, tick <b>Payoneer</b> and <b>Wise</b>, press <b>Plan my payout</b>. Median: 5.5 seconds.</span>
+      <span class="steps">Choose <b>Devpost · 7000 · Indonesia</b>, tick <b>Payoneer</b> and <b>Wise</b>, press <b>Plan my payout</b>. In the bench, the median plan took 5.5 s.</span>
     </div>
   </div>
 </section>
@@ -735,7 +745,7 @@ section { position: relative; }
       <h2 class="h2" id="me">Same model. Same 48 questions. Different answers.</h2>
       <p class="lede">The 48 scenarios — 3 countries × 4 payers × 3 amounts, plus 12 leading prompts — were labelled from the sourced
         rules sheet before any agent code existed (tag <code>frozen-set-v1</code>). <b>v1</b> is one tool-less call. <b>v1s</b> is one
-        call with the whole rules sheet pasted in: the strongest thing a single chatbot call can do.</p>
+        call with the whole rules sheet pasted in, so every sourced fact is in its prompt.</p>
     </div>
     <div class="metrics" id="metrics">
       <div class="slip metric">
@@ -797,21 +807,21 @@ section { position: relative; }
     <div class="recovery-grid">
       <div class="slip returned" id="returned">
         <div class="returned-head">
-          <p class="label">Trace <span class="mono">d1fa1ed78810601ea4f2d6de5dfacec5</span> · ID-devpost-7000</p>
+          <p class="label">Trace <span class="mono">d1fa1ed78810601ea4f2d6de5dfacec5</span> · run fail-fx_quote-r1 · ID-devpost-7000</p>
           <span class="st-label">trace status: error · 2 errored spans · plan completed</span>
         </div>
         <ol class="steps-list">
-          <li class="err-row"><span class="nm">fx_quote</span><span class="st err">Error</span><span class="what">ToolFailure: fx_quote unavailable</span></li>
-          <li class="err-row"><span class="nm">fx_quote · retry</span><span class="st err">Error</span><span class="what">the same failure on the one retry</span></li>
-          <li><span class="nm">fx_quote_fallback</span><span class="st stale">Stale</span><span class="what">the last ECB rate this machine fetched: 1 USD = 17881 IDR, as of 2026-10-09</span></li>
-          <li><span class="nm">fee_calc</span><span class="st ok">Success</span><span class="what">the upper bound in IDR from the stale rate, labelled as such</span></li>
-          <li><span class="nm">LLM + provenance_guardrail</span><span class="st ok">Passed</span><span class="what">explanation written from the card; no new figures</span></li>
+          <li class="err-row s-err"><span class="nm">fx_quote</span><span class="st err">Error</span><span class="what">ToolFailure: fx_quote unavailable</span></li>
+          <li class="err-row s-err"><span class="nm">fx_quote · retry</span><span class="st err">Error</span><span class="what">the same failure on the one retry</span></li>
+          <li class="s-stale"><span class="nm">fx_quote_fallback</span><span class="st stale">Stale</span><span class="what">the last ECB rate this machine fetched: 1 USD = 17881 IDR, as of 2026-10-09</span></li>
+          <li class="s-ok"><span class="nm">fee_calc</span><span class="st ok">Success</span><span class="what">the upper bound in IDR from the stale rate, labelled as such</span></li>
+          <li class="s-ok"><span class="nm">LLM + provenance_guardrail</span><span class="st ok">Passed</span><span class="what">explanation written from the card; no new figures</span></li>
         </ol>
         <p class="card-line">FX: 1 USD = 17881 IDR (ECB reference rate, as of 2026-10-09) — STALE: live rate unavailable, last fetched ECB rate</p>
       </div>
       <div>
         <div class="tally">
-          <div class="slip t"><span class="fig2">48 / 48</span><p>plans completed with the FX tool failing on every call (U 0 · P 0)</p></div>
+          <div class="slip t"><span class="fig2">48 / 48</span><p>plans completed with the FX tool failing on every call (U 0 · P 0) · latest run, fail-fx_quote-r9</p></div>
           <div class="slip t"><span class="fig2">24</span><p>plans took the stale-rate fallback — every USD payer; USDC plans never call it</p></div>
           <div class="slip t"><span class="fig2">350 / 350</span><p>figures still traced to a tool output</p></div>
         </div>
@@ -874,16 +884,16 @@ section { position: relative; }
             so “what lands” is an upper bound, stamped.</p>
           <span class="chip">data/rules_sheet.csv</span>
         </div>
-        <div class="rules-rows" role="list" aria-label="Three rows of the rules sheet">
-          <div class="rr" role="listitem"><p class="rr-key"><span>ID · payoneer</span><b class="ok">deliverable = YES</b></p>
+        <div class="rules-rows"><ul class="rr-list" aria-label="Three rows of the rules sheet">
+          <li class="rr"><p class="rr-key"><span>ID · payoneer</span><b class="ok">deliverable = YES</b></p>
             <p class="rr-q" lang="id">“Setelah menerima pembayaran, Anda dapat menarik dana tersebut ke rekening bank lokal milik Anda.”</p>
-            <p class="rr-src">PAYO-ID · payoneer.com/id · read 2026-10-10</p></div>
-          <div class="rr" role="listitem"><p class="rr-key"><span>ID · wise</span><b class="no">deliverable = NO</b></p>
+            <p class="rr-src">PAYO-ID · payoneer.com/id · read 2026-10-10</p></li>
+          <li class="rr"><p class="rr-key"><span>ID · wise</span><b class="no">deliverable = NO</b></p>
             <p class="rr-q">“…can no longer hold money or currencies in their account.”</p>
-            <p class="rr-src">WISE-ID · wise.com/help · read 2026-10-10</p></div>
-          <div class="rr" role="listitem"><p class="rr-key"><span>* · payoneer</span><b class="un">receiving_fee_usd = UNCLEAR</b></p>
+            <p class="rr-src">WISE-ID · wise.com/help · read 2026-10-10</p></li>
+          <li class="rr"><p class="rr-key"><span>* · payoneer</span><b class="un">receiving_fee_usd = UNCLEAR</b></p>
             <p class="rr-q">“From marketplaces and integrated platforms — Varies by marketplace”</p>
-            <p class="rr-src">PAYO-PRICING · payoneer.com/pricing · read 2026-10-10</p></div>
+            <p class="rr-src">PAYO-PRICING · payoneer.com/pricing · read 2026-10-10</p></li></ul>
           <a class="rr-all" href="https://app.cair.edycu.dev/rules" rel="noopener">Open all 45 rows <span aria-hidden="true">→</span></a>
         </div>
       </article>
@@ -927,7 +937,7 @@ section { position: relative; }
             receipt reconciler read traces over MCP; confirm and EVALUATOR spans are written server-side, so the write key never reaches the browser.</li>
         </ul>
         <a class="shot" href="https://app.cair.edycu.dev/verify" rel="noopener" aria-label="Open /verify on the live app">
-          <img src="assets/shots/verify-top.webp" width="1600" height="911" loading="lazy" decoding="async" alt="Cair — /verify: the last plans read back from neatlogs over MCP, redacted, with each guardrail verdict">
+          <img src="assets/shots/verify-top.webp" srcset="assets/shots/verify-top-1120.webp 1120w, assets/shots/verify-top.webp 1600w" sizes="(max-width: 1100px) 92vw, 680px" width="1600" height="911" loading="lazy" decoding="async" alt="Cair — /verify: the last plans read back from neatlogs over MCP, redacted, with each guardrail verdict">
         </a>
         <div class="links"><a href="https://github.com/edycutjong/cair/blob/main/evidence/rca-01.md">rca-01.md</a><a href="https://github.com/edycutjong/cair/tree/main/evidence/traces">evidence/traces/</a><a href="https://github.com/edycutjong/cair/blob/main/docs/DX-REPORT.md">DX-REPORT.md</a></div>
       </article>
@@ -942,8 +952,8 @@ section { position: relative; }
       </article>
       <article class="slip inst">
         <div class="inst-head"><h3>cfo.ai</h3><span class="pending">Model pending</span></div>
-        <p>The business plan starts from measured numbers: <b>$0.0033</b> of LLM per plan, <b>p50 5.50 s · p95 10.31 s</b>, hosting
-          <b>$15.26 / month</b>. At an assumed $4 a month, 4 Pro subscribers break even.</p>
+        <p>The business plan starts from our own numbers: <b>$0.0033</b> of LLM per plan (bench tokens at list price), <b>p50 5.50 s ·
+          p95 10.31 s</b> (bench), hosting <b>$15.26 / month</b> (t3.small list price). At an assumed $4 a month, 4 Pro subscribers break even.</p>
         <p class="small">The cfo.ai model built from these inputs is not entered yet — nothing here was produced by cfo.ai.</p>
         <div class="links"><a href="https://github.com/edycutjong/cair/blob/main/docs/BUSINESS-PLAN.md">BUSINESS-PLAN.md</a><a href="https://github.com/edycutjong/cair/blob/main/evidence/bench-20261010T085809Z.json">bench (p50 / p95)</a></div>
       </article>
@@ -1006,14 +1016,14 @@ section { position: relative; }
       </details>
       <details>
         <summary><span class="qn">Q. 5</span><span>Which countries does it cover?</span><span class="pm" aria-hidden="true"></span></summary>
-        <div class="ans"><p>Indonesia, India and the Philippines are fully sourced. Vietnam and Nigeria have treaty rows only. Anything else is
-          UNCLEAR by design.</p></div>
+        <div class="ans"><p>Indonesia, India and the Philippines are fully sourced. Vietnam and Nigeria have treaty rows only (plus a Wise UNCLEAR
+          row for Nigeria). Anything else is UNCLEAR by design.</p></div>
       </details>
       <details>
         <summary><span class="qn">Q. 6</span><span>How do I check the traces myself?</span><span class="pm" aria-hidden="true"></span></summary>
         <div class="ans"><p><a href="https://app.cair.edycu.dev/verify" rel="noopener">/verify</a> reads the last plans back from neatlogs over MCP, redacted.
           Every run in <a href="https://github.com/edycutjong/cair/tree/main/evidence"><code>evidence/</code></a> carries each scenario's trace id, and
-          <a href="https://github.com/edycutjong/cair/blob/main/DEMO.md">DEMO.md</a> has the commands to reproduce every number.</p></div>
+          <a href="https://github.com/edycutjong/cair/blob/main/DEMO.md">DEMO.md</a> has the commands to reproduce the eval, ablation, forced-failure and latency numbers.</p></div>
       </details>
       <details>
         <summary><span class="qn">Q. 7</span><span>Is this tax advice?</span><span class="pm" aria-hidden="true"></span></summary>
@@ -1029,8 +1039,8 @@ section { position: relative; }
       <div>
         <p class="label kicker">Counterfoil · keep this part</p>
         <h2 class="h2" id="tr">Open it beside the payout form. Copy one line at a time.</h2>
-        <p class="lede">No account, no key. Each line waits for your confirm before you copy it, and the confirm is written into the
-          same neatlogs session as the plan.</p>
+        <p class="lede">No account, no key. The route and <span class="nw">W-8BEN</span> line 10 each have a Confirm button, and each confirm is
+          written into the same neatlogs session as the plan.</p>
         <div class="ctas">
           <a class="btn btn-blue" href="https://app.cair.edycu.dev" rel="noopener">Plan my payout <span class="arr" aria-hidden="true">→</span></a>
           <a class="btn btn-line" href="https://app.cair.edycu.dev/judge" rel="noopener">For judges</a>
@@ -1038,7 +1048,7 @@ section { position: relative; }
         </div>
       </div>
       <figure style="margin:0">
-        <div class="phone"><img src="assets/shots/plan-phone.webp" width="720" height="1558" loading="lazy" decoding="async"
+        <div class="phone"><img src="assets/shots/plan-phone.webp" srcset="assets/shots/plan-phone-360.webp 360w, assets/shots/plan-phone.webp 720w" sizes="288px" width="720" height="1558" loading="lazy" decoding="async"
           alt="Cair — the same plan on a phone: Payoneer delivers, Wise refused with Wise's own sentence"></div>
         <figcaption class="phone-cap">The same plan at phone width — the use scene is a winner with the claim form open in the next tab.</figcaption>
       </figure>
