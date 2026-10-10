@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}For judges — Cair{% endblock %}
+{% block main %}
+<section class="intro">
+  <p class="eyebrow">For judges · no login · one page</p>
+  <h1>Cair, in the order you'd check it.</h1>
+</section>
+<article class="slip judge">{{ body|safe }}</article>
+{% endblock %}

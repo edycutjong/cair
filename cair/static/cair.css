@@ -170,3 +170,12 @@ sup a { display: inline-block; min-width: 18px; text-align: center; }
   .rail .confirm, .line10 .confirm { width: 100%; margin: 8px 0 0; }
   .masthead nav a { padding: 12px 4px; }
 }
+
+/* /judge: rendered from JUDGE.md */
+.judge { max-width: 860px; }
+.judge h2 { font: 400 clamp(24px, 3.4vw, 30px)/1.15 var(--font-display); margin: 1.6em 0 .5em; }
+.judge h2:first-child { margin-top: 0; }
+.judge table { width: 100%; border-collapse: collapse; margin: 1em 0; font-size: 16px; display: block; overflow-x: auto; }
+.judge th, .judge td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.judge th { font-weight: 700; color: var(--muted); }
+.judge code { font-family: var(--font-data); font-size: 14px; }
