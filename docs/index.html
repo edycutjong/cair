@@ -723,12 +723,12 @@ section { position: relative; }
           <li><span class="kind d2">TOOL</span><span class="nm">platform_rails</span><span class="ms">0.2 ms</span><span class="out">devpost offers payoneer, paypal, wise · <span class="nw">W-8BEN</span> applies · DP114</span></li>
           <li><span class="kind d2">TOOL</span><span class="nm">rail_eligibility ×2</span><span class="ms">0.3 ms</span><span class="out">payoneer <span class="ok">YES</span> PAYO-ID · wise <span class="no">NO</span> WISE-ID</span></li>
           <li><span class="kind d2">RETRIEVER</span><span class="nm">treaty_lookup</span><span class="ms">2.8 ms</span><span class="out">treaty text searched → line 10 blank, no Other Income article · TRTY-ID</span></li>
-          <li><span class="kind d2">TOOL</span><span class="nm">fx_quote</span><span class="ms">314.0 ms</span><span class="out">1 USD = 17881 IDR · ECB reference rate · as of 2026-10-09</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">fx_quote</span><span class="ms">314.0 ms</span><span class="out">1 USD = 17881 IDR · ECB reference rate · as of <span class="nw">2026-10-09</span></span></li>
           <li><span class="kind d2">TOOL</span><span class="nm">fee_calc</span><span class="ms">0.3 ms</span><span class="out">withheld 2100.00 · at most 4900.00 · at most IDR 87616900</span></li>
           <li><span class="kind d2">LLM</span><span class="nm">qwen3.8-max</span><span class="ms">5,791 ms</span><span class="out">words the card from the tool outputs</span></li>
           <li><span class="kind d2">GUARDRAIL</span><span class="nm">provenance_guardrail</span><span class="ms">11.6 ms</span><span class="out"><span class="ok">PASSED</span> · 7 figures, all in tool outputs<span class="cursor" aria-hidden="true"></span></span></li>
         </ol>
-        <div class="rb-foot"><span>10 spans · status success · exported 2026-10-10 11:21 UTC</span><a href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json"><code>evidence/traces/live-plan-ee3w412a.json</code></a></div>
+        <div class="rb-foot"><span>10 spans · status success · exported <span class="nw">2026-10-10 11:21 UTC</span></span><a href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json"><code>evidence/traces/live-plan-ee3w412a.json</code></a></div>
       </div>
     </div>
     <div class="try">
@@ -807,17 +807,17 @@ section { position: relative; }
     <div class="recovery-grid">
       <div class="slip returned" id="returned">
         <div class="returned-head">
-          <p class="label">Trace <span class="mono">d1fa1ed78810601ea4f2d6de5dfacec5</span> · run fail-fx_quote-r1 · ID-devpost-7000</p>
+          <p class="label">Trace <span class="mono">d1fa1ed78810601ea4f2d6de5dfacec5</span> · run <span class="mono nw">fail-fx_quote-r1</span> · <span class="mono nw">ID-devpost-7000</span></p>
           <span class="st-label">trace status: error · 2 errored spans · plan completed</span>
         </div>
         <ol class="steps-list">
           <li class="err-row s-err"><span class="nm">fx_quote</span><span class="st err">Error</span><span class="what">ToolFailure: fx_quote unavailable</span></li>
           <li class="err-row s-err"><span class="nm">fx_quote · retry</span><span class="st err">Error</span><span class="what">the same failure on the one retry</span></li>
-          <li class="s-stale"><span class="nm">fx_quote_fallback</span><span class="st stale">Stale</span><span class="what">the last ECB rate this machine fetched: 1 USD = 17881 IDR, as of 2026-10-09</span></li>
+          <li class="s-stale"><span class="nm">fx_quote_fallback</span><span class="st stale">Stale</span><span class="what">the last ECB rate this machine fetched: 1 USD = 17881 IDR, as of <span class="nw">2026-10-09</span></span></li>
           <li class="s-ok"><span class="nm">fee_calc</span><span class="st ok">Success</span><span class="what">the upper bound in IDR from the stale rate, labelled as such</span></li>
           <li class="s-ok"><span class="nm">LLM + provenance_guardrail</span><span class="st ok">Passed</span><span class="what">explanation written from the card; no new figures</span></li>
         </ol>
-        <p class="card-line">FX: 1 USD = 17881 IDR (ECB reference rate, as of 2026-10-09) — STALE: live rate unavailable, last fetched ECB rate</p>
+        <p class="card-line">FX: 1 USD = 17881 IDR (ECB reference rate, as of <span class="nw">2026-10-09</span>) — STALE: live rate unavailable, last fetched ECB rate</p>
       </div>
       <div>
         <div class="tally">
@@ -887,13 +887,13 @@ section { position: relative; }
         <div class="rules-rows"><ul class="rr-list" aria-label="Three rows of the rules sheet">
           <li class="rr"><p class="rr-key"><span>ID · payoneer</span><b class="ok">deliverable = YES</b></p>
             <p class="rr-q" lang="id">“Setelah menerima pembayaran, Anda dapat menarik dana tersebut ke rekening bank lokal milik Anda.”</p>
-            <p class="rr-src">PAYO-ID · payoneer.com/id · read 2026-10-10</p></li>
+            <p class="rr-src">PAYO-ID · payoneer.com/id · read <span class="nw">2026-10-10</span></p></li>
           <li class="rr"><p class="rr-key"><span>ID · wise</span><b class="no">deliverable = NO</b></p>
             <p class="rr-q">“…can no longer hold money or currencies in their account.”</p>
-            <p class="rr-src">WISE-ID · wise.com/help · read 2026-10-10</p></li>
+            <p class="rr-src">WISE-ID · wise.com/help · read <span class="nw">2026-10-10</span></p></li>
           <li class="rr"><p class="rr-key"><span>* · payoneer</span><b class="un">receiving_fee_usd = UNCLEAR</b></p>
             <p class="rr-q">“From marketplaces and integrated platforms — Varies by marketplace”</p>
-            <p class="rr-src">PAYO-PRICING · payoneer.com/pricing · read 2026-10-10</p></li></ul>
+            <p class="rr-src">PAYO-PRICING · payoneer.com/pricing · read <span class="nw">2026-10-10</span></p></li></ul>
           <a class="rr-all" href="https://app.cair.edycu.dev/rules" rel="noopener">Open all 45 rows <span aria-hidden="true">→</span></a>
         </div>
       </article>
@@ -911,7 +911,7 @@ section { position: relative; }
             <div><p class="label">Landed</p><p class="rf">$4,897.00</p><p class="vtext">in Payoneer</p></div>
             <div><p class="label">Verdict</p><p class="rf blue"><span class="stamp landed">Landed</span></p><p class="vtext">within sourced bound</p></div>
           </div>
-          <p class="receipt-note">Landed 2026-09-23 · $3.00 not explained by the sourced rules · partial replay, because the fee is UNCLEAR · EVALUATOR trace <span class="mono">f5a47b9c…</span> · builder-reported, n = 1</p>
+          <p class="receipt-note">Landed <span class="nw">2026-09-23</span> · $3.00 not explained by the sourced rules · partial replay, because the fee is UNCLEAR · EVALUATOR trace <span class="mono">f5a47b9c…</span> · builder-reported, n = 1</p>
         </div>
       </article>
     </div>
@@ -1123,10 +1123,17 @@ section { position: relative; }
   if (!motion) return;
 
   if (!('IntersectionObserver' in window)) return;
-  function onSeen(el, fn, threshold) {
+  /* Fires once the element is `threshold` visible. Never use 1: a rotated or subpixel-placed element can sit at
+     0.9999 forever. If it scrolls back out before reaching the threshold, `done` puts it in its final state. */
+  function onSeen(el, fn, threshold, done) {
+    var t = threshold || 0.35, touched = false;
     var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); fn(); } });
-    }, { threshold: threshold || 0.35 });
+      es.forEach(function (e) {
+        if (e.intersectionRatio >= t - 0.01) { io.disconnect(); fn(); }
+        else if (e.isIntersecting) touched = true;
+        else if (touched && done) { io.disconnect(); done(); }
+      });
+    }, { threshold: [0, t] });
     io.observe(el);
   }
 
@@ -1136,7 +1143,8 @@ section { position: relative; }
   if (slip) {
     slip.classList.add('armed');
     [].slice.call(slip.querySelectorAll('.strike, .stamp')).forEach(function (el) {
-      onSeen(el, function () { el.classList.add('play'); }, 1);
+      function play() { el.classList.add('play'); }
+      onSeen(el, play, 0.6, play);
     });
     var amt = document.getElementById('hero-amount');
     function money(v) { return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
@@ -1152,7 +1160,7 @@ section { position: relative; }
             if (p < 1) requestAnimationFrame(step); else amt.textContent = money(to);
           });
         }, 120);
-      }, 1);
+      }, 0.6, function () { amt.textContent = money(4900); });
     }
   }
 

@@ -83,6 +83,7 @@ body { background: var(--ink); color: var(--ink); font-family: var(--font-body);
 h1, h2 { font-family: var(--font-display); font-weight: 400; letter-spacing: -.016em; margin: 0; }
 h2 { font-size: 88px; line-height: 1.02; margin-top: 22px; max-width: 1400px; }
 .mono { font-family: var(--font-data); }
+.label .mono.id { text-transform: none; letter-spacing: .02em; font-weight: 500; }
 .red { color: var(--before); } .blue { color: var(--after); } .ochre { color: var(--unclear); }
 .center { margin-block: auto; }
 .foot { position: absolute; left: 120px; right: 120px; bottom: 44px; display: flex; justify-content: space-between; align-items: center;
@@ -460,7 +461,7 @@ body.ov .overview { display: block; }
 
 <!-- 8 · Failure -->
 <section class="slide s-fail" aria-label="Slide 8 of 11: a run where an action failed">
-  <p class="label kicker">Trace d1fa1ed7… · run r1</p>
+  <p class="label kicker"><span>Trace <span class="mono id">d1fa1ed7…</span> · run <span class="mono id">fail-fx_quote-r1</span></span></p>
   <h2>The rate API fails. The plan finishes.</h2>
   <div class="grid center">
     <ol class="slip steps">
