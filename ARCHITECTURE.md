@@ -85,7 +85,11 @@ end_user_metadata={"origin": …})`. Confirms and receipt checks are separate tr
    or the tag is missing.
 6. **Public read-back is redacted** — `/verify` never shows span inputs or outputs or raw amounts: per plan it shows
    span names, kinds, status and durations read back over MCP, the guardrail verdict, the trace id, payer type,
-   country, an amount band and a hashed-user prefix (`test_verify_has_no_raw_amounts`).
+   country, an amount band and a hashed-user prefix (`test_verify_has_no_raw_amounts`); `tests/test_boundary.py`
+   adds that no public route returns a key or token.
+
+Invariants 1–4 are also checked exhaustively: `tests/test_exhaustive.py` runs every payer × country × option set ×
+amount band (2,448 scenarios) through the real planner and asserts them on each resulting card.
 
 ## Hosting
 

@@ -12,6 +12,7 @@
 
   [![Live App](https://img.shields.io/badge/🚀_Live-App-06b6d4?style=for-the-badge)](https://app.cair.edycu.dev)
   [![Read the Traces](https://img.shields.io/badge/🔍_Verify-Traces-f59e0b?style=for-the-badge)](https://app.cair.edycu.dev/verify)
+  [![For Judges](https://img.shields.io/badge/📌_Judge-Page-0f766e?style=for-the-badge)](https://app.cair.edycu.dev/judge)
   [![Rules Sheet](https://img.shields.io/badge/📋_Rules-Sheet-ef4444?style=for-the-badge)](https://app.cair.edycu.dev/rules)
   [![Built for neatHack](https://img.shields.io/badge/neatHack-Oct_10--12_2026-8b5cf6?style=for-the-badge)](https://luma.com/s5blr882)
 
@@ -22,10 +23,12 @@
   ![neatlogs](https://img.shields.io/badge/neatlogs-traces-black?style=flat)
   ![Entire](https://img.shields.io/badge/Entire-code_graph-black?style=flat)
   ![Qwen Cloud](https://img.shields.io/badge/Qwen_Cloud-615CED?style=flat)
-  ![Tests](https://img.shields.io/badge/tests-76_passing-brightgreen?style=flat)
+  ![Tests](https://img.shields.io/badge/tests-90_passing-brightgreen?style=flat)
+  [![CI](https://github.com/edycutjong/cair/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/cair/actions/workflows/ci.yml)
+  [![CodeQL](https://github.com/edycutjong/cair/actions/workflows/codeql.yml/badge.svg)](https://github.com/edycutjong/cair/actions/workflows/codeql.yml)
   [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
 
-  <p><a href="DEMO.md">Demo &amp; reproduce</a> · <a href="ARCHITECTURE.md">Architecture</a> · <a href="docs/METRICS.md">Metrics</a> · <a href="docs/BUSINESS-PLAN.md">Business plan</a></p>
+  <p><a href="JUDGE.md">For judges</a> · <a href="DEMO.md">Demo &amp; reproduce</a> · <a href="ARCHITECTURE.md">Architecture</a> · <a href="docs/METRICS.md">Metrics</a> · <a href="docs/BUSINESS-PLAN.md">Business plan</a></p>
 
 </div>
 
@@ -185,14 +188,39 @@ Python 3.12. To run the app or the eval against Qwen Cloud, set the variables li
 
 ```bash
 python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m pytest -q        # 76 tests
+.venv/bin/python -m pytest -q        # 90 tests
 ```
 
 Full reproduce steps (eval, ablation, forced failure, bench) and things to try on the live site: [DEMO.md](DEMO.md).
 
+## 🧪 Testing & CI
+
+```bash
+make install        # .venv + dev dependencies + Playwright's Chromium
+make ci             # ruff · mypy · pytest with coverage · pip-audit · gitleaks
+make e2e            # Playwright: boots the app with no keys, drives it in a browser
+```
+
+The tests below run with no keys and no network. That is a statement about the **tests**, not the product: the product
+runs on the real model, the real ECB rate and the real neatlogs project, and every number in this README comes from
+such a run ([DEMO.md](DEMO.md) §3).
+
+| Layer | What runs | Result |
+|---|---|---|
+| Unit + invariants | `pytest` — 90 tests; regressions are named for the defect they pin (`test_amount_in_2000s_is_not_masked_as_a_year`, `test_idr_receipt_in_the_tens_of_millions_is_accepted`) | 90 passing, 89% line+branch coverage |
+| Exhaustive check | every payer × country × option set × amount band (**2,448 scenarios**) through the real planner: no refused or unclear route is recommended, no article on line 10 without a W-8BEN and a source, no landed amount above the gross, and the fallback template passes its own provenance guardrail | 0 violations (`tests/test_exhaustive.py`; deliberately breaking the route rule makes 2,256 of them fail) |
+| Permission boundary | no public route returns a key or token; the public plan API carries no raw tool errors; the builder-only origin cannot be forged (`tests/test_boundary.py`) | passing |
+| Browser E2E | Playwright (Chromium): the hero plan, an unlisted country, a bad amount, `/judge` with no session, no horizontal overflow at 375 / 768 / 1440 px | 23 passing |
+| Lighthouse (local, desktop) | `/`, `/judge`, `/rules` | accessibility 100, best practices 100, SEO 100, performance 91–100 |
+| Security | CodeQL (python) · gitleaks over full history · pip-audit · Dependabot (pip + actions) · secret scanning with push protection | 0 findings at the last run |
+
+The pipeline ([`ci.yml`](.github/workflows/ci.yml)) runs quality and dependency audit in parallel, then a boot-and-smoke
+build, then E2E and Lighthouse (advisory), with a deploy gate on `main`. A judge-facing summary with the receipts:
+[JUDGE.md](JUDGE.md), served at [/judge](https://app.cair.edycu.dev/judge).
+
 ## 📽️ Demo Materials
 
-- Live app: [app.cair.edycu.dev](https://app.cair.edycu.dev) · traces read back: [/verify](https://app.cair.edycu.dev/verify) · rules sheet: [/rules](https://app.cair.edycu.dev/rules)
+- Judges: [/judge](https://app.cair.edycu.dev/judge) · live app: [app.cair.edycu.dev](https://app.cair.edycu.dev) · traces read back: [/verify](https://app.cair.edycu.dev/verify) · rules sheet: [/rules](https://app.cair.edycu.dev/rules)
 - Reproduce every number: [DEMO.md](DEMO.md) · business plan: [docs/BUSINESS-PLAN.md](docs/BUSINESS-PLAN.md)
 
 ## 📄 License
