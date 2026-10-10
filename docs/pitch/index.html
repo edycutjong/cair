@@ -283,6 +283,17 @@ body.ov .overview { display: block; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .readback li.typing { opacity: 1; } }
 
+/* ---------- full-bleed: on screen the letterbox around the 16:9 stage takes the active slide's background ---------- */
+@media screen {
+  .viewport { background-color: var(--bg); transition: background-color .35s var(--ease);
+    background-image:
+      repeating-radial-gradient(circle at 10% -20%, transparent 0 30px, rgba(185, 203, 191, .30) 30px 31.5px),
+      repeating-radial-gradient(circle at 96% 120%, transparent 0 34px, rgba(185, 203, 191, .22) 34px 35.5px); }
+  body.on-dark .viewport { background-color: var(--ink); background-image: none; }
+  .viewport .slide:not(.dark) { background: transparent; }
+  .viewport .slide { overflow: visible; }  /* decorations run on into the letterbox instead of being cut at the 16:9 edge */
+}
+
 /* ---------- print: one slide per page ---------- */
 @page { size: 16in 9in landscape; margin: 0; }
 @media print {
@@ -575,6 +586,7 @@ body.ov .overview { display: block; }
     slides[cur].classList.remove('active');
     cur = n;
     slides[cur].classList.add('active');
+    document.body.classList.toggle('on-dark', slides[cur].classList.contains('dark'));
     counter.textContent = 'Slide ' + (cur + 1) + ' of ' + total;
     var notes = slides[cur].querySelector('.speaker-notes');
     notesText.textContent = notes ? notes.textContent.replace(/\s+/g, ' ').trim() : '';
