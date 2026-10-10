@@ -140,7 +140,7 @@ def test_short():
     assert view._short("no-scheme.io/x") == "no-scheme.io/x"
     long = "https://example.com/" + "a" * 100
     out = view._short(long)
-    assert len(out) == 58 and out.endswith("…") and out.startswith("example.com/")
+    assert len(out) == 58 and out.endswith("…") and out.split("/")[0] == "example.com"
     exactly = "x" * 60
     assert view._short("https://" + exactly) == exactly
 

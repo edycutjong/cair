@@ -56,7 +56,7 @@ EXTRA_RAILS = {"skrill": "Skrill", "western_union": "Western Union", "swift": "S
                "gopay": "GoPay", "ovo": "OVO", "dana": "DANA", "gcash": "GCash", "upi": "UPI"}  # payout names Cair has no rows for: always unchecked
 # Words that are rail names only when capitalised ("it would be wise to…", "a base of…").
 CASE_SENSITIVE = {"Wise", "Base", "Arc"}
-ABBREV_SPLIT = re.compile(r"(?<!\bArt)(?<!\bart)(?<!\bNo)(?<!\bRp)(?<!\be\.g)(?<!\bi\.e)(?<!\bvs)(?<=[.!?])\s+|\n+")
+ABBREV_SPLIT = re.compile(r"(?<!\bArt\.)(?<!\bart\.)(?<!\bArts\.)(?<!\barts\.)(?<!\bNo)(?<!\bRp)(?<!\be\.g)(?<!\bi\.e)(?<!\bvs)(?<=[.!?])\s+|\n+")
 
 
 def rail_names(rail: str) -> list[str]:

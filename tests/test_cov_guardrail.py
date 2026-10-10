@@ -56,6 +56,10 @@ def test_neighbouring_article_numbers_are_allowed_when_a_sourced_article_exists(
     assert ok["unsourced"] == ["16", "17"]  # only the sourced article number is accepted in "articles" context
     ok2 = guardrail.check("See article 15 and also 15 here.", out, card())
     assert ok2["unsourced"] == []
+    # a2a r01: "Art." stays inside its sentence, so an abbreviated list reads like the spelled-out one
+    abbr = [{"article": 15}, {"article": 16}, {"article": 17}]
+    assert guardrail.check("Check the nearest Art. 15, 16 and 17.", abbr, card())["unsourced"] == []
+    assert "16" in guardrail.check("Check the nearest Art. 15, 16 and 17.", out, card())["unsourced"]
 
 
 def test_bare_number_in_article_context_matches_sourced_article():

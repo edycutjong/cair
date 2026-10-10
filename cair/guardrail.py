@@ -28,7 +28,7 @@ TAXWORD = re.compile(r"withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak|tari
 MARGIN = re.compile(r"margin|conversion|konversi", re.I)
 RATE_CTX = re.compile(r"\brate\b|\bthe plan\b|rencana", re.I)  # "the plan says 30%"
 SHARE_CTX = re.compile(r"\b(?:of|dari)\b", re.I)  # "30% of $7,000.00" when the $7,000.00 is sourced
-ARTICLE_CTX = re.compile(r"\barticles?\b|\bpasal\b", re.I)
+ARTICLE_CTX = re.compile(r"\barticles?\b|\barts?\b|\bpasal\b", re.I)
 ARTICLE_CLAIM = re.compile(r"\bclaim\w*|treaty benefit|reduc\w*|lower\w*|exempt\w*|appl(?:y|ies)|berlaku|klaim|"
                            r"menurunkan|mengurangi|taxable only|lebih rendah|dibebaskan|dikecualikan|\bcuts?\b", re.I)
 ARTICLE_DESCRIBED = re.compile(r"nearest|terdekat|\bnone\b|no article|tidak ada|no other income|tidak memiliki|"
