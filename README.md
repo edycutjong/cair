@@ -171,7 +171,7 @@ The guardrail is also tested on its own, against sentences it was **not** tuned 
 **62 / 66** violations (94%) and **3 / 66** honest sentences (5%) (`evidence/guardrail-heldout-r4-20261010T084859Z.json`).
 The misses (numberless claims such as "not taxed at all") were then fixed, so that set is now in-sample, like the 53
 scripted cases in `scripts/guardrail_recall.py`. The guardrail is rule-based: expect new phrasings to slip through at
-about that rate (one known gap: a bare number with no currency or % sign that ends a sentence, such as "…is 4897.", is not extracted, found while checking an outside review), which is why the route, line 10 and every amount on the card are decided by code, not by the prose.
+about that rate (the same scripts re-run on `42cda1c`: the eval's U/P/K and the forced-failure 48/48 are unchanged; figures in the wording counted 270 and 282, since the model words the card differently each run: [`evidence/rerun-at-head-2026-10-11.md`](evidence/rerun-at-head-2026-10-11.md). One known gap: a bare number with no currency or % sign that ends a sentence, such as "…is 4897.", is not extracted, found while checking an outside review), which is why the route, line 10 and every amount on the card are decided by code, not by the prose.
 
 The same question as seen in neatlogs: v1 is three steps, one model call that holds every figure; v2 is ten, with a TOOL or RETRIEVER span behind each figure and a GUARDRAIL after the model.
 
