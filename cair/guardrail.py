@@ -22,6 +22,7 @@ BOUND = re.compile(r"at most|up to|maximum|\bbefore\b|sebelum|paling banyak|maks
 RECEIVE = re.compile(r"\b(receiv\w*|land\w*|arriv\w*|get|gets|got|deposit\w*|credit(?:ed|s)?|take home|keep|keeps|"
                      r"reach\w*|net|end(?:s)? up|you have|in your (?:account|bank|wallet|balance)|menerima|diterima|"
                      r"terima|masuk|sampai|mendapat\w*|dapat|bersih)\b", re.I)
+PURPOSE = re.compile(r"\b(?:to|in order to|untuk|agar bisa) (?:receive|menerima|terima)\b", re.I)  # "to receive X, use…"
 GROSS_OR_TAX = re.compile(r"\bgross\b|bruto|kotor|withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak", re.I)
 TAXWORD = re.compile(r"withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak|tarif|treaty rate", re.I)
 MARGIN = re.compile(r"margin|conversion|konversi", re.I)
@@ -74,6 +75,8 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
             ok = figures.is_sourced(f, pools)
             if ok and f["kind"] == "pct" and not (TAXWORD.search(sent) or MARGIN.search(sent) or RATE_CTX.search(sent)):
                 ok = False  # a sourced rate is a withholding or margin rate; "Payoneer charges 30%" is not sourced
+            if not ok and f["kind"] == "number" and len(f["raw"]) >= 6 and f["raw"] in known_text:
+                ok = True  # an id inside a source URL the tools returned (e.g. a help-article number)
             if (not ok and f["kind"] == "number" and ARTICLE_CTX.search(sent)
                     and Decimal(f["value"]) == Decimal(f["value"]).to_integral_value()
                     and int(f["value"]) in pools.arts):
@@ -93,7 +96,7 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
                 claim("unclear_rail", f"recommends {rail}, whose deliverability is UNCLEAR: {sent[:140]}")
         on_card = {r["rail"] for r in card["rails"]}
         for rail in [r for r in rules.RAILS if r not in on_card] + [f"usdc:{c}" for c in rules.CHAINS if f"usdc:{c}" not in on_card]:
-            if claims.endorses_unclear(sent, rail):  # a rail the plan never checked is UNCLEAR by definition
+            if claims.endorses_unclear(sent, rail, strong_only=True):  # a rail the plan never checked is UNCLEAR
                 claim("unclear_rail", f"recommends {rail}, which this plan did not check: {sent[:140]}")
         others = [r["rail"] for r in card["rails"] if r["rail"] not in refused and claims.mentions(sent, r["rail"])]
         if (not named_refused and not others and prev_named and claims.endorses(sent) and FOLLOW_UP.search(sent)
@@ -119,7 +122,8 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
         if claims.TAX_POSITION.search(sent) and not claims.refuses(sent) and not claims.UNCLEAR_WORD.search(sent):
             claim("withholding", f"tax position the tools did not produce (they say {wh_rate}): {sent[:140]}")
         # --- UNCLEAR is terminal: nothing may be presented as what lands -------------------------------------------
-        if landed_unclear and RECEIVE.search(sent) and not BOUND.search(sent) and not GROSS_OR_TAX.search(sent):
+        if (landed_unclear and RECEIVE.search(sent) and not BOUND.search(sent) and not GROSS_OR_TAX.search(sent)
+                and not PURPOSE.search(sent)):
             money = [f for f in figures.extract(sent) if f["kind"] in ("money", "number", "word")]
             if money:
                 claim("unclear_upgraded", f"{money[0]['raw']} stated as what lands while it is UNCLEAR: {sent[:140]}")

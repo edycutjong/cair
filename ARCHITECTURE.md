@@ -45,7 +45,7 @@ flowchart TD
 | `cair/rules.py` | Loads the rules sheet; refuses a fact cell filled twice or a fact with no source; most-specific row wins (`country,payer` > `country,*` > `*,payer` > `*,*`). |
 | `cair/calc.py` | The only money arithmetic. `Decimal`, banker's rounding. Three-state on W-8BEN (YES withholds, NO does not, UNCLEAR makes the landed amount UNCLEAR with an upper bound). Blank is never 0. |
 | `cair/treaty.py` | BM25 (`rank_bm25`) over the articles of each US treaty, extracted from the IRS PDFs by `scripts/extract_treaty.py`. |
-| `cair/fx.py` | ECB-only rates; every success is snapshotted so a later failure can fall back to a real, dated ECB rate. |
+| `cair/fx.py` | ECB-only rates (IDR, INR, PHP); every success is snapshotted so a later failure can fall back to a real, dated ECB rate — never one older than 7 days (older → UNCLEAR). |
 | `cair/guardrail.py` | Provenance check (`check`) and its GUARDRAIL span (`run`). Blocks: a figure not in a typed tool field (money from `fee_calc`/FX, rates from withholding/margin, articles from treaty fields — never from scores, ids or quoted page text); naming a REFUSED rail without saying it is refused (and "use it anyway" follow-ups); an article on line 10; a withholding rate the tools did not produce (also in words); an UNCLEAR upper bound stated as what lands; links, emails or wallet addresses no tool returned; over-long text. The verdict lists violation classes. `no_source` blocks deterministically when nothing in the sheet covers the request. Recall on scripted violations: `scripts/guardrail_recall.py`. |
 | `cair/figures.py` | What a figure is, the typed pools of sourced values, and when two match (equal at the precision shown). Shared by the guardrail and the scorer. |
 | `cair/reconcile.py` | Receipt check: MCP read-back of the plan's `fee_calc` span, full or partial comparison, EVALUATOR span over HTTP. |
@@ -59,7 +59,7 @@ flowchart TD
 WORKFLOW payout-plan                inputs: plan id, payer, country, amount, rails, exchange, origin, question
  └─ AGENT planner
      ├─ TOOL platform_rails
-     ├─ TOOL rail_eligibility        × each offered rail
+     ├─ TOOL rail_eligibility        × each offered rail (USD payers; USDC payers use exchange_networks)
      ├─ RETRIEVER treaty_lookup      neatlogs.retriever.query / .documents
      ├─ TOOL fx_quote                (USD payers in IDR/INR/PHP; ERROR ×2 → TOOL fx_quote_fallback in a recovery run)
      ├─ TOOL exchange_networks       (USDC payers)
@@ -71,7 +71,7 @@ WORKFLOW payout-plan                inputs: plan id, payer, country, amount, rai
 Session and end user are bound per request with `neatlogs.identify(session_id=…, end_user_id=<hashed cookie>,
 end_user_metadata={"origin": …})`. Confirms and receipt checks are separate traces in the same session.
 
-## Invariants (each has a test in `tests/`)
+## Invariants (1–4 and 6 have tests in `tests/`; 5 is enforced by `eval.py` and `make_frozen_set.py --check`)
 
 1. **Provenance** — every money amount, rate and treaty-article number in the explanation appears in a tool output of
    the same plan (`test_guardrail_blocks_unsourced_number`, `test_guardrail_allows_line_numbers`).
@@ -89,6 +89,6 @@ end_user_metadata={"origin": …})`. Confirms and receipt checks are separate tr
 
 ## Hosting
 
-AWS EC2 t3.small (us-east-1), Ubuntu 24.04, `uvicorn` behind Caddy (automatic HTTPS) at
+Per the deployment notes: AWS EC2 t3.small (us-east-1), Ubuntu 24.04, `uvicorn` behind Caddy (automatic HTTPS) at
 `https://app.cair.edycu.dev`, systemd unit, secrets in `/etc/cair/cair.env` (never in the repo). neatlogs is
 initialised once in the FastAPI lifespan and flushed once at shutdown.

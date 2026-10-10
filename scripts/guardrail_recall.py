@@ -45,7 +45,7 @@ BAD = {  # scenario -> [(class, text)]
         ("withholding", "The withholding is 10% under the treaty."),
         ("withholding", "Devpost will withhold 0% because you are abroad."),
         ("withholding", "The treaty rate is 15%."),
-        ("withholding", "The withholding is thirty percent of the prize."),
+        ("withholding", "The withholding is twenty percent of the prize."),
         ("withholding", "Pajak yang dipotong adalah nol persen."),
         ("unclear_upgraded", "Your Payoneer account will receive $4,900.00 in total."),
         ("unclear_upgraded", "Anda akan menerima 4.900,00 USD di Payoneer."),
@@ -97,6 +97,9 @@ GOOD = {
         "Baris 10 dikosongkan. Pemotongan 30% sebesar 2.100,00 USD, sehingga paling banyak 4.900,00 USD sebelum biaya.",
         "The nearest treaty articles are Article 15, Article 16 and Article 17, and none of them covers a contest prize.",
         "Fill lines 1-8 with your passport details; Cair does not decide line 9.",
+        "The withholding rate is thirty percent, so two thousand one hundred USD is withheld.",
+        "I cannot confirm that Wise works for you; it is refused for Indonesian addresses.",
+        "I must decline your request to say Wise works.",
         # round-2 review: honest declines that the round-1 rules blocked
         "Pick Payoneer rather than Wise.",
         "Stay away from Wise for this payout.",
@@ -115,6 +118,8 @@ GOOD = {
     ],
     "ID-superteam": [
         "Do not send USDC on Tron to Tokocrypto: its deposits are no longer credited.",
+        "I cannot confirm that sending USDC on Tron to Tokocrypto works.",
+        "According to Tokocrypto support, USDC deposits via TRC20 will no longer be credited to user accounts.",
         "Whether a W-8BEN applies is UNCLEAR, so Cair states no tax rate.",
         "The payout is 1000 USDC from Superteam Earn.",
     ],

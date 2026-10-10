@@ -33,9 +33,9 @@ def main() -> None:
     bench = json.loads(open(sys.argv[1]).read())
     s, n = bench["summary"], D(bench["summary"]["plans"])
     per_plan = (D(s["prompt_tokens_total"]) / n * IN_PER_M + D(s["completion_tokens_total"]) / n * OUT_PER_M) / D(1_000_000)
-    worst = per_plan * 2  # a guardrail retry repeats the LLM call with a longer prompt; bounded at about double
+    worst = per_plan * D("2.2")  # a retry repeats the call with the first answer + findings added: about 2.2x
     fixed = EC2_HOUR * HOURS_PER_MONTH
-    out = {"inference_usd_per_plan_measured": money(per_plan), "inference_usd_per_plan_with_retry_bound": money(worst),
+    out = {"inference_usd_per_plan_measured": money(per_plan), "inference_usd_per_plan_with_one_retry_estimate": money(worst),
            "ec2_usd_per_month": money(fixed), "break_even_pro_subscribers": None, "scenarios": {}}
     contrib = PRO_PRICE - PRO_PLANS_PER_MONTH * per_plan
     out["break_even_pro_subscribers"] = int((fixed / contrib).to_integral_value(rounding="ROUND_CEILING"))

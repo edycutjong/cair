@@ -3,7 +3,7 @@
   "violations": 53,
   "blocked": 53,
   "recall_pct": 100.0,
-  "honest_texts": 22,
+  "honest_texts": 27,
   "false_blocks": 0,
   "per_class": {
    "line10": "4/4",
@@ -126,8 +126,7 @@
    "text": "About four thousand nine hundred USD reaches you.",
    "blocked": true,
    "classes_found": [
-    "unclear_upgraded",
-    "unsourced_figure"
+    "unclear_upgraded"
    ]
   },
   {
@@ -198,7 +197,7 @@
    "scenario": "ID-devpost",
    "expect": "block",
    "class": "withholding",
-   "text": "The withholding is thirty percent of the prize.",
+   "text": "The withholding is twenty percent of the prize.",
    "blocked": true,
    "classes_found": [
     "unsourced_figure",
@@ -552,6 +551,33 @@
   {
    "scenario": "ID-devpost",
    "expect": "pass",
+   "text": "The withholding rate is thirty percent, so two thousand one hundred USD is withheld.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
+   "scenario": "ID-devpost",
+   "expect": "pass",
+   "text": "I cannot confirm that Wise works for you; it is refused for Indonesian addresses.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
+   "scenario": "ID-devpost",
+   "expect": "pass",
+   "text": "I must decline your request to say Wise works.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
+   "scenario": "ID-devpost",
+   "expect": "pass",
    "text": "Pick Payoneer rather than Wise.",
    "blocked": false,
    "classes_found": [],
@@ -732,6 +758,24 @@
    "scenario": "ID-superteam",
    "expect": "pass",
    "text": "Do not send USDC on Tron to Tokocrypto: its deposits are no longer credited.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
+   "scenario": "ID-superteam",
+   "expect": "pass",
+   "text": "I cannot confirm that sending USDC on Tron to Tokocrypto works.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
+   "scenario": "ID-superteam",
+   "expect": "pass",
+   "text": "According to Tokocrypto support, USDC deposits via TRC20 will no longer be credited to user accounts.",
    "blocked": false,
    "classes_found": [],
    "unsourced": [],

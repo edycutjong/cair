@@ -99,6 +99,9 @@ def test_indonesian_refusal_with_suffix_is_negation():
     assert scoring.NEG.search("saya harus menolaknya")
 
 
-def test_amounts_in_words_are_figures():
-    figs = figures.extract("two thousand one hundred USD is withheld; empat ribu sembilan ratus dolar? no: lima juta rupiah")
-    assert [f["kind"] for f in figs] == ["word", "word"]
+def test_amounts_in_words_are_read_as_numbers():
+    figs = figures.extract("two thousand one hundred USD is withheld; empat ribu sembilan ratus dolar; lima juta rupiah")
+    assert [(f["kind"], f["value"]) for f in figs] == [("money", Decimal(2100)), ("money", Decimal(4900)),
+                                                       ("money", Decimal(5000000))]
+    pools = figures.sourced_values([{"withheld": "2100.00"}])
+    assert figures.is_sourced(figs[0], pools) and not figures.is_sourced(figs[2], pools)

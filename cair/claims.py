@@ -12,10 +12,15 @@ from .rules import CHAINS, RAILS
 
 REC = re.compile(r"\b(recommend\w*|use|using|pick|choose|go with|works?|safe|best|select|try|fine|ok|okay|good option|"
                  r"pilih|gunakan|pakai|aman|disarankan|terbaik|coba|bisa dipakai)\b", re.I)
+STRONG_REC = re.compile(r"\b(recommend\w*|use|pick|choose|go with|best|select|try|pilih|gunakan|pakai|disarankan|"
+                        r"terbaik|coba)\b", re.I)
+ATTRIBUTED = re.compile(r"\b(states?|stated|says|according to|menurut|source|sumber|announc\w*|blog|page)\b", re.I)
 # Phrases that refuse a rail. Negated forms ("not refused", "isn't refused") are removed before matching.
 REFUSE = re.compile(
-    r"refus\w*|\bcan(?:not|'t| no longer) (?:receive|hold|be used|deliver\w*|accept\w*|work|get|use)|"
-    r"no longer (?:hold\w*|accept\w*|support\w*|credit\w*|work\w*|available|be used|deliver\w*|receiv\w*)|"
+    r"refus\w*|\bcan(?:not|'t| no longer) (?:receive|hold|be used|deliver\w*|accept\w*|work|get|use|confirm|say|tell|"
+    r"state|recommend|guarantee|place|put|write|add|include|advise)|declin\w*|\bmust not\b|"
+    r"no longer (?:be )?(?:hold\w*|accept\w*|support\w*|credit\w*|work\w*|available|used|deliver\w*|receiv\w*)|"
+    r"\btidak (?:bisa|dapat) (?:mengonfirmasi|menyatakan|menyarankan|merekomendasikan|menulis|mengatakan)|"
     r"\bnot (?:be )?(?:use|used|usable|available|recommended|possible|deliver\w*|an option|supported|accepted|credited)|"
     r"(?:don't|do not|never|won't|will not) (?:use|pick|choose|send|select|go with|deliver|work|arrive|be credited)|"
     r"(?:doesn't|does not|isn't|is not|aren't|are not) (?:work\w*|deliver\w*|available|an option|possible|supported|usable|"
@@ -80,7 +85,11 @@ def endorses_refused(sentence: str, rail: str) -> bool:
     return bool(CONCESSIVE.search(sentence) and endorses(sentence))
 
 
-def endorses_unclear(sentence: str, rail: str) -> bool:
-    """The sentence recommends a rail whose deliverability is UNCLEAR without saying so."""
-    return (mentions(sentence, rail) and endorses(sentence) and not refuses(sentence)
+def endorses_unclear(sentence: str, rail: str, strong_only: bool = False) -> bool:
+    """The sentence recommends a rail whose deliverability is UNCLEAR without saying so. For rails the plan never
+    checked, only a direct recommendation counts, and reporting what a source says does not."""
+    rec = STRONG_REC if strong_only else REC
+    if strong_only and ATTRIBUTED.search(sentence):
+        return False
+    return (mentions(sentence, rail) and bool(rec.search(sentence)) and not refuses(sentence)
             and not UNCLEAR_WORD.search(sentence))

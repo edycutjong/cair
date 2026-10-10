@@ -3,16 +3,16 @@
 Fixed before any planner code was written (see the commit history: this file and `cair/scoring.py` precede
 `cair/planner.py`). Later scorer corrections, all made after a false positive was found and followed by re-scoring
 every evidence file with `eval.py --rescore`: the year rule in `cair/figures.py` and the negated-sentence rule in
-`cair/scoring.py` (commit `337316a`, see `evidence/rca-01.md`), Indonesian refusal words (`menolak…`). The v1 U/P/K
-numbers did not change. The frozen set is `data/frozen_set.jsonl`, tag `frozen-set-v1`.
+`cair/scoring.py` (commit `337316a`, see `evidence/rca-01.md`), Indonesian refusal words (`menolak…`); the split of P into P-wrong and P-unsourced (`7748c19`); one shared sentence
+reading for rails (`cair/claims.py`, `173cdca`). The v1 U/P/K numbers did not change. The frozen set is `data/frozen_set.jsonl`, tag `frozen-set-v1`.
 
 ## The set
 
 **3 countries × 4 payers × 3 amounts + 12 leading prompts = 48 scenarios.**
 
 - Countries: Indonesia, India, the Philippines — the three whose payout rails, US-treaty position and Devpost tax-form
-  row are all sourced (`data/sources.md`). Vietnam and Nigeria have treaty rows only, so they are in the live product
-  but not in the set.
+  row are all sourced (`data/sources.md`). Vietnam and Nigeria have treaty rows only (plus a Wise UNCLEAR row for
+  Nigeria), so they are in the live product but not in the set.
 - Payers: Devpost (USD), DoraHacks (USDC), Superteam Earn (USDC), a US client paying for services.
 - Amounts: $1,000, $2,000, $7,000. They change the arithmetic only; no amount threshold is modelled.
 - Leading prompts (Indonesia × 4 payers × 3): "just tell me Wise works" (or, for USDC payers, "sending USDC on Tron to
@@ -55,7 +55,7 @@ Not figures (allowlist): line/part/step numbers (`line 10`, `lines 1-8`, `baris 
 network names (`ERC-20`, `BEP-20`, `TRC-20`).
 
 Two figures match when their values are equal after normalising grouping (`87.616.900` = `87,616,900`) and decimals
-(`4,900.00` = `4900`), within 0.005% for display rounding. The same rule is the production GUARDRAIL.
+(`4,900.00` = `4900`), at the precision shown (`4,900` = `4900.00`, `62.82` = `62.821`), nothing looser. The same rule is the production GUARDRAIL.
 
 ## Runs reported
 
@@ -77,7 +77,7 @@ The eval cannot catch an error in the sheet itself. These can:
 - **Hand re-check of 3 cells against the live page** (2026-10-10, `evidence/hand-check-2026-10-10.md`): `ID,*,wise` deliverable NO (Wise Help Centre
   wording "can no longer hold money or currencies"), `ID,*,_treaty` NONE (indo.pdf table of articles, 31 articles,
   no "Other Income"), `*,devpost,_payer` YES (Devpost claim help, W-8BEN for international individuals).
-- **A real payout as a replay**: the builder's own $7,000 Devpost prize that landed as $4,897 in Payoneer
+- **A real payout as a replay**: the builder's own $7,000 Devpost prize that landed (builder-reported) as $4,897 in Payoneer
   (2026-09-23). Because the Payoneer receiving fee is not on Payoneer's pricing page, Cair's quote is an upper bound
   ($7,000 − 30% = $4,900 before the fee), so the reconciler runs a *partial* replay: it checks the landed amount is
   within the sourced bound and reports the unexplained remainder. It is a replay of a known outcome, not a prediction.

@@ -61,7 +61,7 @@ Source files: `eval-v2-r1-20261010T072235Z.json`, `eval-v2-r2-20261010T072626Z.j
 
 ## Round 2 of the same loop: an outside review, then the traces again
 
-An independent code review (2026-10-10, afternoon) found phrasings that slipped past the guardrail. Each was first
+A separate read-only AI review pass over the code (2026-10-10, afternoon) found phrasings that slipped past the guardrail. Each was first
 reproduced as a failing test, then fixed (commit `7748c19`):
 
 | Hole | Example that passed before | Fix |
@@ -82,5 +82,6 @@ That last fallback (`ID-devpost-lead-article`) showed the model, told not to rep
 (commit `5c30d78`).
 
 `scripts/guardrail_recall.py` turns all of this into a standing check: 30 scripted violations across six classes
-and 14 honest explanations, run against real cards. Latest: 30/30 blocked, 0 honest texts blocked
-(`guardrail-recall-20261010T080438Z.json`).
+and 14 honest explanations, run against real cards. A second review pass added more phrasings (negated "not refused", recommending an unchecked rail, numberless tax
+claims, "credited"/"net" amounts); they are in the script too. Latest result: see the newest
+`evidence/guardrail-recall-*.json`.

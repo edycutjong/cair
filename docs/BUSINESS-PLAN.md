@@ -21,7 +21,7 @@ fees … or be delaying or forfeiting receipt of the prize".
 | Cost | Value | Source |
 |---|---|---|
 | LLM per plan | **$0.0025** (660 prompt + 197 completion tokens on average, 1 call) | `evidence/bench-20261010T073454Z.json` × qwen3.8-max International $2 / $6 per 1M tokens (Alibaba Cloud Model Studio pricing page, updated 2026-10-09) |
-| LLM per plan, worst case | **$0.0050** *(bound, not measured: assumes one guardrail retry; 0 of 48 bench plans and 3 of 48 v2-r2 plans retried)* | same, ×2 |
+| LLM per plan with one guardrail retry | **about $0.0056** *(estimate, not measured: the retry repeats the call with the first answer and the findings added, ≈2.2× tokens)* | same |
 | Hosting | **$15.26 / month** (t3.small on-demand, Linux, US East (N. Virginia), $0.0209/h × 730 h) | aws.amazon.com/ec2/instance-types/t3 |
 | Tracing | neatlogs free tier (MCP `whoami` reports `"tier": "free"`) | `evidence/mcp-whoami.json` |
 | FX rates, rules data | $0 (ECB via Frankfurter; primary pages read by hand) | — |
@@ -30,6 +30,9 @@ fees … or be delaying or forfeiting receipt of the prize".
 Latency (same bench): p50 **5.49 s**, p95 **6.83 s** per plan, live LLM and live ECB rate, one plan at a time.
 
 ## Revenue scenarios (monthly, assumptions labelled)
+
+Assumptions: Pro at $4/month, 4 plans per Pro subscriber per month, Payout Desk at $2 per winner. These are
+inputs to `scripts/unit_economics.py`, not measurements.
 
 From `python scripts/unit_economics.py evidence/bench-20261010T073454Z.json`:
 
@@ -42,8 +45,8 @@ From `python scripts/unit_economics.py evidence/bench-20261010T073454Z.json`:
 
 ## Runway
 
-- Cash raised: $0. The AWS allowance our team received for neatHack ($25, builder's record) pays for about 1.6 months
-  of the t3.small.
+- Cash raised: $0. The AWS credits our team received for neatHack ($25 by the builder's record; the event page gives
+  no amount) pay for about 1.6 months of the t3.small.
 - Monthly burn with no revenue at 1,000 free plans: **$17.76** ($15.26 hosting + 1,000 × $0.0025). After the allowance it is self-funded
   by the builder; the burn is small enough that runway is set by the builder's time, not cash.
 - The cost that would grow first is not inference (a plan costs a quarter of a cent) but the rules sheet: every new

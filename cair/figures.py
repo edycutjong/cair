@@ -34,13 +34,50 @@ PCT_RE = re.compile(rf"({_NUM})\s?(?:%|percent|per cent|pct|persen)", re.I)
 _WORDNUM = (r"(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|"
             r"sixty|seventy|eighty|ninety|hundred|thousand|million|satu|dua|tiga|empat|lima|enam|tujuh|delapan|"
             r"sembilan|sepuluh|seratus|seribu|ratus|ribu|juta|puluh|belas)")
-WORD_MONEY_RE = re.compile(rf"\b{_WORDNUM}(?:[\s-]+(?:and\s+)?{_WORDNUM})*\s+(?:US\s)?(?:dollars?|USD|USDC|rupiah|IDR|rupees?|INR|pesos?|PHP)\b",
+WORD_MONEY_RE = re.compile(rf"\b{_WORDNUM}(?:[\s-]+(?:and\s+)?{_WORDNUM})*\s+(?:US\s)?(?:dollars?|dolar(?: AS)?|USD|USDC|rupiah|IDR|rupees?|INR|pesos?|PHP)\b",
                            re.I)
 WORD_PCT_RE = re.compile(r"\b(?:zero|nol|one|two|three|four|five|ten|fifteen|twenty|thirty|forty|fifty|satu|dua|tiga|lima|"
                          r"sepuluh|lima belas|dua puluh|tiga puluh)(?:[- ](?:one|two|five|puluh|belas))?\s?"
                          r"(?:%|percent|per cent|persen)", re.I)
 ARTICLE_RE = re.compile(r"\b(?:article|art\.|pasal)\s*(\d{1,2})\b", re.I)
 BARE_RE = re.compile(rf"(?<![\w.])({_NUM})(?![\w.])")
+
+
+_UNITS = {"zero": 0, "nol": 0, "one": 1, "satu": 1, "se": 1, "two": 2, "dua": 2, "three": 3, "tiga": 3, "four": 4,
+          "empat": 4, "five": 5, "lima": 5, "six": 6, "enam": 6, "seven": 7, "tujuh": 7, "eight": 8, "delapan": 8,
+          "nine": 9, "sembilan": 9, "ten": 10, "sepuluh": 10, "eleven": 11, "sebelas": 11, "twelve": 12, "fifteen": 15,
+          "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60, "seventy": 70, "eighty": 80, "ninety": 90}
+_SCALES = {"hundred": 100, "ratus": 100, "seratus": 100, "thousand": 1000, "ribu": 1000, "seribu": 1000,
+           "million": 1_000_000, "juta": 1_000_000, "sejuta": 1_000_000}
+
+
+def words_to_number(phrase: str) -> Decimal | None:
+    """'two thousand one hundred USD' -> 2100, 'tiga puluh persen' -> 30. None if any word is not a number word."""
+    words = re.findall(r"[a-z]+", phrase.lower())
+    words = [w for w in words if w not in {"and", "us", "usd", "usdc", "dollar", "dollars", "dolar", "rupiah", "idr",
+                                            "inr", "php", "rupee", "rupees", "peso", "pesos", "percent", "per", "cent",
+                                            "persen", "pct"}]
+    total, current, seen = 0, 0, False
+    for w in words:
+        if w in ("puluh",):
+            current *= 10
+        elif w in ("belas",):
+            current += 10
+        elif w in _UNITS:
+            current += _UNITS[w]
+        elif w in _SCALES:
+            scale = _SCALES[w]
+            if w.startswith("se"):
+                current += 1
+            if scale == 100:
+                current = max(current, 1) * 100
+            else:
+                total += max(current, 1) * scale
+                current = 0
+        else:
+            return None
+        seen = True
+    return Decimal(total + current) if seen else None
 
 
 def _dec(raw: str) -> Decimal | None:
@@ -82,9 +119,14 @@ def extract(text: str) -> list[dict]:
                 val *= MULT[groups[1].lower()]
             found.append({"kind": kind, "value": val, "raw": m.group(0).strip()})
             spans.append(m.span())
-    for m in list(WORD_PCT_RE.finditer(text)) + list(WORD_MONEY_RE.finditer(text)):
-        if not taken(*m.span()):
-            found.append({"kind": "word", "value": m.group(0), "raw": m.group(0)})
+    for rx, kind in ((WORD_PCT_RE, "pct"), (WORD_MONEY_RE, "money")):
+        for m in rx.finditer(text):
+            if taken(*m.span()):
+                continue
+            val = words_to_number(m.group(0))
+            # a number written in words is read like digits; one we cannot read is never sourced
+            found.append({"kind": kind if val is not None else "word", "value": val if val is not None else m.group(0),
+                          "raw": m.group(0), "words": True})
             spans.append(m.span())
     for m in BARE_RE.finditer(masked):
         if taken(*m.span()):
@@ -155,6 +197,9 @@ def _places(raw: str) -> int:
 def is_sourced(fig: dict, pools: Pools) -> bool:
     if fig["kind"] == "word":
         return False
+    if fig.get("words"):  # read from words: must equal a sourced value exactly
+        pool = pools.pct if fig["kind"] == "pct" else pools.money
+        return Decimal(fig["value"]) in pool
     if fig["kind"] == "article":
         return fig["value"] in pools.arts
     try:

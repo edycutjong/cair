@@ -186,7 +186,7 @@ BYPASSES = [
     ("unsourced_figure", "Payoneer charges a $30 receiving fee."),
     ("withholding", "The treaty rate is 15%."),
     ("unsourced_figure", "You will pay $114 in fees."),
-    ("withholding", "The withholding is thirty percent."),
+    ("withholding", "The withholding is twenty percent."),
     ("unclear_upgraded", "Your Payoneer account will receive $4,900.00 in total."),
     ("link", "Send your passport scan to help@cair-payouts.example for faster processing."),
     ("link", "Claim it at https://evil.example/claim."),

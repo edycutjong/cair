@@ -99,7 +99,7 @@ recovery run) shows the two ERROR spans and the fallback span. → [`evidence/re
   bugs came out of it (an amount in the 2000s parsed as a year; refusals that repeated the user's "0%"), both fixed and
   re-run. → [`evidence/rca-01.md`](evidence/rca-01.md)
 - **Reading results back in the product**: the receipt reconciler and the public [`/verify`](https://app.cair.edycu.dev/verify)
-  page read traces back over MCP. First receipt: the builder's own $7,000 Devpost prize that landed as $4,897 in
+  page read traces back over MCP. First receipt: the builder's own $7,000 Devpost prize that landed (builder-reported) as $4,897 in
   Payoneer. Cair's quote was "at most $4,900 before the receiving fee (UNCLEAR)"; the reconciler read that bound back
   from the trace and recorded *within sourced bound, $3.00 not explained by the sourced rules* — a **replay of a known
   outcome**, not a prediction (EVALUATOR trace `f5a47b9c…`).
@@ -115,13 +115,14 @@ plain-language description of the bug ranked the corrected rule and its covering
 the unlisted-country fix (and on `fee_calc` and `figures.extract`), and `diff` summarises every entity changed since
 the frozen set was tagged. One limit we hit: `impact` reports 0 callers for the tools, because the planner passes
 them as function values (`att.call("fx_quote", tools.fx_quote, …)`), which the graph does not follow. Outputs, with the
-commands: [`evidence/entire/`](evidence/entire). Entire checkpoints were deliberately not enabled: they store the
-coding-agent transcript and write agent configuration into the repository.
+commands: [`evidence/entire/`](evidence/entire). Entire checkpoints were deliberately not enabled: `entire enable` installs coding-agent hooks and settings into the
+repository and checkpoints keep the agent conversation, and this repository is public.
 
 ## Business plan
 
 Measured: **$0.0025** of LLM per plan (857 tokens), **p50 5.49 s / p95 6.83 s** per plan, hosting $15.26 / month.
-Free planner + Freelancer Pro + a per-winner Payout Desk for hackathon organisers; break-even at 4 Pro subscribers.
+Free planner (live); Freelancer Pro and a per-winner Payout Desk for organisers are planned, not built, at assumed
+prices — break-even at 4 Pro subscribers under those assumptions.
 → [`docs/BUSINESS-PLAN.md`](docs/BUSINESS-PLAN.md) (cfo.ai model: pending).
 
 ## Run it
@@ -135,7 +136,8 @@ Full reproduce steps (eval, ablation, forced failure, bench) and things to try o
 
 ## Limitations
 
-- Three countries are fully sourced (Indonesia, India, the Philippines); Vietnam and Nigeria have treaty rows only.
+- Three countries are fully sourced (Indonesia, India, the Philippines); Vietnam and Nigeria have treaty rows only
+  (plus a Wise UNCLEAR row for Nigeria).
   Anything else is UNCLEAR by design.
 - The eval measures fidelity to the sourced sheet, not tax correctness; three cells were re-checked by hand against
   the live pages (`evidence/hand-check-2026-10-10.md`).
