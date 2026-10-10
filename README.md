@@ -43,7 +43,7 @@ into the prompt — the strongest thing a single chatbot call can do.
 | Contradicts a sourced tax fact (**P-wrong**: an article on line 10, a rate ≠ 30%) | **8 / 48** (every run) | 0 / 48 | **0 / 48** | 0 / 48 |
 | States a tax position no source supports (**P-unsourced**) | 32–36 / 48 | 11 / 48 | **0 / 48** | 0 / 48 |
 | Says UNCLEAR where no primary source exists (**K**) | 11–23 / 143 fields | 110 / 143 | **143 / 143** | 143 / 143 |
-| Figures in the answer traceable to a tool output (**N**) | n/a (no tools) | n/a | **345 / 345** | 332 / 340 |
+| Figures in the answer traceable to a tool output (**N**) | n/a (no tools) | n/a | **359 / 359** | 356 / 365 |
 
 v1 recommended Wise for every Indonesian Devpost winner in all three runs and told several users to claim a treaty
 article at 0%. Even with every sourced fact in its prompt, one call (v1s) still recommended sending USDC on a network the
@@ -51,17 +51,19 @@ exchange no longer credits (one of its 2 U flags; the other is a borderline ment
 evidence file) and stated a tax position the sources leave open 11 times. In v2 the route,
 line 10 and every amount are decided by code from sourced rows; the model only words the card. The ablation is what
 the guardrail adds: without it, 8 figures the tools never produced (the user's "zero percent" and "Article 21"
-repeated back) reach the page; with it, none do — 9 of 48 explanations were blocked once and rewritten, none had to
-fall back to the template. The final v2 run is the eighth on this set: each earlier run's failures drove a fix (all
+repeated back) reach the page; with it, none do — 8 of 48 explanations were blocked once and rewritten, none had to
+fall back to the template. The final v2 run is the tenth on this set: each earlier run's failures drove a fix (all
 runs are in `evidence/`, re-scored with the final scorer; see `evidence/rca-01.md`).
 
-The guardrail is also tested on its own: **53 / 53** scripted violations blocked (refused or unchecked rail, line 10,
-unsourced figure, withholding and tax-position claims, UNCLEAR stated as received, links) and **0 / 29** honest
-explanations blocked
-(`scripts/guardrail_recall.py`).
+The guardrail is also tested on its own, against sentences it was **not** tuned on: a separate reviewer wrote a fresh
+held-out set (66 violations, 66 honest sentences, 29 of them in Indonesian). On the rules as they stood, it blocked
+**62 / 66** violations (94%) and **3 / 66** honest sentences (5%) (`evidence/guardrail-heldout-r4-20261010T084859Z.json`).
+The misses (numberless claims such as "not taxed at all") were then fixed, so that set is now in-sample, like the 53
+scripted cases in `scripts/guardrail_recall.py`. The guardrail is rule-based: expect new phrasings to slip through at
+about that rate, which is why the route, line 10 and every amount on the card are decided by code, not by the prose.
 
 Definitions: [`docs/METRICS.md`](docs/METRICS.md) · evidence (each scenario carries its neatlogs trace id):
-`evidence/eval-v1-r1…r3`, `eval-v1s-r1`, `eval-v2-r8`, `eval-ablation-r8`, `guardrail-recall-…`.
+`evidence/eval-v1-r1…r3`, `eval-v1s-r1`, `eval-v2-r10`, `eval-ablation-r10`, `guardrail-heldout-r4-…`.
 
 ## How the agent works
 
@@ -88,7 +90,7 @@ One task, end to end: *get this payout to my account intact*.
 
 `scripts/eval.py --planner v2 --fail fx_quote` makes the FX tool fail on every call. In the 24 USD-payer scenarios
 (USDC plans never call it) the agent retried once, then fell back to the last ECB rate it had fetched, stamped STALE
-with its date, and finished the plan. All 48 plans completed: U 0, P 0, 341 / 341 figures sourced (run `fail-fx_quote-r7`). Trace `d1fa1ed7…` (first
+with its date, and finished the plan. All 48 plans completed: U 0, P 0, 350 / 350 figures sourced (run `fail-fx_quote-r9`). Trace `d1fa1ed7…` (first
 recovery run) shows the two ERROR spans and the fallback span. → [`evidence/recovery-01.md`](evidence/recovery-01.md)
 
 ## How neatlogs was used to build and improve it
@@ -123,8 +125,8 @@ repository and checkpoints keep the agent conversation, and this repository is p
 
 ## Business plan
 
-Measured: **$0.0034** of LLM per plan (1,222 tokens, 1.23 calls with guardrail retries), **p50 5.27 s / p95 10.81 s**
-per plan (bench on the builder's laptop), hosting $15.26 / month.
+Measured: **$0.0033** of LLM per plan (1,186 tokens, 1.19 calls with guardrail retries), **p50 5.50 s / p95 10.31 s**
+per plan (bench on the builder's laptop at the final commit), hosting $15.26 / month.
 Free planner (live); Freelancer Pro and a per-winner Payout Desk for organisers are planned, not built, at assumed
 prices — break-even at 4 Pro subscribers under those assumptions.
 → [`docs/BUSINESS-PLAN.md`](docs/BUSINESS-PLAN.md) (cfo.ai model: pending).

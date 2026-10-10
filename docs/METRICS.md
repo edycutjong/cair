@@ -62,10 +62,12 @@ Two figures match when their values are equal after normalising grouping (`87.61
 - v1 — one tool-less LLM call (same model, temperature 0). Run 3 times (`eval-v1-r1`, `-r2`, `-r3`); reported as a range.
 - v1s — the same single call with the whole `rules_sheet.csv` and `sources.md` in the prompt: the controlled baseline
   (does the agent beat "give the model the data"?).
-- v2 — the evidence plan + GUARDRAIL. Headline run: `eval-v2-r8` (final rules, commit `02195f9`). Earlier runs are kept as history.
+- v2 — the evidence plan + GUARDRAIL. Headline run: `eval-v2-r10` (final rules, commit `0a8fc06`). Earlier runs are kept as history.
 - Ablation — v2 with the GUARDRAIL removed (`--no-guardrail`), to show which figures the guardrail stops.
 - Forced failure — v2 with one tool made to fail (`--fail fx_quote`), to show recovery.
-- Guardrail recall — `scripts/guardrail_recall.py`: scripted violations and honest texts against real cards, no LLM.
+- Guardrail recall — `scripts/guardrail_recall.py` (in-sample: 53 scripted violations, 29 honest texts) and two held-out
+  sets written by separate reviewers, `scripts/guardrail_heldout_r3.py` and `scripts/guardrail_heldout_r4.py`, each
+  measured before the fixes they prompted (r3: 53/71 and 12/60; r4: 62/66 and 3/66) and kept verbatim.
 
 Model id, parameters, sheet version, set sha256 and git sha (read at the start of the run, plus a dirty flag) are
 written into every `evidence/eval-*.json`. Every file has been re-scored with the current scorer (`--rescore`).

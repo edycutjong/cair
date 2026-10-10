@@ -65,3 +65,9 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   fallbacks (`eval-v2-r8`); forced FX failure 48/48, 341/341 (`eval-fail-fx_quote-r7`); guardrail recall 53/53
   with 0/29 honest texts blocked. Bench: p50 5.27 s, p95 10.81 s, $0.0034 per plan
   (`evidence/bench-20261010T083109Z.json`). Tests: 76.
+- **2026-10-10 evening (later)** — held-out testing (loop QA rounds 3–4). A first held-out set written by a separate
+  reviewer showed the guardrail at 53/71 violations blocked and 12/60 honest sentences blocked — much worse than the
+  in-sample 100%. After fixing those, a second, fresh held-out set measured 62/66 and 3/66; its misses were fixed too
+  (`evidence/rca-01.md`, rounds 3–4). Final runs at `0a8fc06`: v2 U 0 / P 0 / UNCLEAR 143/143 / figures 359/359, no
+  template fallbacks (`eval-v2-r10`); forced FX failure 48/48, 350/350 (`eval-fail-fx_quote-r9`); bench p50 5.50 s,
+  p95 10.31 s, $0.0033 per plan (`evidence/bench-20261010T085809Z.json`). Tests: 76.

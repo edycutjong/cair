@@ -95,3 +95,12 @@ $4,900.00", "PayPal is also a solid choice", "You will not owe any US tax"); the
 the same set gives 69/71 and 5/60, and all 5 are refusals that repeat the user's own "0%" or "Article 21", which the
 guardrail blocks by design and the planner retries. That set is now in-sample too, so a fresh held-out set measures
 the final rules (round 4).
+## Round 4: a fresh held-out test of the final rules
+
+Another reviewer wrote a new set without seeing the earlier sentence lists (`scripts/guardrail_heldout_r4.py`):
+66 violations and 66 honest sentences, 29 in Indonesian. On the round-3 rules the guardrail blocked **62/66** and
+wrongly blocked **3/66** (`guardrail-heldout-r4-20261010T084859Z.json`). The misses were tax positions with no
+number ("Prizes paid in USDC are not taxed at all", "A reduced treaty withholding applies"), a payout service Cair
+has no rows for (Remitly) and an amount in lakh; the false blocks were "Payoneer delivers; Wise does not.", a
+"Sources: …" citation line and Indonesian "tidak termasuk". All fixed (`0a8fc06`); the set then gives 66/66 and
+0/66, so it is in-sample too. 62/66 and 3/66 are the honest held-out estimate for this guardrail.
