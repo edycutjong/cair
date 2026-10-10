@@ -23,6 +23,8 @@ confirm spans) · neatlogs MCP server (trace read-back) · Qwen Cloud through an
   one HTTP `/v1/trace` trace with an EVALUATOR child was read back the same way. Details in `docs/DX-REPORT.md`.
 
 ## Demo
+Video (2:57, covers neatlogs, Entire and cfo.ai): https://youtu.be/UC7pSo3hUlk
+
 https://app.cair.edycu.dev — steps and reproduce commands in `DEMO.md`; judges' trace read-back at `/verify`.
 
 ## Known limitations and next steps
@@ -83,3 +85,5 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
 ## Built in public (#neatHack)
 - [Launch post](https://x.com/edycutjong/status/2108905407381213633) — Sat 10 Oct ~20:00 WIB.
 - [The recovery story](https://x.com/edycutjong/status/2108938150072705311) — Sat 10 Oct 22:10 WIB: the FX tool fails twice, the agent falls back and the plan finishes.
+- [Shared in the neatHack Discord](https://discord.com/channels/1528866100207419472/1554463484752830504/1558498173591232603) — Sat 10 Oct ~22:15 WIB.
+- [Demo video on YouTube](https://youtu.be/UC7pSo3hUlk) — Sun 11 Oct.

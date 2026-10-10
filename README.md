@@ -11,6 +11,7 @@
   <br/>
 
   [![Live App](https://img.shields.io/badge/🚀_Live-App-06b6d4?style=for-the-badge)](https://app.cair.edycu.dev)
+  [![Demo Video](https://img.shields.io/badge/▶_Demo-Video_2:57-FF0000?style=for-the-badge)](https://youtu.be/UC7pSo3hUlk)
   [![Website](https://img.shields.io/badge/🌐_Site-cair.edycu.dev-1C4C9C?style=for-the-badge)](https://cair.edycu.dev)
   [![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-f59e0b?style=for-the-badge)](https://cair.edycu.dev/pitch/)
   [![Read the Traces](https://img.shields.io/badge/🔍_Verify-Traces-f59e0b?style=for-the-badge)](https://app.cair.edycu.dev/verify)
