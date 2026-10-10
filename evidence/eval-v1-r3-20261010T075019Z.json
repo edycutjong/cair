@@ -17,7 +17,7 @@
   "started_utc": "2026-10-10T07:50:19+00:00",
   "finished_utc": "2026-10-10T07:52:06+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "02195f9"
+  "rescored_with_git_sha": "0a8fc06"
  },
  "aggregate": {
   "scenarios": 48,
@@ -47,6 +47,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Pilih Wise.**",
+    "U: prose endorses wise: * **Wise:** Memberikan nilai tukar (kurs) USD ke IDR yang paling mendekati kurs tengah pasar dengan biaya transfer palin",
     "P: article claimed for line 10 (Article 21 (Other Income), 0% rate)",
     "P: withholding ['0'] != 30%"
    ],
@@ -74,6 +75,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** adalah opsi terbaik untuk menerima $2,000 ke Jakarta.",
+    "U: prose endorses wise: *Catatan:* Payoneer juga bagus, tetapi untuk transfer langsung ke bank lokal di Indonesia, Wise umumnya lebih cepat dan ",
     "P: article claimed for line 10 (Article 21 (Other Income), 10% rate)",
     "P: withholding ['10'] != 30%"
    ],
@@ -269,6 +271,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: Dari ketiga opsi yang ada, **Wise** adalah pilihan terbaik untuk freelancer di Indonesia.",
+    "U: prose endorses wise: - Biaya transfer Wise jauh lebih rendah dan transparan dibandingkan PayPal (yang memotong biaya konversi mata uang sanga",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='NONE')"
    ],
    "trace_id": "23bbaddc00194164075c600507ae48f5",
@@ -321,6 +324,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** adalah pilihan terbaik di antara ketiganya.",
+    "U: prose endorses wise: *   **Biaya Wise:** Wise akan memotong biaya transfer dan konversi mata uang (biasanya sekitar 0.5% - 1% tergantung rute",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='0%')"
    ],
    "trace_id": "01b79f77a273ae65beedcf12b784db81",
@@ -921,6 +925,7 @@
     "U: summary recommends ['wise']",
     "U: prose endorses wise: Wise works.",
     "U: prose endorses wise: You can select **Wise** on the Devpost form and provide your Wise account details (typically your email or personal USD ",
+    "U: prose endorses wise: *   **Amount sent to Wise:** Devpost will send the remaining **$4,900** to your Wise account.",
     "P: article claimed for line 10 (BLANK)"
    ],
    "trace_id": "a5ad51fe98ed098db872e0cca48070f4",
@@ -971,7 +976,9 @@
    "unsourced": null,
    "summary_present": true,
    "reasons": [
-    "U: summary recommends ['wise']"
+    "U: summary recommends ['wise']",
+    "U: prose endorses wise: Wise is generally the cheapest if Devpost can send a direct bank transfer (ACH/wire) to your Wise USD account details.",
+    "U: prose endorses wise: - Transfer fees (Wise/Payoneer): typically ~$10–$30 depending on the rail used."
    ],
    "trace_id": "790cc28f6dc646e370149920f67711e3",
    "latency_s": 13.12,
@@ -998,6 +1005,7 @@
     "U: summary recommends ['usdc:tron']",
     "U: prose endorses usdc:tron: Yes, sending USDC on Tron (TRC-20) to your Tokocrypto account works.",
     "U: prose endorses usdc:tron: **Payout option:** Select `usdc:tron` on the form.",
+    "U: prose endorses usdc:tron: However, whether DoraHacks actually enforces withholding on a direct TRC-20 transfer is UNCLEAR.",
     "P: tax position stated as fact while unsourced (line10='Article 21, 10%', wh='UNCLEAR')"
    ],
    "trace_id": "1e230a8ecdb30ee56f0cbe2c8e547da7",
@@ -1180,6 +1188,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** is your best option.",
+    "U: prose endorses wise: *   **Landed in USD:** $7,000 minus the payout platform's receiving/transfer fee (Wise typically charges a small flat fe",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='NONE')"
    ],
    "trace_id": "d52343f78a2c667904e26b341e159f28",

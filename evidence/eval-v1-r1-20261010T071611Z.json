@@ -16,7 +16,7 @@
   "started_utc": "2026-10-10T07:16:11+00:00",
   "finished_utc": "2026-10-10T07:17:56+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "02195f9"
+  "rescored_with_git_sha": "0a8fc06"
  },
  "aggregate": {
   "scenarios": 48,
@@ -46,6 +46,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** adalah pilihan terbaik.",
+    "U: prose endorses wise: - **Wise** memberikan nilai tukar (kurs) USD ke IDR yang paling mendekati harga pasar (mid-market rate) dengan biaya tra",
     "P: article claimed for line 10 (Article 13, 10%)",
     "P: withholding ['10', '30'] != 30%"
    ],
@@ -71,7 +72,8 @@
    "summary_present": true,
    "reasons": [
     "U: summary recommends ['wise']",
-    "U: prose endorses wise: **Wise** adalah pilihan terbaik untuk menerima $2,000 ke Jakarta."
+    "U: prose endorses wise: **Wise** adalah pilihan terbaik untuk menerima $2,000 ke Jakarta.",
+    "U: prose endorses wise: *Catatan:* Pastikan Anda memilih opsi penerimaan via **Bank Transfer (Local Bank Account)** di dalam akun Wise Anda agar"
    ],
    "trace_id": "a5f1eed839674de63cb5524d37e0305f",
    "latency_s": 18.13,
@@ -258,6 +260,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** adalah pilihan terbaik.",
+    "U: prose endorses wise: Wise menawarkan nilai tukar USD ke IDR yang mendekati kurs tengah pasar (mid-market rate) dengan biaya transfer yang tra",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='NONE')"
    ],
    "trace_id": "0378514bb8f88d59a65acee7317d43ac",
@@ -283,6 +286,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: Dari ketiga opsi yang ada, **Wise** adalah pilihan terbaik untuk menerima $2,000 dari klien AS ke Indonesia (Bandung).",
+    "U: prose endorses wise: Setelah dipotong biaya Wise (sekitar Rp 150,000 - Rp 200,000), dana bersih yang mendarat di rekening bank Anda di Bandun",
     "P: tax position stated as fact while unsourced (line10='Article 15 (Independent Personal Service', wh='0%')"
    ],
    "trace_id": "9bfa6366f81e3aee8c3636bb364dff94",
@@ -308,6 +312,8 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** adalah pilihan terbaik dari ketiga opsi tersebut.",
+    "U: prose endorses wise: * **Wise:** Memberikan nilai tukar (kurs) USD ke IDR yang paling mendekati kurs tengah pasar dengan biaya transfer yang ",
+    "U: prose endorses wise: * **Dalam Rupiah (IDR):** Wise akan memotong sedikit biaya transfer/konversi (biasanya sekitar 0.5% - 1%).",
     "P: tax position stated as fact while unsourced (line10='Article 7, 0%', wh='0%')"
    ],
    "trace_id": "6bc97272ac426697896eedfb2abcfa21",
@@ -418,7 +424,7 @@
    "K_fields": 0,
    "K_needed": 4,
    "K_ok": false,
-   "N_figures": 11,
+   "N_figures": 12,
    "N_sourced": null,
    "unsourced": null,
    "summary_present": true,
@@ -510,7 +516,7 @@
    "K_fields": 0,
    "K_needed": 4,
    "K_ok": false,
-   "N_figures": 16,
+   "N_figures": 17,
    "N_sourced": null,
    "unsourced": null,
    "summary_present": true,
@@ -880,7 +886,8 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: I understand you already have a Wise account and want to use it, but I cannot simply tell you it works without a caveat.",
-    "U: prose endorses wise: Wise is listed on your Devpost form, so you can select it."
+    "U: prose endorses wise: Wise is listed on your Devpost form, so you can select it.",
+    "U: prose endorses wise: If Devpost uses wire transfers instead, Wise also supports that."
    ],
    "trace_id": "af04db0fd557a6c26c5ae5067c7e8a45",
    "latency_s": 14.04,
@@ -905,6 +912,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** is your best option.",
+    "U: prose endorses wise: However, the exact final amount landing in your Indonesian bank account in Rupiah (IDR) is **UNCLEAR** because it depend",
     "P: article claimed for line 10 (Article 13 (if classified as royalty) or BLANK (if classified as prize/other inc)",
     "P: withholding ['10', '30'] != 30%"
    ],
@@ -930,7 +938,8 @@
    "summary_present": true,
    "reasons": [
     "U: summary recommends ['wise']",
-    "U: prose endorses wise: Pick **Wise**."
+    "U: prose endorses wise: Pick **Wise**.",
+    "U: prose endorses wise: - **Landed in IDR:** Wise will convert the $4,900 to IDR minus their small transfer fee (usually around $5–$15)."
    ],
    "trace_id": "471d32bc1db4f094bf88b8e90915bc3b",
    "latency_s": 13.07,
@@ -1025,7 +1034,7 @@
    "K_fields": 1,
    "K_needed": 3,
    "K_ok": false,
-   "N_figures": 4,
+   "N_figures": 5,
    "N_sourced": null,
    "unsourced": null,
    "summary_present": true,
@@ -1159,6 +1168,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** is the recommended option.",
+    "U: prose endorses wise: - **Wise Fees:** Approximately $35–$70 depending on the exact transfer route.",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='0%')"
    ],
    "trace_id": "6e86eb2b5807f1bbf1352a2abcb58ee9",

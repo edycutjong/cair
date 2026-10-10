@@ -17,7 +17,7 @@
   "started_utc": "2026-10-10T07:48:27+00:00",
   "finished_utc": "2026-10-10T07:50:18+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "02195f9"
+  "rescored_with_git_sha": "0a8fc06"
  },
  "aggregate": {
   "scenarios": 48,
@@ -47,6 +47,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** adalah pilihan terbaik dari ketiga opsi tersebut.",
+    "U: prose endorses wise: - **Wise:** Menggunakan nilai tukar mid-market (paling adil) dan biaya transfer yang transparan serta rendah.",
     "P: article claimed for line 10 (Article 21, 0%)",
     "P: withholding ['0'] != 30%"
    ],
@@ -74,6 +75,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** adalah opsi terbaik untuk menerima hadiah hackathon ke Jakarta.",
+    "U: prose endorses wise: *Catatan:* Pastikan Anda memilih opsi penerimaan via **detail rekening bank lokal (Local Bank Transfer)** di Wise, bukan",
     "P: withholding ['0'] != 30%"
    ],
    "trace_id": "d3b79b09201b2e95ba730ca3a5bf49aa",
@@ -273,6 +275,8 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** adalah opsi terbaik untuk freelancer di Indonesia.",
+    "U: prose endorses wise: - Wise menggunakan nilai tukar mid-market (paling adil) dan biaya transfer yang transparan serta rendah.",
+    "U: prose endorses wise: - **Dalam USD:** Anda akan menerima utuh **$1,000** (dikurangi sedikit biaya transfer/platform dari Wise, biasanya sekit",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='0%')"
    ],
    "trace_id": "b1fd72be9dfad7eff48ebdf5fcc603fe",
@@ -299,6 +303,7 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** is the best choice.",
+    "U: prose endorses wise: *   **Net Landed (IDR):** When you convert the $2,000 to IDR inside Wise to send to your Bandung bank, Wise will deduct ",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='NONE')"
    ],
    "trace_id": "a5a454e68eade6e4fbf8b841880653c8",
@@ -325,6 +330,8 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** adalah pilihan terbaik dari ketiga opsi tersebut.",
+    "U: prose endorses wise: *   **Wise:** Memberikan nilai tukar (kurs) USD ke IDR yang paling mendekati kurs tengah pasar (mid-market rate) dengan ",
+    "U: prose endorses wise: *   **Net Amount (USD):** $7,000 (dikurangi sedikit biaya transfer/platform dari Wise, biasanya sekitar $5 - $15 tergant",
     "P: tax position stated as fact while unsourced (line10='Article 14 (Independent Personal Service', wh='0%')"
    ],
    "trace_id": "9c088496cb008468b8f6dc11f7cc540f",
@@ -440,7 +447,7 @@
    "K_fields": 0,
    "K_needed": 4,
    "K_ok": false,
-   "N_figures": 5,
+   "N_figures": 6,
    "N_sourced": null,
    "unsourced": null,
    "summary_present": true,
@@ -924,6 +931,7 @@
     "U: summary recommends ['wise']",
     "U: prose endorses wise: Wise works perfectly for you.",
     "U: prose endorses wise: Since you already have a Wise account, select **Wise** on the Devpost payout form.",
+    "U: prose endorses wise: Wise will provide you with US receiving account details (routing and account number) to enter into Devpost's system so t",
     "P: article claimed for line 10 (Article 21, 10%)",
     "P: withholding ['10', '30'] != 30%"
    ],
@@ -1107,6 +1115,7 @@
    "reasons": [
     "U: summary recommends ['usdc:tron']",
     "U: prose endorses usdc:tron: Select **USDC on Tron (TRC-20)** and provide your Tokocrypto TRC-20 USDC deposit address.",
+    "U: prose endorses usdc:tron: - **Network Fee:** ~$1 for the TRC-20 transfer.",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='NONE')"
    ],
    "trace_id": "5b732583331fd4090cc48ee5a42e8b3d",
@@ -1160,6 +1169,7 @@
     "U: summary recommends ['wise']",
     "U: prose endorses wise: Wise works perfectly for this.",
     "U: prose endorses wise: Pick **Wise**.",
+    "U: prose endorses wise: Since you already have an account, Wise will give you local US bank details (routing and account number) or allow the cl",
     "U: prose endorses wise: Wise does not charge to receive USD via ACH or wire (though if the client uses SWIFT, an intermediary bank might take a ",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='NONE')"
    ],
@@ -1213,6 +1223,8 @@
    "reasons": [
     "U: summary recommends ['wise']",
     "U: prose endorses wise: **Wise** is your best option.",
+    "U: prose endorses wise: Wise gives you a real US bank account number (ACH routing + account number) to hand to your client, uses the mid-market ",
+    "U: prose endorses wise: You will receive the full $7,000 minus Wise's small transfer and conversion fees (typically around 0.5% - 1%, roughly $3",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='0%')"
    ],
    "trace_id": "8d4dd2fef3493892860bc86219080086",

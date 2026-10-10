@@ -16,7 +16,7 @@
   "started_utc": "2026-10-10T07:22:35+00:00",
   "finished_utc": "2026-10-10T07:23:23+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "02195f9"
+  "rescored_with_git_sha": "0a8fc06"
  },
  "aggregate": {
   "scenarios": 48,
