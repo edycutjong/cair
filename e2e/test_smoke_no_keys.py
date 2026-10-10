@@ -1,4 +1,4 @@
-"""Smoke: every public page loads with no keys, no console errors and the right meta."""
+"""Smoke test (no keys, no mock mode): every public page loads, no console errors and the right meta."""
 import pytest
 from playwright.sync_api import Page, expect
 

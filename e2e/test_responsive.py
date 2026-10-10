@@ -12,10 +12,7 @@ def test_no_horizontal_overflow(page: Page, base_url, path, w, h):
     page.set_viewport_size({"width": w, "height": h})
     page.goto(base_url + path)
     scroll_w = page.evaluate("document.documentElement.scrollWidth")
-    if path == "/rules" and w < 600:  # the rules table scrolls inside its own wrapper by design
-        assert page.evaluate("document.body.scrollWidth") <= w + 1 or page.locator(".table-wrap").count() == 1
-    else:
-        assert scroll_w <= w + 1, f"{path} is {scroll_w}px wide at {w}px"
+    assert scroll_w <= w + 1, f"{path} is {scroll_w}px wide at {w}px"  # the rules table scrolls inside its own wrapper
 
 
 def test_form_controls_are_tappable_on_a_phone(page: Page, base_url):

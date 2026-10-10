@@ -1,7 +1,10 @@
 name: release
 
+# Runs only after the CI/CD Pipeline succeeded on main, so a commit that breaks the tests is never released.
 on:
-  push:
+  workflow_run:
+    workflows: ["CI/CD Pipeline"]
+    types: [completed]
     branches: ["main"]
   workflow_dispatch:
 
@@ -11,10 +14,12 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # full history — we read commits since the last tag
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Compute next version from Angular-style commits
         id: ver
@@ -32,9 +37,9 @@ jobs:
           fi
 
           BUMP=none
-          echo "$LOG" | grep -qE '^(feat|fix|perf)(\(.+\))?!:|BREAKING CHANGE:' && BUMP=major
-          [ "$BUMP" = none ] && echo "$LOG" | grep -qE '^feat(\(.+\))?:'        && BUMP=minor
-          [ "$BUMP" = none ] && echo "$LOG" | grep -qE '^(fix|perf)(\(.+\))?:'  && BUMP=patch
+          grep -qE '^(feat|fix|perf)(\(.+\))?!:|BREAKING CHANGE:' <<< "$LOG" && BUMP=major
+          [ "$BUMP" = none ] && grep -qE '^feat(\(.+\))?:' <<< "$LOG"        && BUMP=minor
+          [ "$BUMP" = none ] && grep -qE '^(fix|perf)(\(.+\))?:' <<< "$LOG"  && BUMP=patch
           if [ "$BUMP" = none ]; then
             echo "No releasable commits since ${LAST:-the beginning}."
             echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0

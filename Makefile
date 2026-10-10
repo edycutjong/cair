@@ -56,7 +56,8 @@ lighthouse:
 audit:
 	@echo "=== pip-audit (dependency CVEs) ==="
 	$(PY) -m pip_audit -r requirements.txt
-	@echo "=== gitleaks (secrets in history) ==="
+	@echo "=== gitleaks (secrets in history; install: brew install gitleaks) ==="
+	@command -v gitleaks >/dev/null || { echo "gitleaks is not installed"; exit 1; }
 	gitleaks detect --no-banner --redact
 
 security-scan: audit

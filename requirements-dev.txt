@@ -1,6 +1,6 @@
 -r requirements.txt
-pytest-cov
-ruff
-mypy
-pip-audit
-pytest-playwright
+pytest-cov==7.1.0
+ruff==0.17.0
+mypy==2.4.0
+pip-audit==2.10.1
+pytest-playwright==0.10.0

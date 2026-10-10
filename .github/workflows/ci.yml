@@ -133,14 +133,14 @@ jobs:
 
   # ── STAGE 6: Deploy gate (main only) ──────────────────────
   deploy-gate:
-    name: "Stage 6 · Deploy gate"
+    name: "Stage 6 · Gate summary (main)"
     needs: [build, e2e, performance, dependency-audit]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: All gates passed
         run: |
-          echo "All CI gates passed."
+          echo "All blocking CI gates passed (Lighthouse is advisory)."
           echo "  Stage 1 — ruff, mypy, pytest + coverage"
           echo "  Stage 2 — pip-audit (gitleaks and CodeQL run as their own workflows)"
           echo "  Stage 3 — boot with no keys + smoke"
