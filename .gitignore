@@ -1,0 +1,22 @@
+# secrets / local env
+.env
+.env.*
+*.pem
+*.key
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# local state
+*.db
+*.sqlite
+var/
+# kitchen / tooling that must never be public
+.claude/
+.entire/
+.mcp.json
+AGENTS.md
+CLAUDE.md
+graphify-out/
+.DS_Store

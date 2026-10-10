@@ -1,0 +1,11 @@
+neatlogs[openai]==1.4.26
+fastapi==0.143.0
+uvicorn[standard]
+jinja2
+httpx
+openai==3.28.0
+mcp==2.3.0
+rank_bm25
+python-ulid
+python-multipart
+pytest
