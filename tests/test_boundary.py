@@ -80,3 +80,9 @@ def test_a_validly_signed_but_malformed_cookie_is_never_written_back(client):
     client.cookies.set("cair_sid", appmod._sign("evil; Path=/; Domain=x"))
     r = client.get("/")
     assert "evil" not in r.headers.get("set-cookie", "") and "Domain=x" not in r.headers.get("set-cookie", "")
+
+
+def test_responses_carry_basic_security_headers_and_a_non_ascii_builder_token_is_not_a_500(client, secrets_set):
+    r = client.get("/judge")
+    assert r.headers["x-content-type-options"] == "nosniff" and r.headers["x-frame-options"] == "DENY"
+    assert client.get("/?b=é").status_code == 200  # hmac.compare_digest on str would raise TypeError

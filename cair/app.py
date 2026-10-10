@@ -45,6 +45,15 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Cair", lifespan=lifespan, docs_url=None, redoc_url=None)
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    resp = await call_next(request)
+    resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+    resp.headers.setdefault("X-Frame-Options", "DENY")
+    resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    return resp
+
+
 app.mount("/static", StaticFiles(directory=str(config.ROOT / "cair" / "static")), name="static")
 
 # --- per-IP rate limits: /api/plan fronts a paid LLM key -------------------------------------------------------
@@ -130,7 +139,7 @@ def index(request: Request, src: str | None = None, b: str | None = None):
     _, _, _, cookies = identity(request)
     if src == "ethjkt":
         cookies["cair_origin"] = "ethjkt"
-    if b and config.BUILDER_TOKEN and b == config.BUILDER_TOKEN:
+    if b and config.BUILDER_TOKEN and hmac.compare_digest(b.encode(), config.BUILDER_TOKEN.encode()):
         cookies["cair_origin"] = "builder"
     set_cookies(resp, cookies)
     return resp
