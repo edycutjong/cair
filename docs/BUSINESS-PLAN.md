@@ -1,8 +1,8 @@
 # Cair — business plan
 
 > **Status:** the measured costs below come from this repository (`scripts/bench.py`, `scripts/unit_economics.py`).
-> The model built from them is entered in cfo.ai and shared publicly: **https://cfo.ai/s/PQ2HUGmiJl3P0RQB** (5 pages: Runway, Pricing,
-> Unit economics, Monthly costs, Revenue scenarios). The export is [`cfo/Runway.xlsx`](cfo/Runway.xlsx) and the Main Scenario
+> The model built from them is entered in cfo.ai and shared publicly: **https://cfo.ai/s/PQ2HUGmiJl3P0RQB** (5 pages as listed by the builder: Runway, Pricing,
+> Unit economics, Monthly costs, Revenue scenarios; the spreadsheet export has 3 sheets). The export is [`cfo/Runway.xlsx`](cfo/Runway.xlsx) and the Main Scenario
 > tables below are rendered from its cached values. Where cfo.ai and our script differ by cents (cost $18.887 vs $18.94, burn
 > $18.557 vs $18.61), cfo.ai's figures are used: it takes the per-plan cost as $0.0033, the script as the unrounded $0.003348.
 
@@ -18,7 +18,7 @@ Why organisers (a hypothesis, not yet validated): winners are likely to ask them
 undeliverable payout becomes their problem too. Devpost's own help page says that if a prize is undeliverable the winner "may incur
 fees … or be delaying or forfeiting receipt of the prize".
 
-## Costs (measured)
+## Costs (measured tokens and latency; list prices)
 
 | Cost | Value | Source |
 |---|---|---|

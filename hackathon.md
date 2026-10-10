@@ -77,7 +77,7 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   every currency, so IDR 87,616,900 was refused. A coverage pass then took the suite to 571 tests at 100% line+branch coverage.
 - **2026-10-10 night** — landing page https://cair.edycu.dev and an 11-slide pitch deck https://cair.edycu.dev/pitch/ (GitHub Pages
   from `/docs`); every number on them is read from `evidence/`.
-- **2026-10-10 20:16** — cfo.ai: the business plan is entered and shared (https://cfo.ai/s/PQ2HUGmiJl3P0RQB); export in `docs/cfo/Runway.xlsx`, rendered in
+- **2026-10-10 evening** — cfo.ai: the business plan is entered and shared (https://cfo.ai/s/PQ2HUGmiJl3P0RQB); export in `docs/cfo/Runway.xlsx`, rendered in
   `docs/BUSINESS-PLAN.md`. neatlogs dashboard traces are linked from the README and `evidence/`.
 
 ## Built in public (#neatHack)

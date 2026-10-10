@@ -105,7 +105,7 @@ Full detail: [ARCHITECTURE.md](ARCHITECTURE.md).
   outcome**, not a prediction (EVALUATOR trace [`f5a47b9c…`](https://app.neatlogs.com/traces?orgId=ae155adf-dd4b-456e-a79a-b3e3324e7b81&projectId=a91f004f-568a-47ba-8990-5f10fb956af2&q=f5a47b9cba7cf056a800e136616e0013), neatlogs dashboard).
 - **HTTP write-back**: confirm and EVALUATOR spans are posted server-side to `/v1/trace`; the write key never reaches
   the browser.
-- Trace exports read back over MCP: [`evidence/traces/`](evidence/traces). What was hard or undocumented:
+- The neatlogs dashboard links in this repository open the builder's project and need a neatlogs login on that organisation; the same step trees are saved as screenshots in [`docs/assets/neatlogs/`](docs/assets/neatlogs) and the trace exports read back over MCP are in [`evidence/traces/`](evidence/traces). What was hard or undocumented:
   [`docs/DX-REPORT.md`](docs/DX-REPORT.md).
 
 ### Entire — how it was used
@@ -123,7 +123,7 @@ repository and checkpoints keep the agent conversation, and this repository is p
 
 The model is entered in cfo.ai and shared publicly: **[cfo.ai/s/PQ2HUGmiJl3P0RQB](https://cfo.ai/s/PQ2HUGmiJl3P0RQB)** (5 pages: Runway, Pricing,
 Unit economics, Monthly costs, Revenue scenarios); the spreadsheet export is [`docs/cfo/Runway.xlsx`](docs/cfo/Runway.xlsx).
-Its inputs are measured: **$0.0033** of LLM per plan (1,186 tokens, 1.19 calls with guardrail retries, priced at list) and
+Its inputs are measured tokens and latency plus published list prices: **$0.0033** of LLM per plan (1,186 tokens, 1.19 calls with guardrail retries, priced at list) and
 hosting **$15.257 / month** (t3.small list price, $0.0209 × 730 h, not a measured bill); latency is **p50 5.50 s / p95 10.31 s**
 (bench on the builder's laptop at commit `0a8fc06`). Prices and volumes are assumptions (free planner; Freelancer Pro $4 / month;
 Payout Desk $2 per winner, both planned, not built).
@@ -171,7 +171,7 @@ The guardrail is also tested on its own, against sentences it was **not** tuned 
 **62 / 66** violations (94%) and **3 / 66** honest sentences (5%) (`evidence/guardrail-heldout-r4-20261010T084859Z.json`).
 The misses (numberless claims such as "not taxed at all") were then fixed, so that set is now in-sample, like the 53
 scripted cases in `scripts/guardrail_recall.py`. The guardrail is rule-based: expect new phrasings to slip through at
-about that rate, which is why the route, line 10 and every amount on the card are decided by code, not by the prose.
+about that rate (one known gap: a bare number with no currency or % sign that ends a sentence, such as "…is 4897.", is not extracted, found while checking an outside review), which is why the route, line 10 and every amount on the card are decided by code, not by the prose.
 
 The same question as seen in neatlogs: v1 is three steps, one model call that holds every figure; v2 is ten, with a TOOL or RETRIEVER span behind each figure and a GUARDRAIL after the model.
 
