@@ -1,0 +1,1192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cair — the payout route a chatbot can't get wrong</title>
+<meta name="description" content="Tell Cair who's paying you, how much, where you live. It refuses routes that can't deliver and sources every amount, rate and treaty article it shows.">
+<meta name="author" content="Edy Cu">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#E5EDE7">
+<link rel="canonical" href="https://cair.edycu.dev/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Cair">
+<meta property="og:url" content="https://cair.edycu.dev/">
+<meta property="og:title" content="Cair — the payout route a chatbot can't get wrong">
+<meta property="og:description" content="An agent that refuses payout routes that can't deliver and footnotes every amount, rate and treaty article.">
+<!-- bump ?v= whenever og-1200.png changes: social platforms cache cards by URL -->
+<meta property="og:image" content="https://cair.edycu.dev/assets/og-1200.png?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Cair — Choose Wise struck through and stamped REFUSED; Payoneer, at most $4,900, fee UNCLEAR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cair — the payout route a chatbot can't get wrong">
+<meta name="twitter:description" content="An agent that refuses payout routes that can't deliver and footnotes every amount, rate and treaty article.">
+<meta name="twitter:image" content="https://cair.edycu.dev/assets/og-1200.png?v=1">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  /* Motion is opt-in: content renders in its final state; this class only enables the authored moments. */
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
+</script>
+<style>
+/* Tokens: the project's design contract, verbatim. Every colour and face below is a var(). */
+:root {
+  --bg:      #E5EDE7;  /* mint security paper: the tinted stock cheques and remittance slips are printed on */
+  --paper:   #F6F9F5;  /* the slip itself (cards, the plan, the counterfoil) */
+  --ink:     #13241B;  /* green-black intaglio ink; 13.6:1 on --bg, 15.3:1 on --paper */
+  --muted:   #4F6157;  /* pre-printed form labels; 5.5:1 on --bg */
+  --before:  #A3321C;  /* state: refused / unsourced — returned-item stamp red; 5.8:1 on --bg */
+  --after:   #1C4C9C;  /* state: sourced / landed — carbon-copy blue; 6.9:1 on --bg */
+  --unclear: #7F5A00;  /* state: unclear — no primary source; ochre of an unsigned memo stamp; 5.2:1 on --bg */
+  --rule:    #B9CBBF;  /* guilloche and form-box rules (decorative only, never text) */
+  --font-display: "Gloock", "Georgia", serif;
+  --font-body:    "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-data:    "Spline Sans Mono", ui-monospace, monospace;  /* span names, trace ids, source ids, dates, footnote refs only */
+
+  /* The ink band (the statement summary): the same states, lifted for a dark ground. Ratios on --ink. */
+  --on-ink:        var(--paper);   /* 15.3:1 */
+  --on-ink-muted:  var(--rule);    /* 9.5:1 */
+  --on-ink-before: #F2A48F;        /* 8.1:1 */
+  --on-ink-after:  #A8C2F2;        /* 9.0:1 */
+
+  --wash-after:  color-mix(in srgb, var(--after) 9%, var(--paper));
+  --wash-before: color-mix(in srgb, var(--before) 8%, var(--paper));
+  --line: color-mix(in srgb, var(--ink) 16%, transparent);
+  --shadow: 0 1px 0 rgba(19, 36, 27, .05), 0 22px 48px -24px rgba(19, 36, 27, .42);
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  --pad: clamp(20px, 4.4vw, 64px);
+  --max: 1240px;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; overflow-x: clip; scroll-behavior: smooth; scroll-padding-top: 84px;
+  scrollbar-color: var(--rule) var(--bg); }
+body {
+  margin: 0; color: var(--ink); background-color: var(--bg); caret-color: var(--after);
+  font: 400 18px/1.6 var(--font-body); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  background-image:
+    repeating-radial-gradient(circle at 12% -18%, transparent 0 22px, rgba(185, 203, 191, .30) 22px 23px),
+    repeating-radial-gradient(circle at 94% 118%, transparent 0 26px, rgba(185, 203, 191, .22) 26px 27px);
+}
+::selection { background: color-mix(in srgb, var(--after) 24%, var(--paper)); color: var(--ink); }
+img { max-width: 100%; height: auto; display: block; }
+figure { margin: 0; }
+a { color: var(--after); text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color .18s var(--ease); }
+a:hover { color: var(--ink); }
+:focus-visible { outline: 2px solid var(--after); outline-offset: 3px; border-radius: 2px; }
+.nw { white-space: nowrap; }
+.vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: 12px; top: -80px; z-index: 50; background: var(--ink); color: var(--paper); padding: 10px 14px; border-radius: 3px; }
+.skip:focus { top: 12px; color: var(--paper); }
+code, .mono { font-family: var(--font-data); font-size: .84em; letter-spacing: -.01em; }
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+
+/* ---------- labels: pre-printed form labels, small caps ---------- */
+.label { font: 700 12.5px/1.35 var(--font-body); letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.label .mono { letter-spacing: 0; text-transform: none; font-weight: 400; font-size: 12px; }
+.kicker { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.kicker::before { content: ""; width: 34px; height: 1px; background: var(--muted); }
+
+/* ---------- header ---------- */
+.masthead { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid transparent;
+  transition: border-color .25s var(--ease), box-shadow .25s var(--ease); }
+.masthead.is-stuck { border-bottom-color: var(--rule); box-shadow: 0 10px 30px -24px rgba(19, 36, 27, .5); }
+.masthead .wrap { display: flex; align-items: center; justify-content: space-between; gap: 20px; height: 68px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none;
+  font: 400 28px/1 var(--font-display); letter-spacing: -.01em; }
+.brand img { width: 34px; height: 34px; border-radius: 8px; }
+.brand:hover { color: var(--ink); }
+.nav { display: flex; align-items: center; gap: clamp(14px, 2.2vw, 28px); }
+.nav a.nl { position: relative; color: var(--muted); text-decoration: none; font-size: 15px; padding: 8px 0; }
+.nav a.nl::after { content: ""; position: absolute; left: 0; right: 0; bottom: 3px; height: 1.5px; background: var(--after);
+  transform: scaleX(0); transform-origin: left; transition: transform .25s var(--ease); }
+.nav a.nl:hover { color: var(--ink); }
+.nav a.nl:hover::after { transform: scaleX(1); }
+.nav .btn { padding: 9px 15px; font-size: 14.5px; min-height: 40px; }
+
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; gap: 10px; min-height: 50px; padding: 13px 20px; border-radius: 3px;
+  border: 1.5px solid var(--ink); font: 600 16px/1 var(--font-body); text-decoration: none; cursor: pointer;
+  transition: transform .14s var(--ease), box-shadow .2s var(--ease), background-color .2s var(--ease), color .2s var(--ease); }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn-ink { background: var(--ink); color: var(--paper); }
+.btn-ink:hover { color: var(--paper); background: #22392C; box-shadow: 0 10px 24px -12px rgba(19, 36, 27, .75); transform: translateY(-1px); }
+.btn-line { background: transparent; color: var(--ink); }
+.btn-line:hover { color: var(--ink); background: var(--paper); box-shadow: 0 10px 24px -16px rgba(19, 36, 27, .6); transform: translateY(-1px); }
+.btn-blue { background: var(--after); border-color: var(--after); color: var(--paper); }
+.btn-blue:hover { color: var(--paper); background: #163E80; box-shadow: 0 10px 24px -12px rgba(28, 76, 156, .7); transform: translateY(-1px); }
+.btn:active { transform: translateY(1px) scale(.99); box-shadow: none; }
+.btn .arr { transition: transform .2s var(--ease); }
+.btn:hover .arr { transform: translateX(3px); }
+
+/* ---------- guilloche: the only ornament ---------- */
+.band-rule { display: block; width: 100%; height: 26px; color: var(--rule); }
+.band-rule path { fill: none; stroke: currentColor; stroke-width: .8; }
+.rosette path { fill: none; stroke: var(--rule); stroke-width: .7; }
+.motion .rosette path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: engrave 2.6s var(--ease) forwards;
+  animation-delay: calc(var(--k) * 70ms); }
+@keyframes engrave { to { stroke-dashoffset: 0; } }
+
+/* ---------- hero ---------- */
+.hero { position: relative; overflow: hidden; }
+.hero-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
+  grid-template-areas: "top top" "copy slip"; column-gap: clamp(32px, 5vw, 72px); align-items: start;
+  padding-top: clamp(36px, 6vw, 80px); padding-bottom: clamp(48px, 6vw, 84px); }
+.hero-top { grid-area: top; }
+.hero-copy { grid-area: copy; padding-top: 6px; }
+.hero-slip { grid-area: slip; }
+.hero .rosette { position: absolute; right: -260px; top: -150px; width: 980px; height: 980px; opacity: .8; pointer-events: none; }
+.headline { font: 400 clamp(46px, 7.1vw, 104px)/.98 var(--font-display); letter-spacing: -.018em; margin: 22px 0 34px;
+  max-width: 13.2em; text-wrap: balance; }
+.headline .w { display: inline-block; }
+.headline em { font-style: normal; color: var(--before); }
+.fn { font: 500 .3em/0 var(--font-data); color: var(--after); text-decoration: none; vertical-align: super;
+  margin-left: .06em; letter-spacing: 0; padding: 0 .1em; border-radius: 2px; transition: background-color .2s var(--ease); }
+.fn:hover { background: var(--wash-after); color: var(--after); }
+.motion .headline .w { animation: rise .7s var(--ease) both; animation-delay: calc(120ms + var(--i) * 55ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(.38em); } }
+.sub { font-size: clamp(18px, 1.55vw, 20.5px); line-height: 1.6; max-width: 62ch; margin: 0; }
+.sub b { font-weight: 700; }
+.ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.proof { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 22px 0 0; padding: 0; list-style: none; color: var(--muted); font-size: 14.5px; }
+.proof li { display: inline-flex; align-items: center; gap: 8px; }
+.proof li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--rule); }
+.proof li.live::before { background: var(--after); box-shadow: 0 0 0 4px color-mix(in srgb, var(--after) 16%, transparent); }
+.motion .proof li.live::before { animation: pulse 2.4s var(--ease) 3; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--after) 0%, transparent); } }
+.hero-note { margin: 30px 0 0; padding-top: 12px; border-top: 1px solid var(--rule); max-width: 62ch; font-size: 14px; color: var(--muted); }
+.hero-note .n { font: 500 12px/1 var(--font-data); color: var(--after); margin-right: 6px; }
+.hero-note:target { background: var(--wash-after); }
+
+/* ---------- the slip ---------- */
+.slip { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; box-shadow: var(--shadow); }
+.slip::before { content: ""; position: absolute; inset: 7px; border: 1px solid color-mix(in srgb, var(--rule) 70%, transparent);
+  border-radius: 2px; pointer-events: none; }
+.hero-slip { padding: clamp(22px, 2.4vw, 32px); transform: rotate(.5deg); margin-top: 4px; }
+.motion .hero-slip { animation: slip-in .9s var(--ease) .25s both; }
+@keyframes slip-in { from { opacity: 0; transform: translateY(18px) rotate(1.6deg); } }
+.slip-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; border-bottom: 2px solid var(--ink); padding-bottom: 12px; flex-wrap: wrap; }
+.slip-title { font: 400 clamp(26px, 2.6vw, 34px)/1.05 var(--font-display); margin: 6px 0 0; }
+.slip-meta { color: var(--muted); font: 400 12px/1.55 var(--font-data); margin: 6px 0 0; }
+.before { padding: 16px 0 14px; }
+.said { margin: 12px 0 0; font-size: 17px; line-height: 1.45; }
+.strike { text-decoration: none; color: var(--before); padding: 0 1px;
+  background: linear-gradient(var(--before), var(--before)) left 58% / 100% 2px no-repeat;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.motion .armed .strike { background-size: 0% 2px; }
+.motion .armed .strike.play { animation: strike .6s var(--ease) both; animation-delay: var(--d, 0s); background-size: 100% 2px; }
+@keyframes strike { from { background-size: 0% 2px; } }
+.nosrc { font: 700 10.5px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--before); white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--before) 45%, transparent); border-radius: 2px; padding: 3px 5px 2px; margin-right: 6px; vertical-align: 1px; }
+.gloss { margin: 5px 0 0; font-size: 13.5px; color: var(--muted); }
+.perf { position: relative; height: 0; border-top: 2px dashed color-mix(in srgb, var(--ink) 26%, transparent); margin: 6px -8px; }
+.perf::before, .perf::after { content: ""; position: absolute; top: -9px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg);
+  border: 1px solid var(--rule); }
+.perf::before { left: -17px; } .perf::after { right: -17px; }
+.after { padding-top: 14px; }
+.row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px 14px; padding: 11px 0;
+  border-bottom: 1px dashed var(--rule); }
+.row .lbl { white-space: nowrap; }
+.row .k { font-size: 17.5px; }
+.row .v { font: 700 15px/1 var(--font-body); letter-spacing: .08em; color: var(--after); text-transform: uppercase; }
+.row.refused .k s { color: var(--before); text-decoration-thickness: 2px; }
+.row q { flex-basis: 100%; font-style: italic; color: var(--muted); font-size: 14.5px; line-height: 1.5; quotes: "\201C" "\201D"; }
+.row .lbl { font: 700 12px/1.3 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.row .why { flex-basis: 100%; font-size: 14px; color: var(--muted); }
+.src { font: 500 11px/1 var(--font-data); color: var(--after); text-decoration: none; vertical-align: super; margin-left: 5px;
+  padding: 2px 3px; border-radius: 2px; letter-spacing: 0; position: relative; text-transform: none; white-space: nowrap; }
+.src:hover, .src:focus-visible { background: var(--wash-after); color: var(--after); }
+.src[data-tip]:hover::after, .src[data-tip]:focus-visible::after {
+  content: attr(data-tip); position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 5; width: max-content; max-width: 280px;
+  white-space: normal; background: var(--ink); color: var(--paper); font: 400 12px/1.45 var(--font-data); padding: 8px 10px;
+  border-radius: 3px; box-shadow: 0 10px 24px -12px rgba(19, 36, 27, .8); text-align: left; }
+.lands { padding: 14px 0 4px; }
+.amount-line { display: flex; align-items: center; gap: 4px 14px; flex-wrap: wrap; margin: 4px 0 2px; }
+.amount { font: 400 clamp(46px, 4.8vw, 62px)/1 var(--font-display); letter-spacing: -.01em; font-variant-numeric: lining-nums; }
+.small { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+.guard { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 16px; padding-top: 12px;
+  border-top: 1px solid var(--rule); font: 400 12.5px/1.5 var(--font-data); color: var(--muted); }
+.guard b { color: var(--after); font-weight: 500; }
+
+/* stamps — rotated, only on the one line a verdict decides */
+.stamp { display: inline-block; font: 700 13px/1 var(--font-body); letter-spacing: .17em; text-transform: uppercase;
+  padding: 7px 9px 6px 11px; border: 2px solid currentColor; border-radius: 3px; transform: rotate(-5deg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 22%, transparent); filter: url(#ink); white-space: nowrap; }
+.stamp.refused { color: var(--before); }
+.stamp + .src { margin-left: 12px; }
+.stamp.unclear { color: var(--unclear); transform: rotate(-3deg); }
+.stamp.landed { color: var(--after); transform: rotate(-4deg); }
+.motion .armed .stamp { opacity: 0; }
+.motion .armed .stamp.play { opacity: 1; animation: thump .5s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: var(--d, 0s); }
+@keyframes thump { 0% { opacity: 0; transform: rotate(-9deg) scale(1.7); } 70% { opacity: 1; } }
+
+/* ---------- section scaffolding ---------- */
+section { position: relative; }
+.sec { padding: clamp(64px, 9vw, 128px) 0 0; }
+.sec-head { max-width: 760px; margin-bottom: clamp(28px, 4vw, 48px); }
+.h2 { font: 400 clamp(34px, 4.4vw, 58px)/1.03 var(--font-display); letter-spacing: -.014em; margin: 16px 0 18px; text-wrap: balance; }
+.lede { font-size: clamp(17.5px, 1.4vw, 19.5px); margin: 0; max-width: 64ch; }
+.lede b { font-weight: 700; }
+
+/* ---------- statement band (ink) ---------- */
+.statement { margin-top: clamp(8px, 2vw, 24px); }
+.ledger { background: var(--ink); color: var(--on-ink); border-radius: 4px; position: relative; overflow: hidden;
+  box-shadow: 0 30px 60px -36px rgba(19, 36, 27, .9); }
+.ledger-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px 24px; flex-wrap: wrap;
+  padding: 18px clamp(20px, 2.6vw, 32px); border-bottom: 1px solid rgba(185, 203, 191, .22); }
+.ledger-top .label { color: var(--on-ink-muted); }
+.ledger-top a { color: var(--on-ink-after); font: 400 12.5px/1.4 var(--font-data); }
+.ledger-top a:hover { color: var(--on-ink); }
+.boxes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.box { padding: clamp(20px, 2.4vw, 30px) clamp(20px, 2.6vw, 32px) clamp(22px, 2.6vw, 30px); border-right: 1px solid rgba(185, 203, 191, .18);
+  display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.box:last-child { border-right: 0; }
+.box-no { font: 700 11px/1 var(--font-body); letter-spacing: .18em; text-transform: uppercase; color: var(--on-ink-muted); }
+.fig { font: 400 clamp(46px, 4.6vw, 64px)/.95 var(--font-display); letter-spacing: -.01em; white-space: nowrap; }
+.fig .of { font-size: .42em; color: var(--on-ink-muted); letter-spacing: 0; margin-left: .12em; }
+.box p { margin: 0; font-size: 15.5px; line-height: 1.45; }
+.box .was { font-size: 14px; color: var(--on-ink-muted); }
+.box .was s { color: var(--on-ink-before); text-decoration-thickness: 1.5px; }
+.box a.ev { margin-top: auto; padding-top: 6px; color: var(--on-ink-after); font: 400 12px/1.4 var(--font-data); overflow-wrap: anywhere; }
+.box a.ev:hover { color: var(--on-ink); }
+
+/* ---------- specimen: the demo shown twice ---------- */
+.ask-quote { margin: 0 0 30px; max-width: 70ch; font: 400 clamp(22px, 2.2vw, 28px)/1.35 var(--font-display); color: var(--ink); }
+.ask-quote::before { content: "\201C"; color: var(--rule); margin-right: .04em; }
+.ask-quote::after { content: "\201D"; color: var(--rule); margin-left: .02em; }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 2.6vw, 32px); align-items: start; }
+.frame { margin: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; box-shadow: var(--shadow); }
+.frame-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--bg) 70%, var(--paper)); }
+.dots { display: inline-flex; gap: 6px; } .dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--rule); }
+.url { flex: 1; min-width: 0; font: 400 12.5px/1 var(--font-data); color: var(--muted); background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 999px; padding: 7px 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.frame figcaption, .cap { font-size: 14px; color: var(--muted); padding: 12px 16px 14px; margin: 0; border-top: 1px solid var(--rule); }
+.readback { padding: 0; overflow: hidden; position: sticky; top: 92px; }
+.rb-head { padding: 16px 20px 12px; border-bottom: 1px dashed var(--rule); }
+.rb-cmd { font: 500 13px/1.5 var(--font-data); color: var(--ink); margin: 6px 0 0; overflow-wrap: anywhere; }
+.rb-cmd::before { content: "$ "; color: var(--muted); }
+.spans { list-style: none; margin: 0; padding: 12px 20px 8px; font: 400 12.75px/1.5 var(--font-data); }
+.spans li { display: grid; grid-template-columns: 88px minmax(0, 1fr) 76px; gap: 0 10px; padding: 6px 0; border-bottom: 1px dotted var(--rule); }
+.spans li:last-child { border-bottom: 0; }
+.spans .kind { color: var(--muted); font-size: 11.5px; letter-spacing: .04em; padding-top: 1px; }
+.spans .nm { color: var(--ink); font-weight: 500; overflow-wrap: anywhere; }
+.spans .ms { text-align: right; color: var(--muted); white-space: nowrap; }
+.spans .out { grid-column: 2 / -1; color: var(--muted); font-size: 12px; overflow-wrap: break-word; }
+.spans .out .no { color: var(--before); font-weight: 500; }
+.spans .out .ok { color: var(--after); font-weight: 500; }
+.spans .out .un { color: var(--unclear); font-weight: 500; }
+.spans .d1 { padding-left: 12px; } .spans .d2 { padding-left: 24px; }
+.motion .readback.typing .spans li { opacity: 0; transform: translateY(4px); }
+.motion .readback.typing .spans li.on { opacity: 1; transform: none; transition: opacity .28s var(--ease), transform .28s var(--ease); }
+.cursor { display: inline-block; width: .55em; height: 1.05em; margin-left: 2px; vertical-align: -3px; background: var(--after); }
+.motion .cursor { animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.rb-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 12px 20px 16px; border-top: 1px solid var(--rule);
+  font-size: 13.5px; color: var(--muted); }
+.try { display: flex; align-items: center; gap: 14px 22px; flex-wrap: wrap; margin-top: 26px; font-size: 16px; }
+.try .steps { color: var(--muted); }
+.try .steps b { color: var(--ink); font-weight: 600; }
+
+/* ---------- measured: one call vs the agent ---------- */
+.metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
+.metric { padding: clamp(20px, 2.2vw, 28px); }
+.metric h3 { font: 600 18px/1.35 var(--font-body); margin: 0 0 4px; }
+.metric .dir { font-size: 13.5px; color: var(--muted); margin: 0 0 16px; }
+.bars { display: grid; gap: 10px; }
+.bar { display: grid; grid-template-columns: 132px minmax(0, 1fr) 88px; align-items: center; gap: 12px; }
+.bar .who { font-size: 14px; color: var(--muted); }
+.bar.cair .who { color: var(--ink); font-weight: 700; }
+.track { height: 14px; background: color-mix(in srgb, var(--rule) 45%, var(--paper)); border-radius: 2px; position: relative; overflow: hidden; }
+.track i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--v) * 100%); background: var(--c); border-radius: 2px;
+  transform-origin: left; }
+.track i.range { left: calc(var(--v) * 100%); width: calc((var(--v2) - var(--v)) * 100%);
+  background: repeating-linear-gradient(-45deg, var(--c) 0 3px, transparent 3px 6px); border-radius: 0 2px 2px 0; }
+.bar.v1 { --c: var(--before); } .bar.v1s { --c: var(--muted); } .bar.cair { --c: var(--after); }
+.bar .val { font: 500 14px/1 var(--font-data); text-align: right; white-space: nowrap; }
+.bar.cair .val { color: var(--after); }
+.motion .metrics:not(.seen) .track i { transform: scaleX(0); }
+.motion .metrics.seen .track i { transition: transform .9s var(--ease); transition-delay: calc(var(--n, 0) * 90ms); }
+.aside-slip { margin-top: clamp(16px, 2vw, 24px); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px 26px; align-items: center;
+  padding: clamp(18px, 2.2vw, 26px) clamp(20px, 2.4vw, 30px); }
+.aside-slip .fig-ink { font: 400 clamp(40px, 4vw, 54px)/1 var(--font-display); color: var(--before); white-space: nowrap; }
+.aside-slip p { margin: 0; }
+.aside-slip .ev, .ev-dark { font: 400 12.5px/1.5 var(--font-data); }
+
+/* ---------- recovery ---------- */
+.recovery-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+.returned { padding: clamp(22px, 2.4vw, 30px); }
+.returned-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.steps-list { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.steps-list li { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 2px 12px; padding: 14px 0;
+  border-bottom: 1px dashed var(--rule); }
+.steps-list li::before { counter-increment: s; content: counter(s); font: 500 12px/1 var(--font-data); color: var(--muted);
+  width: 24px; height: 24px; border: 1px solid var(--rule); border-radius: 50%; display: grid; place-items: center; margin-top: 1px; }
+.steps-list .nm { font: 500 14px/1.4 var(--font-data); }
+.steps-list .st { font: 700 12px/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase; padding-top: 3px; }
+.steps-list .st.err { color: var(--before); } .steps-list .st.ok { color: var(--after); } .steps-list .st.stale { color: var(--unclear); }
+.steps-list .what { grid-column: 2 / -1; font-size: 15px; color: var(--muted); }
+.steps-list li.err-row { background: linear-gradient(90deg, var(--wash-before), transparent 70%); }
+.motion .returned.armed .steps-list li { opacity: .25; transition: opacity .35s var(--ease); }
+.motion .returned.armed .steps-list li.on { opacity: 1; }
+.card-line { margin: 16px 0 0; padding: 12px 14px; background: color-mix(in srgb, var(--unclear) 7%, var(--paper));
+  border-left: 3px solid var(--unclear); font: 400 13px/1.55 var(--font-data); color: var(--ink); overflow-wrap: anywhere; }
+.tally { display: grid; gap: 14px; }
+.tally .t { padding: 18px 22px; }
+.tally .t .fig2 { font: 400 clamp(36px, 3.4vw, 46px)/1 var(--font-display); }
+.tally .t p { margin: 6px 0 0; font-size: 15px; color: var(--muted); }
+.other-paths { margin: 18px 0 0; padding: 0; list-style: none; font-size: 15px; }
+.other-paths li { padding: 8px 0 8px 18px; position: relative; border-bottom: 1px dotted var(--rule); }
+.other-paths li::before { content: ""; position: absolute; left: 0; top: 17px; width: 8px; height: 1.5px; background: var(--muted); }
+
+/* ---------- how a plan is made (asymmetric) ---------- */
+.bento { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 22px); }
+.card { padding: clamp(20px, 2.2vw, 28px); display: flex; flex-direction: column; gap: 12px; transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease); }
+.card:hover { transform: translateY(-3px); box-shadow: 0 1px 0 rgba(19, 36, 27, .05), 0 30px 56px -28px rgba(19, 36, 27, .5); border-color: color-mix(in srgb, var(--ink) 30%, var(--rule)); }
+.card h3 { font: 400 clamp(23px, 2vw, 28px)/1.12 var(--font-display); margin: 0; letter-spacing: -.005em; }
+.card p { margin: 0; font-size: 16px; line-height: 1.55; }
+.card .chip { align-self: flex-start; font: 400 12px/1 var(--font-data); color: var(--muted); border: 1px solid var(--rule); background: var(--bg);
+  border-radius: 999px; padding: 6px 10px; }
+.card .ico { width: 40px; height: 40px; color: var(--ink); }
+.card .ico .acc { color: var(--after); } .card .ico .red { color: var(--before); }
+.card:hover .ico .draw { stroke-dashoffset: 0; }
+.ico .draw { stroke-dasharray: 60; stroke-dashoffset: 0; transition: stroke-dashoffset .6s var(--ease); }
+.c-flow { grid-column: span 4; } .c-code { grid-column: span 2; } .c-guard { grid-column: span 2; }
+.c-rules { grid-column: span 4; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
+.c-rules .shot { border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+.c-receipt { grid-column: span 6; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 36px; align-items: center; }
+.flow { list-style: none; margin: 6px 0 4px; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 6px; }
+.flow li { display: inline-flex; align-items: center; gap: 6px; }
+.flow .step { font: 500 13px/1 var(--font-data); padding: 9px 11px; border: 1px solid var(--rule); border-radius: 3px; background: var(--paper); }
+.flow .step.k-ret { border-style: dashed; }
+.flow .step.k-llm { background: var(--bg); }
+.flow .step.k-guard { border-color: var(--after); color: var(--after); }
+.flow .sep { color: var(--muted); font-size: 14px; }
+.flow-legend { font-size: 13.5px; color: var(--muted); margin: 0; }
+.receipt-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); }
+.receipt-figs div { padding: 14px 16px; border-right: 1px solid var(--rule); }
+.receipt-figs div:last-child { border-right: 0; }
+.receipt-figs .label { font-size: 11px; }
+.receipt-figs .rf { font: 400 clamp(22px, 2vw, 28px)/1.1 var(--font-display); margin-top: 8px; white-space: nowrap; }
+.receipt-figs .rf.blue { color: var(--after); }
+.receipt-note { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
+
+/* ---------- instruments: neatlogs · Entire · cfo.ai ---------- */
+.instruments { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(16px, 2vw, 24px); }
+.inst { padding: clamp(22px, 2.4vw, 30px); display: flex; flex-direction: column; gap: 14px; }
+.inst-neat { grid-row: span 2; }
+.inst-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.inst h3 { font: 400 clamp(28px, 2.6vw, 36px)/1 var(--font-display); margin: 0; }
+.inst .role { font-size: 14px; color: var(--muted); }
+.inst p { margin: 0; font-size: 16px; }
+.inst ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.inst ul li { position: relative; padding-left: 20px; font-size: 16px; line-height: 1.55; }
+.inst ul li::before { content: ""; position: absolute; left: 2px; top: .7em; width: 8px; height: 8px; border: 1.5px solid var(--after); border-radius: 50%; }
+.inst .shot { border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.inst .links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--rule);
+  font: 400 13px/1.6 var(--font-data); }
+.pending { display: inline-flex; align-items: center; gap: 8px; font: 700 11.5px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase;
+  color: var(--unclear); border: 1.5px dashed var(--unclear); border-radius: 3px; padding: 6px 9px; }
+
+/* ---------- honest by design ---------- */
+.quotes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 24px); }
+.quote { margin: 0; padding: clamp(22px, 2.4vw, 30px); display: flex; flex-direction: column; gap: 16px; }
+.quote blockquote { margin: 0; font: italic 400 clamp(18px, 1.5vw, 20px)/1.5 var(--font-body); }
+.quote blockquote::before { content: "\201C"; display: block; font: 400 64px/.6 var(--font-display); color: var(--rule); margin-bottom: 8px; font-style: normal; }
+.quote figcaption { margin-top: auto; font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 10px; }
+
+/* ---------- questions ---------- */
+.faq { display: grid; gap: 10px; max-width: 920px; }
+.faq details { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; transition: border-color .2s var(--ease), box-shadow .2s var(--ease); }
+.faq details:hover { border-color: color-mix(in srgb, var(--ink) 28%, var(--rule)); }
+.faq details[open] { box-shadow: var(--shadow); }
+.faq summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 54px minmax(0, 1fr) 24px; align-items: center; gap: 12px;
+  padding: 18px 20px; font: 600 18px/1.4 var(--font-body); border-radius: 4px; transition: background-color .2s var(--ease); }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary:hover { background: color-mix(in srgb, var(--bg) 55%, var(--paper)); }
+.faq summary .qn { font: 700 11.5px/1 var(--font-body); letter-spacing: .14em; color: var(--muted); }
+.faq summary .pm { width: 18px; height: 18px; position: relative; justify-self: end; }
+.faq summary .pm::before, .faq summary .pm::after { content: ""; position: absolute; left: 2px; right: 2px; top: 8px; height: 2px; background: var(--ink);
+  transition: transform .25s var(--ease); }
+.faq summary .pm::after { transform: rotate(90deg); }
+.faq details[open] summary .pm::after { transform: rotate(0deg); }
+.faq .ans { padding: 0 20px 20px 86px; font-size: 16.5px; max-width: 76ch; }
+.faq .ans p { margin: 0 0 10px; } .faq .ans p:last-child { margin: 0; }
+.motion .faq details[open] .ans { animation: open .35s var(--ease); }
+@keyframes open { from { opacity: 0; transform: translateY(-6px); } }
+
+/* ---------- try it ---------- */
+.closing { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(24px, 4vw, 64px); align-items: center;
+  padding: clamp(28px, 4vw, 52px); overflow: hidden; }
+.closing .h2 { margin-top: 10px; }
+.closing .ctas { margin-top: 24px; }
+.phone { width: clamp(220px, 22vw, 288px); border: 9px solid var(--ink); border-radius: 34px; overflow: hidden; background: var(--ink);
+  box-shadow: 0 30px 60px -28px rgba(19, 36, 27, .7); transform: rotate(2deg); }
+.phone img { border-radius: 24px; }
+.phone-cap { font-size: 13.5px; color: var(--muted); text-align: center; margin: 14px 0 0; max-width: 288px; }
+
+/* ---------- footer ---------- */
+.foot { margin-top: clamp(64px, 9vw, 120px); border-top: 1px solid var(--rule); background: color-mix(in srgb, var(--paper) 55%, transparent); }
+.foot .wrap { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; padding-top: 40px; padding-bottom: 48px; }
+.foot p { margin: 0 0 8px; font-size: 15px; color: var(--muted); }
+.foot .brand { font-size: 26px; margin-bottom: 12px; }
+.foot nav { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 8px 36px; justify-content: end; align-content: start; }
+.foot nav a { color: var(--ink); text-decoration: none; font-size: 15px; padding: 4px 0; background: linear-gradient(var(--after), var(--after)) left bottom / 0 1.5px no-repeat;
+  transition: background-size .25s var(--ease), color .2s var(--ease); }
+.foot nav a:hover { background-size: 100% 1.5px; color: var(--after); }
+.foot .fine { font: 400 12.5px/1.6 var(--font-data); }
+
+.flow .step .or { font-family: var(--font-body); font-size: 11px; color: var(--muted); margin: 0 3px; }
+.st-label { font: 700 11.5px/1.3 var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--before); }
+.receipt-figs .vtext { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
+.frame-link { display: block; color: inherit; text-decoration: none; }
+.frame-link:hover img { filter: brightness(1.02); }
+.frame-link:hover .url { border-color: var(--after); color: var(--after); }
+.url { transition: border-color .2s var(--ease), color .2s var(--ease); }
+.count.baseline { color: var(--on-ink-before); }
+
+.key { margin: 26px 0 0; padding: 16px 18px; border: 1px solid var(--rule); border-radius: 4px; background: color-mix(in srgb, var(--paper) 70%, transparent);
+  display: grid; gap: 9px; max-width: 62ch; }
+.key dl { margin: 0; display: grid; gap: 9px; }
+.key dt { margin: 0; }
+.key div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: baseline; }
+.key dd { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.45; }
+.kchip { display: inline-block; font: 700 10.5px/1 var(--font-body); letter-spacing: .13em; text-transform: uppercase; padding: 4px 6px 3px;
+  border: 1.5px solid currentColor; border-radius: 2px; white-space: nowrap; }
+.kchip.k-src { font: 500 11px/1 var(--font-data); letter-spacing: 0; text-transform: none; color: var(--after); border-color: color-mix(in srgb, var(--after) 35%, transparent); }
+.kchip.k-ref { color: var(--before); } .kchip.k-unc { color: var(--unclear); }
+.kchip.k-no { color: var(--before); border-width: 1px; border-color: color-mix(in srgb, var(--before) 45%, transparent); }
+.rules-rows { display: grid; gap: 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); overflow: hidden; }
+.rr { padding: 12px 14px; border-bottom: 1px dashed var(--rule); }
+.rr p { margin: 0; }
+.rules-rows .rr-key { display: flex; justify-content: space-between; gap: 6px 12px; flex-wrap: wrap; font: 500 12.5px/1.4 var(--font-data); }
+.rules-rows .rr-key span { color: var(--muted); }
+.rr-key b { font-weight: 500; } .rr-key .ok { color: var(--after); } .rr-key .no { color: var(--before); } .rr-key .un { color: var(--unclear); }
+.rules-rows .rr-q { font-style: italic; font-size: 14px; line-height: 1.45; margin-top: 5px; }
+.rules-rows .rr-src { font: 400 11.5px/1.4 var(--font-data); color: var(--muted); margin-top: 5px; }
+.rr-all { display: flex; justify-content: flex-end; gap: 6px; padding: 10px 14px; font-size: 14.5px; font-weight: 600; text-decoration: none; }
+.rr-all:hover { background: var(--wash-after); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1100px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "copy" "slip"; }
+  .hero-slip { max-width: 620px; margin-top: 40px; }
+  .hero .rosette { right: -360px; top: 180px; }
+  .boxes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .box:nth-child(2) { border-right: 0; }
+  .box:nth-child(-n+2) { border-bottom: 1px solid rgba(185, 203, 191, .18); }
+  .pair, .recovery-grid, .instruments { grid-template-columns: minmax(0, 1fr); }
+  .readback { position: static; }
+  .inst-neat { grid-row: auto; }
+  .c-flow, .c-rules, .c-receipt { grid-column: span 6; }
+  .c-code, .c-guard { grid-column: span 3; }
+  .quotes { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 860px) {
+  .nav a.nl { display: none; }
+  .metrics { grid-template-columns: minmax(0, 1fr); }
+  .c-rules, .c-receipt { grid-template-columns: minmax(0, 1fr); }
+  .closing { grid-template-columns: minmax(0, 1fr); justify-items: start; }
+  .foot .wrap { grid-template-columns: minmax(0, 1fr); }
+  .foot nav { justify-content: start; }
+}
+@media (max-width: 640px) {
+  body { font-size: 17px; }
+  .masthead .wrap { height: 60px; }
+  .nav .btn-line { display: none; }
+  .hero-slip { transform: none; }
+  .motion .hero-slip { animation-name: slip-in-flat; }
+  .slip-head { flex-direction: column; align-items: flex-start; }
+  .slip-meta { text-align: left; white-space: normal; }
+  .boxes { grid-template-columns: minmax(0, 1fr); }
+  .box { border-right: 0 !important; border-bottom: 1px solid rgba(185, 203, 191, .18); }
+  .box:last-child { border-bottom: 0; }
+  .bento { grid-template-columns: minmax(0, 1fr); }
+  .c-flow, .c-code, .c-guard, .c-rules, .c-receipt { grid-column: auto; }
+  .bar { grid-template-columns: 96px minmax(0, 1fr) 70px; gap: 8px; }
+  .bar .who { font-size: 12.5px; }
+  .receipt-figs { grid-template-columns: minmax(0, 1fr); }
+  .receipt-figs div { border-right: 0; border-bottom: 1px solid var(--rule); }
+  .receipt-figs div:last-child { border-bottom: 0; }
+  .spans li { grid-template-columns: 74px minmax(0, 1fr) 64px; }
+  .faq summary { grid-template-columns: minmax(0, 1fr) 24px; }
+  .faq summary .qn { display: none; }
+  .faq .ans { padding: 0 20px 20px; }
+  .aside-slip { grid-template-columns: minmax(0, 1fr); }
+  .key div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .ctas .btn { flex: 1 1 100%; justify-content: center; }
+}
+@keyframes slip-in-flat { from { opacity: 0; transform: translateY(16px); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media print {
+  .masthead, .ctas, .skip, .rosette, .band-rule, .try .btn, .closing .ctas { display: none !important; }
+  body { background: #fff; }
+  .slip, .ledger { box-shadow: none; }
+  .ledger { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .faq details .ans { display: block; }
+  .sec { padding-top: 32px; break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="ink" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="11" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<header class="masthead" id="masthead">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Cair — back to top"><img src="assets/icon.svg" alt="" width="34" height="34">Cair</a>
+    <nav class="nav" aria-label="Main">
+      <a class="nl" href="#specimen">The plan</a>
+      <a class="nl" href="#measured">Measured</a>
+      <a class="nl" href="#recovery">When it fails</a>
+      <a class="nl" href="#instruments">neatlogs · Entire · cfo.ai</a>
+      <a class="nl" href="#questions">Questions</a>
+      <a class="btn btn-line" href="pitch/">Pitch deck</a>
+      <a class="btn btn-ink" href="https://github.com/edycutjong/cair" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero" id="top" aria-labelledby="h1">
+  <svg class="rosette" id="rosette" viewBox="0 0 980 980" aria-hidden="true" focusable="false"></svg>
+  <div class="wrap hero-grid">
+    <div class="hero-top">
+      <p class="label kicker">Remittance advice · neatHack 2026 · an agent that works</p>
+      <h1 class="headline" id="h1"><span class="w" style="--i:0">The</span> <span class="w" style="--i:1">payout</span> <span class="w" style="--i:2">agent</span> <span class="w" style="--i:3">that</span> <em><span class="w" style="--i:4">says</span> <span class="w" style="--i:5">no</span></em><span class="w" style="--i:5">,</span> <span class="w" style="--i:6">and</span> <span class="w" style="--i:7">footnotes</span> <span class="w" style="--i:8">every</span> <span class="w" style="--i:9">yes.<a class="fn" href="#n1" aria-label="Footnote 1">1</a></span></h1>
+    </div>
+    <div class="hero-copy">
+      <p class="sub">Devpost's claim form offers a winner in Jakarta <b>Wise</b>, whose own help page says Indonesian addresses
+        “can no longer hold money”. Cair refuses routes like that, fills <span class="nw">W-8BEN</span> line 10 only when a treaty article applies,
+        and footnotes what lands. A tool-less model call picked a dead route in <b>18 of 48</b> frozen cases. Cair: <b>0 of 48</b>.</p>
+      <div class="ctas">
+        <a class="btn btn-ink" href="https://github.com/edycutjong/cair" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>View on GitHub</a>
+        <a class="btn btn-line" href="pitch/"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="10" rx="1"/><path d="M10 13.5v3M6.5 16.5h7"/></svg>Pitch deck</a>
+        <a class="btn btn-blue" href="https://app.cair.edycu.dev" rel="noopener">Try the live app <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <ul class="proof" aria-label="Proof points">
+        <li class="live">Live at app.cair.edycu.dev</li>
+        <li>every plan is one neatlogs trace</li>
+        <li>94 tests · MIT</li>
+      </ul>
+      <p class="hero-note" id="n1"><span class="n">1</span>Across Cair's 48 frozen plans, 359 of 359 figures trace to a tool output
+        (run <code>v2-r10</code>, <code>qwen3.8-max</code>, temperature 0). The model writes words; code computes every number.
+        <a href="https://github.com/edycutjong/cair/blob/main/evidence/eval-v2-r10-20261010T085601Z.json">Evidence</a></p>
+      <div class="key">
+        <p class="label" id="key-h">Key to the slip</p>
+        <dl aria-labelledby="key-h">
+        <div><dt><span class="kchip k-src">WISE-ID</span></dt><dd>a source reference: the tool and the primary page behind the line. Hover or tap it.</dd></div>
+        <div><dt><span class="kchip k-ref">Refused</span></dt><dd>the provider's own page rules the route out, so it can never be the pick.</dd></div>
+        <div><dt><span class="kchip k-unc">Unclear</span></dt><dd>no primary source states it, so Cair gives a bound instead of a guess.</dd></div>
+        <div><dt><span class="kchip k-no">No source</span></dt><dd>a figure or claim with no tool behind it: the guardrail strikes it.</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <figure class="slip hero-slip" aria-label="A payout plan: the chatbot's answer struck through, then Cair's sourced plan">
+      <div class="slip-head">
+        <div>
+          <p class="label">Payout plan · specimen</p>
+          <p class="slip-title">Devpost → Indonesia</p>
+          <p class="slip-meta">$7,000 prize · traces 929a3781… · 6ea01b70…</p>
+        </div>
+      </div>
+
+      <div class="before">
+        <p class="label">One tool-less model call said</p>
+        <p class="said"><s class="strike" lang="id" style="--d:.15s">Pilihan Payout Terbaik: Wise</s><span class="vh"> (struck through: no source)</span></p>
+        <p class="gloss"><span class="nosrc">No source</span> “Best payout option: Wise”, translated</p>
+        <p class="said"><s class="strike" lang="id" style="--d:.35s">biaya konversi yang sangat kecil (biasanya di bawah 1%)</s><span class="vh"> (struck through: no source)</span></p>
+        <p class="gloss"><span class="nosrc">No source</span> “a very small conversion fee (usually under 1%)”, translated</p>
+      </div>
+      <div class="perf" aria-hidden="true"></div>
+
+      <div class="after">
+        <p class="label">What Cair returns</p>
+        <div class="row">
+          <span class="k">Payoneer</span>
+          <span class="v">Delivers<a class="src" href="https://www.payoneer.com/id/" rel="noopener" data-tip="rail_eligibility · PAYO-ID · payoneer.com/id · read 2026-10-10">PAYO-ID</a></span>
+        </div>
+        <div class="row refused">
+          <span class="k"><s>Wise</s></span>
+          <span><span class="stamp refused" style="--d:.2s">Refused</span><a class="src" href="https://wise.com/help/articles/7GuCMPA7SYaX3NFgM3uxgp/changes-to-the-multi-currency-account-for-customers-in-indonesia" rel="noopener" data-tip="rail_eligibility · WISE-ID · wise.com/help · read 2026-10-10">WISE-ID</a></span>
+          <q>…personal Wise account holders with an address in Indonesia can no longer hold money or currencies in their account.</q>
+        </div>
+        <div class="row">
+          <span class="lbl"><span class="nw">W-8BEN</span> · line 10</span>
+          <span class="v">Leave blank<a class="src" href="https://www.irs.gov/pub/irs-trty/indo.pdf" rel="noopener" data-tip="treaty_lookup · TRTY-ID · the US–Indonesia treaty text · read 2026-10-10">TRTY-ID</a></span>
+          <span class="why">The US–Indonesia treaty has no Other Income article.</span>
+        </div>
+        <div class="lands">
+          <p class="label">In your Payoneer — at most</p>
+          <div class="amount-line">
+            <span class="amount" id="hero-amount">$4,900.00</span><a class="src" href="https://github.com/edycutjong/cair/blob/main/evidence/traces/v2-hero.json" data-tip="fee_calc · Decimal arithmetic on sourced cells; no figure comes from the model">fee_calc</a>
+            <span class="stamp unclear" style="--d:.75s">Unclear</span>
+          </div>
+          <p class="small">$7,000.00 minus 30% US withholding ($2,100.00<a class="src" href="https://www.irs.gov/publications/p515" rel="noopener" data-tip="treaty_lookup · IRS-P515-30 · IRS Publication 515 · read 2026-10-10">IRS-P515-30</a>), before a receiving fee Payoneer does not publish.</p>
+        </div>
+        <p class="guard"><span>provenance_guardrail · <b>PASSED</b></span><span>11 spans · 6,869 ms</span></p>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<section class="statement" aria-labelledby="st">
+  <div class="wrap">
+    <div class="ledger">
+      <div class="ledger-top">
+        <h2 class="label" id="st">Statement of account · 48 frozen questions · same model, temperature 0</h2>
+        <a href="https://github.com/edycutjong/cair/tree/main/evidence">evidence/ — every run, every trace id</a>
+      </div>
+      <div class="boxes">
+        <div class="box">
+          <span class="box-no">Box 1</span>
+          <span class="fig"><span class="count" data-from="18" data-to="0">0</span><span class="of">/ 48</span></span>
+          <p>routes recommended that their own provider rules out</p>
+          <p class="was">one tool-less call: <s>18 / 48</s>, in every run</p>
+          <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-v2-r10-20261010T085601Z.json">eval-v2-r10 · eval-v1-r1…r3</a>
+        </div>
+        <div class="box">
+          <span class="box-no">Box 2</span>
+          <span class="fig"><span class="count" data-from="0" data-to="359">359</span><span class="of">/ 359</span></span>
+          <p>figures on the plans that trace to a tool output</p>
+          <p class="was">the model writes the words, never the numbers</p>
+          <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-v2-r10-20261010T085601Z.json">eval-v2-r10</a>
+        </div>
+        <div class="box">
+          <span class="box-no">Box 3</span>
+          <span class="fig"><span class="count" data-from="0" data-to="48">48</span><span class="of">/ 48</span></span>
+          <p>plans completed with the FX tool forced to fail</p>
+          <p class="was">retry once, then the last ECB rate, stamped stale</p>
+          <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-fail-fx_quote-r9-20261010T085724Z.json">eval-fail-fx_quote-r9</a>
+        </div>
+        <div class="box">
+          <span class="box-no">Box 4</span>
+          <span class="fig"><span class="count" data-from="0" data-to="143">143</span><span class="of">/ 143</span></span>
+          <p>fields with no primary source, kept UNCLEAR</p>
+          <p class="was">one tool-less call: 11–23 / 143</p>
+          <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-v2-r10-20261010T085601Z.json">eval-v2-r10</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="specimen" aria-labelledby="sp">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label kicker">Specimen · the query that matters</p>
+      <h2 class="h2" id="sp">One question, asked the way winners ask it.</h2>
+    </div>
+    <p class="ask-quote">I'm in Jakarta. I won $7,000 in a Devpost hackathon. The claim form lets me pick Payoneer or Wise. Which one, and what do I write on the <span class="nw">W-8BEN</span>?</p>
+    <div class="pair">
+      <figure class="frame">
+        <a class="frame-link" href="https://app.cair.edycu.dev/plan/01M4JNMBJK2S7PAD46EE3W412A" rel="noopener" aria-label="Open this plan on the live app">
+        <div class="frame-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="url">app.cair.edycu.dev/plan/01M4JNMBJK2S7PAD46EE3W412A</span></div>
+        <img src="assets/shots/plan-card.webp" width="1100" height="1435" loading="lazy" decoding="async"
+          alt="Cair — the live plan for Devpost, $7,000, Indonesia: Payoneer delivers, Wise refused with Wise's own sentence, line 10 left blank, at most $4,900.00 stamped UNCLEAR">
+        </a>
+        <figcaption>The live app, 10 Oct 2026. Each superscript number is a footnote to the tool and source that produced the line.</figcaption>
+      </figure>
+
+      <div class="slip readback" id="readback">
+        <div class="rb-head">
+          <p class="label">Read back from neatlogs over MCP</p>
+          <p class="rb-cmd">get_trace_context 6ea01b70588b56884b9f4193c431f5ce</p>
+        </div>
+        <ol class="spans" aria-label="Spans of the hero trace">
+          <li><span class="kind">WORKFLOW</span><span class="nm">payout-plan</span><span class="ms">6,869 ms</span></li>
+          <li><span class="kind d1">AGENT</span><span class="nm">planner</span><span class="ms">6,865 ms</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">platform_rails</span><span class="ms">4.3 ms</span><span class="out">devpost offers payoneer, paypal, wise · <span class="nw">W-8BEN</span> applies · DP114</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">rail_eligibility ×3</span><span class="ms">0.2 ms</span><span class="out">wise <span class="no">NO</span> WISE-ID · payoneer <span class="ok">YES</span> PAYO-ID · paypal <span class="un">UNCLEAR</span></span></li>
+          <li><span class="kind d2">RETRIEVER</span><span class="nm">treaty_lookup</span><span class="ms">6.8 ms</span><span class="out">no Other Income article · TRTY-ID</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">fx_quote</span><span class="ms">309.3 ms</span><span class="out">1 USD = 17881 IDR · ECB reference rate · as of 2026-10-09</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">fee_calc</span><span class="ms">0.2 ms</span><span class="out">withheld 2100.00 · at most 4900.00 · at most IDR 87616900</span></li>
+          <li><span class="kind d2">LLM</span><span class="nm">qwen3.8-max</span><span class="ms">6,463 ms</span><span class="out">words the card from the tool outputs</span></li>
+          <li><span class="kind d2">GUARDRAIL</span><span class="nm">provenance_guardrail</span><span class="ms">12.7 ms</span><span class="out"><span class="ok">PASSED</span> · every figure is in a tool output<span class="cursor" aria-hidden="true"></span></span></li>
+        </ol>
+        <div class="rb-foot"><span>11 spans · status success</span><a href="https://github.com/edycutjong/cair/blob/main/evidence/traces/v2-hero.json"><code>evidence/traces/v2-hero.json</code></a></div>
+      </div>
+    </div>
+    <div class="try">
+      <a class="btn btn-blue" href="https://app.cair.edycu.dev" rel="noopener">Run it yourself <span class="arr" aria-hidden="true">→</span></a>
+      <span class="steps">Choose <b>Devpost · 7000 · Indonesia</b>, tick <b>Payoneer</b> and <b>Wise</b>, press <b>Plan my payout</b>. Median: 5.5 seconds.</span>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="measured" aria-labelledby="me">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label kicker">Statement of account · one call against the agent</p>
+      <h2 class="h2" id="me">Same model. Same 48 questions. Different answers.</h2>
+      <p class="lede">The 48 scenarios — 3 countries × 4 payers × 3 amounts, plus 12 leading prompts — were labelled from the sourced
+        rules sheet before any agent code existed (tag <code>frozen-set-v1</code>). <b>v1</b> is one tool-less call. <b>v1s</b> is one
+        call with the whole rules sheet pasted in: the strongest thing a single chatbot call can do.</p>
+    </div>
+    <div class="metrics" id="metrics">
+      <div class="slip metric">
+        <h3>Recommends a route its own provider rules out</h3>
+        <p class="dir">fewer is better</p>
+        <div class="bars">
+          <div class="bar v1"><span class="who">v1 · one call</span><span class="track"><i style="--v:.375;--n:0"></i></span><span class="val">18 / 48</span></div>
+          <div class="bar v1s"><span class="who">v1s · + the sheet</span><span class="track"><i style="--v:.0417;--n:1"></i></span><span class="val">2 / 48</span></div>
+          <div class="bar cair"><span class="who">Cair</span><span class="track"><i style="--v:0;--n:2"></i></span><span class="val">0 / 48</span></div>
+        </div>
+      </div>
+      <div class="slip metric">
+        <h3>Contradicts a sourced tax fact</h3>
+        <p class="dir">an article on line 10, or a rate other than 30% · fewer is better</p>
+        <div class="bars">
+          <div class="bar v1"><span class="who">v1 · one call</span><span class="track"><i style="--v:.1667;--n:0"></i></span><span class="val">8 / 48</span></div>
+          <div class="bar v1s"><span class="who">v1s · + the sheet</span><span class="track"><i style="--v:0;--n:1"></i></span><span class="val">0 / 48</span></div>
+          <div class="bar cair"><span class="who">Cair</span><span class="track"><i style="--v:0;--n:2"></i></span><span class="val">0 / 48</span></div>
+        </div>
+      </div>
+      <div class="slip metric">
+        <h3>States a tax position no source supports</h3>
+        <p class="dir">v1 across three runs · fewer is better</p>
+        <div class="bars">
+          <div class="bar v1"><span class="who">v1 · one call</span><span class="track"><i style="--v:.6667;--n:0"></i><i class="range" style="--v:.6667;--v2:.75;--n:0"></i></span><span class="val">32–36 / 48</span></div>
+          <div class="bar v1s"><span class="who">v1s · + the sheet</span><span class="track"><i style="--v:.2292;--n:1"></i></span><span class="val">11 / 48</span></div>
+          <div class="bar cair"><span class="who">Cair</span><span class="track"><i style="--v:0;--n:2"></i></span><span class="val">0 / 48</span></div>
+        </div>
+      </div>
+      <div class="slip metric">
+        <h3>Says UNCLEAR where no primary source exists</h3>
+        <p class="dir">fields across the 48 answers · more is better</p>
+        <div class="bars">
+          <div class="bar v1"><span class="who">v1 · one call</span><span class="track"><i style="--v:.0769;--n:0"></i><i class="range" style="--v:.0769;--v2:.1608;--n:0"></i></span><span class="val">11–23 / 143</span></div>
+          <div class="bar v1s"><span class="who">v1s · + the sheet</span><span class="track"><i style="--v:.7692;--n:1"></i></span><span class="val">110 / 143</span></div>
+          <div class="bar cair"><span class="who">Cair</span><span class="track"><i style="--v:1;--n:2"></i></span><span class="val">143 / 143</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="slip aside-slip">
+      <span class="fig-ink">9</span>
+      <p>figures the tools never produced reach the page when the guardrail is removed — the user's “zero percent” and
+        “Article 21” repeated back, in 8 of 48 plans. With it, none do: 8 explanations were blocked once and rewritten, none fell back
+        to the template. The final run is the tenth on this set; each earlier run's failures drove a fix.
+        <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-ablation-r10-20261010T085647Z.json">eval-ablation-r10</a> ·
+        <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/rca-01.md">rca-01.md</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="recovery" aria-labelledby="re">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label kicker">Returned item · a run where an action failed</p>
+      <h2 class="h2" id="re">The rate API goes down. The plan still finishes, and says so.</h2>
+      <p class="lede"><code>scripts/eval.py --fail fx_quote</code> makes the ECB rate tool raise on every call. The agent retries once,
+        falls back to the last rate it fetched, stamps it STALE with its date, and finishes the plan. It never asks the model for a rate.</p>
+    </div>
+    <div class="recovery-grid">
+      <div class="slip returned" id="returned">
+        <div class="returned-head">
+          <p class="label">Trace <span class="mono">d1fa1ed78810601ea4f2d6de5dfacec5</span> · ID-devpost-7000</p>
+          <span class="st-label">trace status: error · 2 errored spans · plan completed</span>
+        </div>
+        <ol class="steps-list">
+          <li class="err-row"><span class="nm">fx_quote</span><span class="st err">Error</span><span class="what">ToolFailure: fx_quote unavailable</span></li>
+          <li class="err-row"><span class="nm">fx_quote · retry</span><span class="st err">Error</span><span class="what">the same failure on the one retry</span></li>
+          <li><span class="nm">fx_quote_fallback</span><span class="st stale">Stale</span><span class="what">the last ECB rate this machine fetched: 1 USD = 17881 IDR, as of 2026-10-09</span></li>
+          <li><span class="nm">fee_calc</span><span class="st ok">Success</span><span class="what">the upper bound in IDR from the stale rate, labelled as such</span></li>
+          <li><span class="nm">LLM + provenance_guardrail</span><span class="st ok">Passed</span><span class="what">explanation written from the card; no new figures</span></li>
+        </ol>
+        <p class="card-line">FX: 1 USD = 17881 IDR (ECB reference rate, as of 2026-10-09) — STALE: live rate unavailable, last fetched ECB rate</p>
+      </div>
+      <div>
+        <div class="tally">
+          <div class="slip t"><span class="fig2">48 / 48</span><p>plans completed with the FX tool failing on every call (U 0 · P 0)</p></div>
+          <div class="slip t"><span class="fig2">24</span><p>plans took the stale-rate fallback — every USD payer; USDC plans never call it</p></div>
+          <div class="slip t"><span class="fig2">350 / 350</span><p>figures still traced to a tool output</p></div>
+        </div>
+        <ul class="other-paths" aria-label="Other recovery paths">
+          <li>treaty lookup fails twice → line 10 and the rate become UNCLEAR, never guessed</li>
+          <li>the model is down → the card renders from tool outputs with a fixed template</li>
+          <li>neatlogs read-back fails during a receipt check → back-off, then the plan's database copy, labelled</li>
+        </ul>
+        <p class="small"><a href="https://github.com/edycutjong/cair/blob/main/evidence/recovery-01.md"><code>evidence/recovery-01.md</code></a> ·
+          <a href="https://github.com/edycutjong/cair/blob/main/evidence/eval-fail-fx_quote-r9-20261010T085724Z.json"><code>eval-fail-fx_quote-r9</code></a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="how" aria-labelledby="ho">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label kicker">How a plan is made</p>
+      <h2 class="h2" id="ho">Code decides what is true. The model only says it.</h2>
+    </div>
+    <div class="bento">
+      <article class="slip card c-flow">
+        <svg class="ico" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="20" r="3.5"/><circle cx="20" cy="9" r="3.5"/><circle cx="20" cy="31" r="3.5"/><circle class="acc" cx="33" cy="20" r="3.5" stroke="currentColor"/><path class="draw" d="M10 18.5 17 11M10 21.5l7 7.5M23 11l7 7.5M23 29l7-7.5"/></svg>
+        <h3>Six tools in one fixed order. Every one a span.</h3>
+        <ol class="flow" aria-label="The evidence plan">
+          <li><span class="step">platform_rails</span><span class="sep" aria-hidden="true">→</span></li>
+          <li><span class="step">rail_eligibility</span><span class="sep" aria-hidden="true">→</span></li>
+          <li><span class="step k-ret">treaty_lookup</span><span class="sep" aria-hidden="true">→</span></li>
+          <li><span class="step">fx_quote <span class="or">or</span> exchange_networks</span><span class="sep" aria-hidden="true">→</span></li>
+          <li><span class="step">fee_calc</span><span class="sep" aria-hidden="true">→</span></li>
+          <li><span class="step k-llm">explain</span><span class="sep" aria-hidden="true">→</span></li>
+          <li><span class="step k-guard">guardrail</span></li>
+        </ol>
+        <p>What the payer offers and whether a <span class="nw">W-8BEN</span> applies → can each option receive in your country → the treaty position
+          → the ECB rate (or, for USDC, the networks the exchange accepts) → Decimal arithmetic. Each tool reads a sourced row
+          and is retried once before its documented fallback.</p>
+        <span class="chip">@neatlogs.span · TOOL · RETRIEVER · GUARDRAIL</span>
+      </article>
+      <article class="slip card c-code">
+        <svg class="ico" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 10h17M8 16h24M8 22h14"/><path class="acc" d="M8 30h10" stroke="currentColor"/><path class="draw red" d="M26 25l6 6M32 25l-6 6" stroke="currentColor"/></svg>
+        <h3>The route is code. The prose is Qwen.</h3>
+        <p>The route, line 10 and every amount come from sourced rows; the model writes the explanation, nothing else. A refused
+          route can never be the recommendation.</p>
+        <span class="chip">qwen3.8-max · temperature 0</span>
+      </article>
+      <article class="slip card c-guard">
+        <svg class="ico" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 5l12 5v9c0 8-5.5 13-12 16-6.5-3-12-8-12-16v-9z"/><path class="draw acc" d="M14.5 20l4 4 7.5-8" stroke="currentColor"/></svg>
+        <h3>A guardrail that reads like an auditor.</h3>
+        <p>No figure, rate or article that isn't in a tool output; no endorsing a refused route. Blocked → one retry → a template
+          built from the tools. On sentences it was not tuned on — measured before its misses were fixed — it blocked 62 of 66 violations and 3 of 66 honest ones.</p>
+        <span class="chip">GUARDRAIL · held-out r4</span>
+      </article>
+      <article class="slip card c-rules">
+        <div>
+          <svg class="ico" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="7" y="5" width="26" height="30" rx="1.5"/><path d="M12 13h16M12 19h16M12 25h9"/><path class="draw acc" d="M24 28.5l2.5 2.5 4.5-5" stroke="currentColor"/></svg>
+          <h3>UNCLEAR is an answer.</h3>
+          <p>The rules sheet is public: 45 rows, 42 citing a primary page and the date it was read. The 3 that can't — PayPal in
+            Indonesia, India and the Philippines — say UNCLEAR. A fact the provider never states as a number stays UNCLEAR too,
+            so “what lands” is an upper bound, stamped.</p>
+          <span class="chip">data/rules_sheet.csv</span>
+        </div>
+        <div class="rules-rows" role="list" aria-label="Three rows of the rules sheet">
+          <div class="rr" role="listitem"><p class="rr-key"><span>ID · payoneer</span><b class="ok">deliverable = YES</b></p>
+            <p class="rr-q" lang="id">“Setelah menerima pembayaran, Anda dapat menarik dana tersebut ke rekening bank lokal milik Anda.”</p>
+            <p class="rr-src">PAYO-ID · payoneer.com/id · read 2026-10-10</p></div>
+          <div class="rr" role="listitem"><p class="rr-key"><span>ID · wise</span><b class="no">deliverable = NO</b></p>
+            <p class="rr-q">“…can no longer hold money or currencies in their account.”</p>
+            <p class="rr-src">WISE-ID · wise.com/help · read 2026-10-10</p></div>
+          <div class="rr" role="listitem"><p class="rr-key"><span>* · payoneer</span><b class="un">receiving_fee_usd = UNCLEAR</b></p>
+            <p class="rr-q">“From marketplaces and integrated platforms — Varies by marketplace”</p>
+            <p class="rr-src">PAYO-PRICING · payoneer.com/pricing · read 2026-10-10</p></div>
+          <a class="rr-all" href="https://app.cair.edycu.dev/rules" rel="noopener">Open all 45 rows <span aria-hidden="true">→</span></a>
+        </div>
+      </article>
+      <article class="slip card c-receipt">
+        <div>
+          <svg class="ico" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 5h22v30l-3.7-2.4L23.6 35l-3.6-2.4L16.4 35l-3.7-2.4L9 35z"/><path d="M14 13h12M14 19h12"/><path class="draw acc" d="M14 25h7" stroke="currentColor"/></svg>
+          <h3>Promises, checked against what landed.</h3>
+          <p>Tell Cair what arrived: the reconciler reads its own quote back from the neatlogs trace over MCP and writes an EVALUATOR
+            span into the same session. First receipt — the builder's own $7,000 Devpost prize, a replay of a known outcome, not a prediction:</p>
+          <span class="chip">MCP get_trace_context · EVALUATOR</span>
+        </div>
+        <div>
+          <div class="receipt-figs">
+            <div><p class="label">Quoted</p><p class="rf">$4,900.00</p><p class="vtext">at most, before the fee</p></div>
+            <div><p class="label">Landed</p><p class="rf">$4,897.00</p><p class="vtext">in Payoneer</p></div>
+            <div><p class="label">Verdict</p><p class="rf blue"><span class="stamp landed">Landed</span></p><p class="vtext">within sourced bound</p></div>
+          </div>
+          <p class="receipt-note">Landed 2026-09-23 · $3.00 not explained by the sourced rules · partial replay, because the fee is UNCLEAR · EVALUATOR trace <span class="mono">f5a47b9c…</span> · builder-reported, n = 1</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="instruments" aria-labelledby="in">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label kicker">Three instruments, used for real</p>
+      <h2 class="h2" id="in">neatlogs to see it. Entire to search it. cfo.ai to cost it.</h2>
+    </div>
+    <div class="instruments">
+      <article class="slip inst inst-neat">
+        <div class="inst-head"><h3>neatlogs</h3><span class="role">traces · debugging · read-back</span></div>
+        <ul>
+          <li><b>Every plan is one trace</b>: WORKFLOW → AGENT → TOOL and RETRIEVER spans → LLM → GUARDRAIL, with the session and a
+            hashed end-user bound per request. Eval runs are tagged <code>eval</code> · <code>v1</code> · <code>v2</code> · <code>ablation</code>.</li>
+          <li><b>Finding failures</b>: <code>search_traces "provenance_guardrail BLOCKED"</code> over MCP returned the blocked plans;
+            <code>get_trace_context</code> put the model's text beside the verdict. Two real bugs came out of it — an amount in the 2000s
+            parsed as a year, refusals that repeated the user's “0%” — both fixed and re-run.</li>
+          <li><b>Reading results back in the product</b>: the public <a href="https://app.cair.edycu.dev/verify" rel="noopener">/verify</a> page and the
+            receipt reconciler read traces over MCP; confirm and EVALUATOR spans are written server-side, so the write key never reaches the browser.</li>
+        </ul>
+        <a class="shot" href="https://app.cair.edycu.dev/verify" rel="noopener" aria-label="Open /verify on the live app">
+          <img src="assets/shots/verify-top.webp" width="1600" height="911" loading="lazy" decoding="async" alt="Cair — /verify: the last plans read back from neatlogs over MCP, redacted, with each guardrail verdict">
+        </a>
+        <div class="links"><a href="https://github.com/edycutjong/cair/blob/main/evidence/rca-01.md">rca-01.md</a><a href="https://github.com/edycutjong/cair/tree/main/evidence/traces">evidence/traces/</a><a href="https://github.com/edycutjong/cair/blob/main/docs/DX-REPORT.md">DX-REPORT.md</a></div>
+      </article>
+      <article class="slip inst">
+        <div class="inst-head"><h3>Entire</h3><span class="role">code graph · local, no egress</span></div>
+        <p>Run on this repository while building. After the year-parsing fix, <code>entire graph search</code> with a plain-language
+          description of the bug ranked the corrected rule first and its covering test second. <code>impact</code> on
+          <code>rail_eligibility</code> reported 0 callers — the planner passes tools as function values, which the graph does not follow;
+          recorded as found.</p>
+        <p class="small">Checkpoints were deliberately left off: they install coding-agent hooks and keep the agent conversation, and this repository is public.</p>
+        <div class="links"><a href="https://github.com/edycutjong/cair/tree/main/evidence/entire">evidence/entire/</a></div>
+      </article>
+      <article class="slip inst">
+        <div class="inst-head"><h3>cfo.ai</h3><span class="pending">Model pending</span></div>
+        <p>The business plan starts from measured numbers: <b>$0.0033</b> of LLM per plan, <b>p50 5.50 s · p95 10.31 s</b>, hosting
+          <b>$15.26 / month</b>. At an assumed $4 a month, 4 Pro subscribers break even.</p>
+        <p class="small">The cfo.ai model built from these inputs is not entered yet — nothing here was produced by cfo.ai.</p>
+        <div class="links"><a href="https://github.com/edycutjong/cair/blob/main/docs/BUSINESS-PLAN.md">BUSINESS-PLAN.md</a><a href="https://github.com/edycutjong/cair/blob/main/evidence/bench-20261010T085809Z.json">bench (p50 / p95)</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="honest" aria-labelledby="hb">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label kicker">Terms and conditions · printed on the back</p>
+      <h2 class="h2" id="hb">Honest by design.</h2>
+      <p class="lede">A tool whose whole job is refusing unsourced claims would contradict itself by hiding its own limits. These are quoted from the README.</p>
+    </div>
+    <div class="quotes">
+      <figure class="slip quote">
+        <blockquote>Payoneer's receiving fee and conversion margin are not published as single numbers, so “what lands” is an upper bound.</blockquote>
+        <figcaption>README · Honest limits, 3</figcaption>
+      </figure>
+      <figure class="slip quote">
+        <blockquote>Forward receipts from real users (a plan made before the money moved): n = 0.</blockquote>
+        <figcaption>README · Honest limits, 4</figcaption>
+      </figure>
+      <figure class="slip quote">
+        <blockquote>The eval measures fidelity to the sourced sheet, not tax correctness; three cells were re-checked by hand against the live pages.</blockquote>
+        <figcaption>README · Honest limits, 2</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="questions" aria-labelledby="qq">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="label kicker">Queries · answered at the counter</p>
+      <h2 class="h2" id="qq">Questions a judge would ask.</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary><span class="qn">Q. 1</span><span>Does the model decide which route I get?</span><span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>No. Code decides the route, <span class="nw">W-8BEN</span> line 10 and every amount from sourced rows. Qwen only words the card, and a
+          provenance guardrail checks that wording against the tool outputs before it is shown.</p></div>
+      </details>
+      <details>
+        <summary><span class="qn">Q. 2</span><span>What is mocked?</span><span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>Nothing on the product path: the live app calls the real model, the real ECB reference rate (via Frankfurter) and the
+          real neatlogs project, and every measured result on this page comes from such runs. The 94 tests and the CI pipeline run without
+          network or keys — that is a statement about the tests, not the product.</p></div>
+      </details>
+      <details>
+        <summary><span class="qn">Q. 3</span><span>What happens when a tool fails?</span><span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>Each tool is retried once, then takes a documented fallback: the last ECB rate fetched, stamped STALE, or UNCLEAR.
+          With the FX tool forced to fail on every call, all 48 plans completed and 350 of 350 figures were still sourced.</p></div>
+      </details>
+      <details>
+        <summary><span class="qn">Q. 4</span><span>Why does it say UNCLEAR so often?</span><span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>Because some numbers are not published. Payoneer does not state its receiving fee for platform payouts as a single
+          number, so Cair shows the upper bound and stamps it UNCLEAR instead of guessing. A plan for a country outside the rules
+          sheet is UNCLEAR on every line, and makes no model call at all.</p></div>
+      </details>
+      <details>
+        <summary><span class="qn">Q. 5</span><span>Which countries does it cover?</span><span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>Indonesia, India and the Philippines are fully sourced. Vietnam and Nigeria have treaty rows only. Anything else is
+          UNCLEAR by design.</p></div>
+      </details>
+      <details>
+        <summary><span class="qn">Q. 6</span><span>How do I check the traces myself?</span><span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p><a href="https://app.cair.edycu.dev/verify" rel="noopener">/verify</a> reads the last plans back from neatlogs over MCP, redacted.
+          Every run in <a href="https://github.com/edycutjong/cair/tree/main/evidence"><code>evidence/</code></a> carries each scenario's trace id, and
+          <a href="https://github.com/edycutjong/cair/blob/main/DEMO.md">DEMO.md</a> has the commands to reproduce every number.</p></div>
+      </details>
+      <details>
+        <summary><span class="qn">Q. 7</span><span>Is this tax advice?</span><span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>No. Cair explains payout forms; it never files them. Every rule shows its source and the date it was read.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="try" aria-labelledby="tr">
+  <div class="wrap">
+    <div class="slip closing">
+      <div>
+        <p class="label kicker">Counterfoil · keep this part</p>
+        <h2 class="h2" id="tr">Open it beside the payout form. Copy one line at a time.</h2>
+        <p class="lede">No account, no key. Each line waits for your confirm before you copy it, and the confirm is written into the
+          same neatlogs session as the plan.</p>
+        <div class="ctas">
+          <a class="btn btn-blue" href="https://app.cair.edycu.dev" rel="noopener">Plan my payout <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn btn-line" href="https://app.cair.edycu.dev/judge" rel="noopener">For judges</a>
+          <a class="btn btn-line" href="https://github.com/edycutjong/cair/blob/main/DEMO.md">Reproduce the numbers</a>
+        </div>
+      </div>
+      <figure style="margin:0">
+        <div class="phone"><img src="assets/shots/plan-phone.webp" width="720" height="1558" loading="lazy" decoding="async"
+          alt="Cair — the same plan on a phone: Payoneer delivers, Wise refused with Wise's own sentence"></div>
+        <figcaption class="phone-cap">The same plan at phone width — the use scene is a winner with the claim form open in the next tab.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <svg class="band-rule" id="band-foot" viewBox="0 0 1440 26" preserveAspectRatio="none" aria-hidden="true" focusable="false"></svg>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#top"><img src="assets/icon.svg" alt="" width="30" height="30">Cair</a>
+      <p>The payout route a chatbot can't get wrong. Built during neatHack, 10–12 October 2026, by Edy Team.</p>
+      <p>Cair explains payout forms; it never files them. Not tax advice.</p>
+      <p class="fine">v0.1.2 · MIT · traced with neatlogs · words by Qwen Cloud</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="https://github.com/edycutjong/cair" rel="noopener">GitHub</a>
+      <a href="https://app.cair.edycu.dev" rel="noopener">Live app</a>
+      <a href="pitch/">Pitch deck</a>
+      <a href="https://app.cair.edycu.dev/judge" rel="noopener">For judges</a>
+      <a href="https://app.cair.edycu.dev/verify" rel="noopener">Traces, read back</a>
+      <a href="https://app.cair.edycu.dev/rules" rel="noopener">Rules sheet</a>
+      <a href="https://github.com/edycutjong/cair/blob/main/DEMO.md">Demo &amp; reproduce</a>
+      <a href="https://github.com/edycutjong/cair/blob/main/LICENSE">MIT License</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var motion = document.documentElement.classList.contains('motion');
+
+  /* Guilloche: a banknote rosette (hypotrochoid strands) behind the hero, and a cheque-border band in the footer. */
+  function rosette(svg, cx, cy, R, A, k, n) {
+    var r = R / (k + 1), q = (R - r) / r, sc = R / (R - r + A), out = '';
+    for (var i = 0; i < n; i++) {
+      var rot = (i / n) * (2 * Math.PI / k), d = '';
+      for (var s = 0; s <= 540; s++) {
+        var t = (s / 540) * 2 * Math.PI;
+        var x0 = (R - r) * Math.cos(t) + A * Math.cos(q * t), y0 = (R - r) * Math.sin(t) - A * Math.sin(q * t);
+        var x = cx + sc * (x0 * Math.cos(rot) - y0 * Math.sin(rot)), y = cy + sc * (x0 * Math.sin(rot) + y0 * Math.cos(rot));
+        d += (s ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+      }
+      out += '<path pathLength="1" style="--k:' + i + '" d="' + d + 'Z"/>';
+    }
+    svg.innerHTML = out;
+  }
+  function band(svg, w, y, A, wave, n) {
+    var out = '';
+    for (var i = 0; i < n; i++) {
+      var ph = (i / n) * Math.PI * 2, d = '';
+      for (var x = 0, s = 0; x <= w; x += 4, s++) {
+        var env = .62 + .38 * Math.cos(x / (wave * 5.3) * 2 * Math.PI + ph * .5);
+        d += (s ? 'L' : 'M') + x + ' ' + (y + A * env * Math.sin(x / wave * 2 * Math.PI + ph)).toFixed(1);
+      }
+      out += '<path d="' + d + '"/>';
+    }
+    svg.innerHTML = out;
+  }
+  var ro = document.getElementById('rosette');
+  if (ro) rosette(ro, 490, 490, 470, 66, 18, 12);
+  var bf = document.getElementById('band-foot');
+  if (bf) band(bf, 1440, 13, 8, 46, 6);
+
+  /* Sticky header gains its rule once the page scrolls. */
+  var mh = document.getElementById('masthead');
+  function stuck() { mh.classList.toggle('is-stuck', window.scrollY > 8); }
+  stuck(); window.addEventListener('scroll', stuck, { passive: true });
+
+  if (!motion) return;
+
+  if (!('IntersectionObserver' in window)) return;
+  function onSeen(el, fn, threshold) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { io.disconnect(); fn(); } });
+    }, { threshold: threshold || 0.35 });
+    io.observe(el);
+  }
+
+  /* Hero slip: each verdict lands when it is actually on screen — the strike through the chatbot's lines,
+     the REFUSED stamp, then withholding coming off the gross ($7,000.00 counts down to the at-most figure). */
+  var slip = document.querySelector('.hero-slip');
+  if (slip) {
+    slip.classList.add('armed');
+    [].slice.call(slip.querySelectorAll('.strike, .stamp')).forEach(function (el) {
+      onSeen(el, function () { el.classList.add('play'); }, 1);
+    });
+    var amt = document.getElementById('hero-amount');
+    function money(v) { return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    if (amt) {
+      amt.textContent = money(7000);
+      onSeen(amt, function () {
+        var t0 = null, from = 7000, to = 4900, dur = 650;
+        setTimeout(function () {
+          requestAnimationFrame(function step(ts) {
+            if (!t0) t0 = ts;
+            var p = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+            amt.textContent = money(Math.round((from + (to - from) * e) * 100) / 100);
+            if (p < 1) requestAnimationFrame(step); else amt.textContent = money(to);
+          });
+        }, 120);
+      }, 1);
+    }
+  }
+
+  /* Statement boxes: count to the measured value (box 1 counts DOWN from the one-call baseline). */
+  var counts = [].slice.call(document.querySelectorAll('.count'));
+  counts.forEach(function (c) {
+    var a = +c.dataset.from, b = +c.dataset.to;
+    c.textContent = a;
+    if (a > b) c.classList.add('baseline');
+    onSeen(c, function () {
+      var t0 = null, dur = 1100;
+      requestAnimationFrame(function step(ts) {
+        if (!t0) t0 = ts;
+        var p = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+        c.textContent = Math.round(a + (b - a) * e);
+        if (p < 1) requestAnimationFrame(step); else { c.textContent = b; c.classList.remove('baseline'); }
+      });
+    }, 0.6);
+  });
+
+  /* Read-back: the spans arrive one at a time, like the trace being fetched. */
+  var rb = document.getElementById('readback');
+  if (rb) {
+    var lis = [].slice.call(rb.querySelectorAll('.spans li'));
+    rb.classList.add('typing');
+    onSeen(rb, function () {
+      lis.forEach(function (li, i) { setTimeout(function () { li.classList.add('on'); }, 140 + i * 170); });
+    }, 0.3);
+  }
+
+  /* Bars grow when the statement scrolls into view. */
+  var mt = document.getElementById('metrics');
+  if (mt) onSeen(mt, function () { mt.classList.add('seen'); }, 0.2);
+
+  /* Returned item: the failure and the recovery light up in order. */
+  var rt = document.getElementById('returned');
+  if (rt) {
+    var steps = [].slice.call(rt.querySelectorAll('.steps-list li'));
+    rt.classList.add('armed');
+    onSeen(rt, function () {
+      steps.forEach(function (li, i) { setTimeout(function () { li.classList.add('on'); }, 150 + i * 360); });
+    }, 0.35);
+  }
+})();
+</script>
+</body>
+</html>

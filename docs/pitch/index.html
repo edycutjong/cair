@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cair — pitch deck · neatHack 2026</title>
+<meta name="description" content="Cair, the payout agent that refuses routes that can't deliver and footnotes every amount, rate and treaty article. 11 slides.">
+<meta name="author" content="Edy Cu">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#E5EDE7">
+<link rel="canonical" href="https://cair.edycu.dev/pitch/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Cair">
+<meta property="og:url" content="https://cair.edycu.dev/pitch/">
+<meta property="og:title" content="Cair — pitch deck">
+<meta property="og:description" content="An agent that refuses payout routes that can't deliver and footnotes every amount, rate and treaty article.">
+<meta property="og:image" content="https://cair.edycu.dev/assets/og-1200.png?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Cair — Choose Wise struck through and stamped REFUSED; Payoneer, at most $4,900, fee UNCLEAR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Public+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!--
+  Cair pitch deck — 11 slides on a fixed 1920×1080 stage, scaled to fit any screen (never stacked).
+  Keys:  → / Space / PageDown next · ← / PageUp previous · Home / End · Esc slide overview · P presenter notes · C contrast debug
+  Touch: swipe left / right, or the arrows at the bottom.
+  Print: Cmd/Ctrl+P → Save as PDF → landscape; one slide per page (16 × 9 in).
+  Images (all real captures of the live app, 10 Oct 2026, in ../assets/shots/):
+    plan-card.webp   — the plan card for Devpost · $7,000 · Indonesia (slide 4)
+    plan-pair.webp   — the form and the plan side by side (slide 6)
+    verify-top.webp  — /verify, traces read back from neatlogs over MCP (slide 6)
+    ../assets/icon.svg — the Cair mark (slides 1, 11)
+  The QR on slide 11 is generated for https://app.cair.edycu.dev (inline SVG).
+-->
+<style>
+/* Tokens: the project's design contract, verbatim — identical to the landing page. */
+:root {
+  --bg:      #E5EDE7;  /* mint security paper */
+  --paper:   #F6F9F5;  /* the slip itself */
+  --ink:     #13241B;  /* green-black intaglio ink; 13.6:1 on --bg */
+  --muted:   #4F6157;  /* pre-printed form labels; 5.5:1 on --bg */
+  --before:  #A3321C;  /* state: refused / unsourced; 5.8:1 on --bg */
+  --after:   #1C4C9C;  /* state: sourced / landed; 6.9:1 on --bg */
+  --unclear: #7F5A00;  /* state: unclear; 5.2:1 on --bg */
+  --rule:    #B9CBBF;  /* guilloche and form-box rules (decorative only) */
+  --font-display: "Gloock", "Georgia", serif;
+  --font-body:    "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-data:    "Spline Sans Mono", ui-monospace, monospace;  /* span names, trace ids, source ids, dates only */
+  --on-ink: var(--paper); --on-ink-muted: var(--rule); --on-ink-before: #F2A48F; --on-ink-after: #A8C2F2;
+  --wash-after: color-mix(in srgb, var(--after) 9%, var(--paper));
+  --shadow: 0 1px 0 rgba(19, 36, 27, .05), 0 34px 70px -34px rgba(19, 36, 27, .45);
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+img { max-width: 100%; height: auto; display: block; }
+body { background: var(--ink); color: var(--ink); font-family: var(--font-body); overflow: hidden; -webkit-font-smoothing: antialiased; }
+::selection { background: color-mix(in srgb, var(--after) 24%, var(--paper)); }
+.viewport { position: fixed; inset: 0; overflow: hidden; }
+.stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center center;
+  transform: translate(-50%, -50%) scale(var(--s, .5)); }
+
+/* ---------- slide base ---------- */
+.slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; padding: 92px 120px 120px; display: flex; flex-direction: column;
+  background-color: var(--bg); visibility: hidden; opacity: 0; transition: opacity .35s var(--ease), visibility 0s linear .35s;
+  background-image:
+    repeating-radial-gradient(circle at 10% -20%, transparent 0 30px, rgba(185, 203, 191, .30) 30px 31.5px),
+    repeating-radial-gradient(circle at 96% 120%, transparent 0 34px, rgba(185, 203, 191, .22) 34px 35.5px); }
+.slide.active { visibility: visible; opacity: 1; transition: opacity .35s var(--ease); }
+.slide.dark { background: var(--ink); color: var(--on-ink); background-image: none; }
+.label { font: 700 19px/1.3 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.dark .label { color: var(--on-ink-muted); }
+.kicker { display: flex; align-items: center; gap: 18px; }
+.kicker::before { content: ""; width: 54px; height: 2px; background: currentColor; }
+h1, h2 { font-family: var(--font-display); font-weight: 400; letter-spacing: -.016em; margin: 0; }
+h2 { font-size: 88px; line-height: 1.02; margin-top: 22px; max-width: 1400px; }
+.mono { font-family: var(--font-data); }
+.red { color: var(--before); } .blue { color: var(--after); } .ochre { color: var(--unclear); }
+.center { margin-block: auto; }
+.foot { position: absolute; left: 120px; right: 120px; bottom: 44px; display: flex; justify-content: space-between; align-items: center;
+  font: 400 17px/1 var(--font-data); color: var(--muted); }
+.dark .foot { color: var(--on-ink-muted); }
+.foot .pg { font-family: var(--font-data); }
+.slip { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; box-shadow: var(--shadow); }
+.slip::before { content: ""; position: absolute; inset: 10px; border: 1px solid color-mix(in srgb, var(--rule) 70%, transparent); border-radius: 3px; pointer-events: none; }
+.stamp { display: inline-block; font: 700 26px/1 var(--font-body); letter-spacing: .17em; text-transform: uppercase; padding: 12px 16px 10px 19px;
+  border: 3px solid currentColor; border-radius: 4px; transform: rotate(-5deg); filter: url(#ink); white-space: nowrap; }
+.stamp.refused { color: var(--before); } .stamp.unclear { color: var(--unclear); transform: rotate(-3deg); }
+.strike { text-decoration: none; color: var(--before); background: linear-gradient(var(--before), var(--before)) left 58% / 100% 4px no-repeat;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.nosrc { display: inline-block; font: 700 17px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--before);
+  border: 1.5px solid color-mix(in srgb, var(--before) 50%, transparent); border-radius: 3px; padding: 6px 9px 5px; }
+.speaker-notes { display: none; }
+.contrast-check { }
+/* Press C to toggle contrast debug mode */
+body.debug-contrast .slide.active :is(h1, h2, h3, p, li, span, b, dd, dt, figcaption) { outline: 1px dashed rgba(163, 50, 28, .55); }
+
+/* ---------- 1 cover ---------- */
+.s-cover .rosette { position: absolute; right: -230px; top: -170px; width: 1100px; height: 1100px; pointer-events: none; }
+.s-cover .rosette path { fill: none; stroke: var(--rule); stroke-width: .8; }
+.s-cover .grid { position: relative; display: grid; grid-template-columns: 1000px 1fr; gap: 70px; align-items: center; height: 100%; }
+.wordmark { display: flex; align-items: center; gap: 26px; margin-top: 30px; }
+.wordmark img { width: 96px; height: 96px; border-radius: 20px; box-shadow: 0 16px 34px -18px rgba(19, 36, 27, .6); }
+.wordmark span { font: 400 150px/1 var(--font-display); letter-spacing: -.02em; }
+.s-cover h1 { font-size: 78px; line-height: 1.02; margin-top: 30px; max-width: 980px; }
+.s-cover h1 em { font-style: normal; color: var(--before); }
+.s-cover h1 sup, .fnref { font: 500 26px/0 var(--font-data); color: var(--after); vertical-align: super; margin-left: 4px; }
+.badges { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 40px; }
+.badge { font: 600 21px/1 var(--font-body); padding: 13px 18px; border: 1.5px solid var(--ink); border-radius: 4px; }
+.badge.ver { font-family: var(--font-data); font-weight: 500; border-color: var(--rule); color: var(--muted); }
+.readback { padding: 30px 34px 26px; transform: rotate(.6deg); }
+.readback .cmd { font: 500 21px/1.4 var(--font-data); margin: 10px 0 18px; }
+.readback .cmd::before { content: "$ "; color: var(--muted); }
+.readback ol { list-style: none; margin: 0; padding: 0; font: 400 20px/1.45 var(--font-data); }
+.readback li { display: grid; grid-template-columns: 150px 1fr; gap: 14px; padding: 11px 0; border-top: 1px dotted var(--rule); }
+.readback .k { color: var(--muted); font-size: 16px; padding-top: 3px; letter-spacing: .04em; }
+.readback li.typing { opacity: 0; }
+.slide.active .readback li.typing { animation: type .4s var(--ease) both; animation-delay: calc(.5s + var(--n) * .35s); }
+@keyframes type { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.cursor { display: inline-block; width: 12px; height: 24px; background: var(--after); vertical-align: -4px; margin-left: 4px; }
+.slide.active .cursor { animation: blink 1s steps(1) 2.4s 4 both; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ---------- 2 hook ---------- */
+.s-hook { display: flex; flex-direction: column; justify-content: center; }
+.s-hook blockquote { margin: 38px 0 0; font: 400 100px/1.06 var(--font-display); letter-spacing: -.014em; max-width: 1680px; }
+.s-hook blockquote .hl { background: linear-gradient(transparent 62%, color-mix(in srgb, var(--before) 22%, transparent) 62%); }
+.s-hook .attr { margin-top: 40px; font: 400 22px/1.4 var(--font-data); color: var(--muted); }
+.s-hook .then { margin-top: 56px; font: 600 38px/1.3 var(--font-body); }
+
+/* ---------- 3 problem ---------- */
+.items { display: grid; grid-template-columns: 1.15fr 1fr .95fr; gap: 38px; align-items: stretch; }
+.item { padding: 50px 48px 42px; display: flex; flex-direction: column; gap: 26px; min-height: 500px; }
+.item .what { font: 400 64px/1.04 var(--font-display); }
+.item p { margin: 0; font-size: 36px; line-height: 1.36; }
+.item .src { margin-top: auto; font: 400 21px/1.4 var(--font-data); color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 18px; }
+
+/* ---------- 4 frozen ---------- */
+.s-frozen .grid { display: grid; grid-template-columns: 760px 1fr; gap: 70px; height: 100%; align-items: center; }
+.chat { padding: 44px 46px; }
+.chat .q { font: 400 44px/1.25 var(--font-display); margin: 20px 0 0; }
+.chat .gl { margin: 16px 0 0; font-size: 24px; color: var(--muted); }
+.chat .sep { border-top: 2px dashed color-mix(in srgb, var(--ink) 26%, transparent); margin: 34px -10px 30px; }
+.chat .verdict { font: 400 64px/1.05 var(--font-display); margin: 16px 0 0; }
+.chat .verdict .stamp { font-size: 24px; vertical-align: 14px; margin-left: 14px; }
+.card-shot { justify-self: center; width: 660px; transform: rotate(-.8deg); overflow: hidden; }
+.card-shot img { display: block; width: 100%; border-radius: 6px; }
+.card-cap { position: absolute; right: 16px; bottom: -46px; font: 400 18px/1 var(--font-data); color: var(--muted); }
+
+/* ---------- 5 architecture ---------- */
+.arch { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr 1fr; gap: 0; position: relative; }
+.node { position: relative; padding: 32px 30px 30px; margin-right: 58px; min-height: 330px; display: flex; flex-direction: column; gap: 16px; }
+.node:last-child { margin-right: 0; }
+.node:not(:last-child)::after { content: ""; position: absolute; right: -52px; top: calc(50% - 10px); width: 46px; height: 20px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 20'%3E%3Cpath d='M0 10h40' stroke='%2313241B' stroke-width='2.5'/%3E%3Cpath d='M32 2l10 8-10 8' fill='none' stroke='%2313241B' stroke-width='2.5'/%3E%3C/svg%3E") no-repeat center / contain; }
+.node .n-k { font: 700 19px/1.2 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.node .n-t { font: 400 50px/1.02 var(--font-display); }
+.node .n-d { font: 400 27px/1.4 var(--font-body); color: var(--muted); }
+.node.g { border-color: var(--after); } .node.g .n-t { color: var(--after); }
+.chain { display: flex; flex-direction: column; gap: 9px; }
+.chain span { font: 500 22px/1 var(--font-data); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); align-self: flex-start; }
+.spine { margin-top: 44px; border-radius: 6px; background: var(--ink); color: var(--on-ink); padding: 30px 40px; display: flex; align-items: center; gap: 36px; }
+.spine b { font: 400 50px/1 var(--font-display); }
+.spine .kinds { display: flex; gap: 14px; flex-wrap: wrap; }
+.spine .kinds span { font: 500 23px/1 var(--font-data); padding: 11px 14px; border: 1px solid rgba(185, 203, 191, .4); border-radius: 3px; color: var(--on-ink-muted); }
+.spine .kinds span.e { color: var(--on-ink-after); border-color: var(--on-ink-after); }
+
+/* ---------- 6 demo ---------- */
+.s-demo .grid { display: grid; grid-template-columns: 1160px 1fr; gap: 60px; align-items: start; }
+.frame { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; overflow: visible; box-shadow: var(--shadow); }
+.frame-bar { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--rule); background: color-mix(in srgb, var(--bg) 70%, var(--paper)); border-radius: 10px 10px 0 0; }
+.dots { display: inline-flex; gap: 8px; } .dots i { width: 13px; height: 13px; border-radius: 50%; background: var(--rule); }
+.url { flex: 1; font: 400 18px/1 var(--font-data); color: var(--muted); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; padding: 9px 16px; }
+.frame .shot { position: relative; }
+.frame .shot img { display: block; width: 100%; border-radius: 0 0 10px 10px; }
+.callout { position: absolute; width: 50px; height: 50px; border-radius: 50%; background: var(--after); color: var(--paper); display: grid; place-items: center;
+  font: 700 24px/1 var(--font-body); box-shadow: 0 0 0 6px color-mix(in srgb, var(--after) 22%, transparent); transform: translate(-50%, -50%); }
+.callout.r { background: var(--before); box-shadow: 0 0 0 6px color-mix(in srgb, var(--before) 22%, transparent); }
+.callout.o { background: var(--unclear); box-shadow: 0 0 0 6px color-mix(in srgb, var(--unclear) 22%, transparent); }
+.legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 26px; }
+.legend li { display: grid; grid-template-columns: 50px 1fr; gap: 18px; align-items: start; font-size: 30px; line-height: 1.3; }
+.legend li .callout { position: static; transform: none; }
+.verify-mini { margin-top: 34px; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); }
+.verify-mini img { display: block; width: 100%; }
+.verify-cap { font: 400 17px/1.4 var(--font-data); color: var(--muted); margin: 12px 0 0; }
+
+/* ---------- 7 measured ---------- */
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+.metric { padding: 52px 54px; }
+.metric h3 { font: 600 37px/1.25 var(--font-body); margin: 0 0 8px; }
+.metric .dir { font-size: 26px; color: var(--muted); margin: 0 0 40px; }
+.bar { display: grid; grid-template-columns: 210px 1fr 210px; gap: 22px; align-items: center; margin-top: 26px; }
+.bar .who { font-size: 28px; color: var(--muted); }
+.bar.cair .who { color: var(--ink); font-weight: 700; }
+.track { height: 40px; background: color-mix(in srgb, var(--rule) 45%, var(--paper)); border-radius: 3px; position: relative; overflow: hidden; }
+.track i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--v) * 100%); background: var(--c); transform-origin: left; }
+.track i.range { left: calc(var(--v) * 100%); width: calc((var(--v2) - var(--v)) * 100%); background: repeating-linear-gradient(-45deg, var(--c) 0 5px, transparent 5px 10px); }
+.slide.active .track i { animation: grow 1s var(--ease) both; animation-delay: calc(.2s + var(--n) * .12s); }
+@keyframes grow { from { transform: scaleX(0); } }
+.bar.v1 { --c: var(--before); } .bar.v1s { --c: var(--muted); } .bar.cair { --c: var(--after); }
+.bar .val { font: 500 30px/1 var(--font-data); text-align: right; }
+.bar.cair .val { color: var(--after); }
+.metric-note { margin: 40px 0 0; font-size: 32px; color: var(--muted); }
+
+/* ---------- 8 failure ---------- */
+.s-fail .grid { display: grid; grid-template-columns: 1100px 1fr; gap: 64px; align-items: stretch; }
+.steps { list-style: none; margin: 0; padding: 34px 46px; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 60px 1fr auto; gap: 6px 22px; padding: 26px 0; border-bottom: 1px dashed var(--rule); align-items: baseline; }
+.steps li:last-child { border-bottom: 0; }
+.steps li::before { counter-increment: s; content: counter(s); font: 500 19px/1 var(--font-data); width: 38px; height: 38px; border: 1.5px solid var(--rule); border-radius: 50%; display: grid; place-items: center; align-self: center; }
+.steps .nm { font: 500 33px/1.3 var(--font-data); }
+.steps .st { font: 700 23px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; }
+.steps .st.err { color: var(--before); } .steps .st.ok { color: var(--after); } .steps .st.stale { color: var(--unclear); }
+.steps .what { grid-column: 2 / -1; font-size: 28px; color: var(--muted); }
+.steps li.err { background: linear-gradient(90deg, color-mix(in srgb, var(--before) 7%, var(--paper)), transparent 70%); }
+.tallies { display: grid; gap: 30px; align-content: stretch; }
+.tally { padding: 40px 44px; display: flex; flex-direction: column; justify-content: center; }
+.tally b { display: block; font: 400 96px/1 var(--font-display); white-space: nowrap; }
+.tally span { display: block; margin-top: 14px; font-size: 30px; color: var(--muted); line-height: 1.35; }
+
+/* ---------- 9 instruments ---------- */
+.inst { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 38px; }
+.inst > div { padding: 52px 50px 44px; display: flex; flex-direction: column; gap: 24px; min-height: 600px; }
+.inst h3 { font: 400 80px/1 var(--font-display); margin: 0; }
+.inst .role { font: 700 20px/1.2 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.inst p { margin: 0; font-size: 35px; line-height: 1.36; }
+.inst .ev { margin-top: auto; padding-top: 18px; border-top: 1px dashed var(--rule); font: 400 21px/1.4 var(--font-data); color: var(--muted); }
+.pending { align-self: flex-start; font: 700 20px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--unclear); border: 2px dashed var(--unclear); border-radius: 4px; padding: 10px 13px; }
+
+/* ---------- 10 cost + limits ---------- */
+.s-cost .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.ledger { background: var(--ink); color: var(--on-ink); border-radius: 6px 0 0 6px; padding: 46px 52px; display: grid; gap: 34px; align-content: start; }
+.ledger .row b { display: block; font: 400 104px/1 var(--font-display); }
+.ledger .row span { display: block; margin-top: 12px; font-size: 28px; color: var(--on-ink-muted); }
+.limits { border-radius: 0 6px 6px 0; padding: 46px 52px; display: flex; flex-direction: column; gap: 28px; }
+.limits ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 26px; }
+.limits li { font-size: 38px; line-height: 1.3; padding-left: 38px; position: relative; }
+.limits li::before { content: ""; position: absolute; left: 0; top: 18px; width: 16px; height: 2px; background: var(--unclear); }
+
+/* ---------- 11 ask ---------- */
+.s-ask .rosette { position: absolute; left: -300px; bottom: -380px; width: 1100px; height: 1100px; pointer-events: none; }
+.s-ask .rosette path { fill: none; stroke: var(--rule); stroke-width: .8; }
+.s-ask .grid { position: relative; display: grid; grid-template-columns: 1fr 470px; gap: 90px; align-items: center; height: 100%; }
+.s-ask h2 { font-size: 104px; }
+.s-ask .links { margin-top: 48px; display: grid; gap: 18px; font: 400 30px/1.3 var(--font-data); }
+.s-ask .links span { color: var(--muted); font-family: var(--font-body); font-size: 21px; display: inline-block; width: 150px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+.s-ask .closer { margin-top: 56px; font: 400 40px/1.2 var(--font-display); color: var(--muted); }
+.qr-card { padding: 34px; text-align: center; }
+.qr { width: 380px; height: 380px; display: block; margin: 0 auto; }
+.qr-card p { margin: 18px 0 0; font: 500 23px/1.3 var(--font-data); }
+
+/* ---------- chrome: counter, nav, notes, overview ---------- */
+.chrome { position: fixed; z-index: 20; right: 14px; top: 12px; display: flex; align-items: center; gap: 10px; font: 500 14px/1 var(--font-data); color: var(--on-ink-muted); }
+.chrome button { appearance: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(185, 203, 191, .45); background: rgba(19, 36, 27, .55);
+  color: var(--paper); font: 400 18px/1 var(--font-body); cursor: pointer; transition: background-color .2s var(--ease), transform .12s var(--ease); }
+.chrome button:hover { background: var(--after); }
+.chrome button:active { transform: scale(.94); }
+.chrome button:focus-visible { outline: 2px solid var(--on-ink-after); outline-offset: 2px; }
+.counter { min-width: 72px; text-align: center; background: rgba(19, 36, 27, .55); padding: 12px 10px; border-radius: 999px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.notes-panel { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; height: 20vh; background: rgba(19, 36, 27, .96); color: var(--paper);
+  padding: 18px 28px; font: 400 clamp(15px, 1.6vw, 22px)/1.5 var(--font-body); overflow: auto; display: none; border-top: 2px solid var(--on-ink-after); }
+.notes-panel .t { font: 700 12px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--on-ink-muted); margin-bottom: 8px; }
+body.presenter .notes-panel { display: block; }
+body.presenter.idle, body.presenter.idle * { cursor: none !important; }
+.overview { position: fixed; inset: 0; z-index: 40; background: rgba(19, 36, 27, .97); display: none; overflow: auto; padding: 28px; }
+body.ov .overview { display: block; }
+.ov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+.thumb { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; cursor: pointer; border: 2px solid transparent; background: var(--bg); }
+.thumb:hover, .thumb:focus-visible { border-color: var(--on-ink-after); outline: none; }
+.thumb.cur { border-color: var(--paper); }
+.thumb .slide { visibility: visible; opacity: 1; transform-origin: top left; transition: none; pointer-events: none; }
+.thumb .num { position: absolute; left: 8px; top: 8px; z-index: 2; font: 500 13px/1 var(--font-data); background: var(--ink); color: var(--paper); padding: 5px 7px; border-radius: 3px; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .readback li.typing { opacity: 1; } }
+
+/* ---------- print: one slide per page ---------- */
+@page { size: 16in 9in landscape; margin: 0; }
+@media print {
+  html, body { height: auto; overflow: visible; background: var(--bg); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .viewport { position: static; overflow: visible; }
+  .stage { position: static; transform: none !important; width: auto; height: auto; }
+  .slide { position: relative; visibility: visible; opacity: 1; width: 16in; height: 9in; padding: .8in 1in .9in; transition: none;
+    break-after: page; page-break-after: always; break-inside: avoid; page-break-inside: avoid; zoom: .48;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .chrome, .hint, .notes-panel, .overview, .speaker-notes { display: none !important; }
+  .readback li.typing { opacity: 1 !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="ink" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="11" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="viewport" id="viewport">
+<main class="stage" id="stage" aria-live="polite">
+
+<!-- 1 · Cover -->
+<section class="slide s-cover active" aria-label="Slide 1 of 11: Cair">
+  <svg class="rosette" data-rosette viewBox="0 0 1100 1100" aria-hidden="true" focusable="false"></svg>
+  <div class="grid">
+    <div>
+      <div class="wordmark"><img src="../assets/icon.svg" alt="Cair — the payout planner's mark" width="96" height="96"><span>Cair</span></div>
+      <h1>The payout agent that <em>says no</em>, and footnotes every yes.<sup>1</sup></h1>
+      <div class="badges">
+        <span class="badge">Built for neatHack 2026</span>
+        <span class="badge ver">v0.1.2</span>
+      </div>
+    </div>
+    <div class="slip readback">
+      <p class="label">neatlogs read-back</p>
+      <p class="cmd">get_trace_context 6ea01b70…</p>
+      <ol>
+        <li class="typing" style="--n:0"><span class="k">TOOL</span><span>rail_eligibility · wise <b class="red">NO</b></span></li>
+        <li class="typing" style="--n:1"><span class="k">RETRIEVER</span><span>treaty_lookup · no Other Income article</span></li>
+        <li class="typing" style="--n:2"><span class="k">TOOL</span><span>fee_calc · at most 4900.00</span></li>
+        <li class="typing" style="--n:3"><span class="k">GUARDRAIL</span><span><b class="blue">PASSED</b> · 359 / 359<span class="cursor" aria-hidden="true"></span></span></li>
+      </ol>
+    </div>
+  </div>
+  <div class="foot"><span><span class="fnref">1</span> 359 of 359 figures in 48 frozen plans trace to a tool output · eval-v2-r10</span><span class="pg">01 / 11</span></div>
+  <aside class="speaker-notes">I won seven thousand dollars at a hackathon, and the payout form offered me a route that cannot deliver to my
+    address. Cair is the agent I needed: it refuses that route, and every number it does give me has a source behind it.</aside>
+</section>
+
+<!-- 2 · Hook -->
+<section class="slide s-hook" aria-label="Slide 2 of 11: Wise's own sentence">
+  <p class="label kicker">Exhibit A · Wise Help Centre</p>
+  <blockquote>“…personal Wise account holders with an address in Indonesia <span class="hl">can no longer hold money</span> or currencies in their account.”</blockquote>
+  <p class="attr">WISE-ID · wise.com/help · read 2026-10-10</p>
+  <p class="then">Devpost's claim form still offers Wise.</p>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">02 / 11</span></div>
+  <aside class="speaker-notes">This is Wise's own help page. A prize winner in Indonesia who picks Wise on the claim form is choosing a route that
+    cannot hold the money. Nobody on the form tells them.</aside>
+</section>
+
+<!-- 3 · Problem -->
+<section class="slide s-problem" aria-label="Slide 3 of 11: three ways a payout breaks">
+  <h2>Three ways it breaks.</h2>
+  <div class="center items">
+    <div class="slip item"><p class="what">Wise is on the form.</p><p>It can't hold money for an Indonesian address.</p><p class="src">WISE-ID</p></div>
+    <div class="slip item"><p class="what">Line 10 invites a guess.</p><p>The treaty has no Other Income article.</p><p class="src">TRTY-ID</p></div>
+    <div class="slip item"><p class="what">Nobody quotes the fee.</p><p>Payoneer: “Varies by marketplace.”</p><p class="src">PAYO-PRICING</p></div>
+  </div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">03 / 11</span></div>
+  <aside class="speaker-notes">Three places the money is lost: an option that can't deliver, a tax line that invites a false statement, and a
+    fee nobody publishes as a number. Cair answers all three from primary sources, and says UNCLEAR when there is none.</aside>
+</section>
+
+<!-- 4 · Frozen -->
+<section class="slide s-frozen" aria-label="Slide 4 of 11: the chatbot's answer struck through, Cair's plan">
+  <div class="grid">
+    <div class="slip chat">
+      <p class="label">One tool-less model call said</p>
+      <p class="q"><s class="strike" lang="id">Pilihan Payout Terbaik: Wise</s></p>
+      <p class="gl"><span class="nosrc">No source</span> “Best payout option: Wise”</p>
+      <div class="sep" aria-hidden="true"></div>
+      <p class="label">Cair returned</p>
+      <p class="verdict">Wise <span class="stamp refused">Refused</span></p>
+      <p class="verdict blue">Line 10: blank</p>
+      <p class="verdict">≤ $4,900.00 <span class="stamp unclear">Unclear</span></p>
+    </div>
+    <figure class="slip card-shot" style="margin:0">
+      <img src="../assets/shots/plan-card.webp" width="1100" height="1435" alt="Cair — the live plan card: Payoneer delivers, Wise refused with Wise's sentence, line 10 blank, at most $4,900.00 stamped UNCLEAR, every line footnoted">
+      <figcaption class="card-cap">the live card, 10 Oct 2026</figcaption>
+    </figure>
+  </div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">04 / 11</span></div>
+  <aside class="speaker-notes">Left: the actual answer from one model call with no tools — it picked Wise, and nothing stands behind it.
+    Right: Cair's card for the same question. Wise is refused in Wise's own words, line 10 stays blank, and the amount is an
+    upper bound because Payoneer doesn't publish its fee. Every line carries a footnote to the span that produced it.</aside>
+</section>
+
+<!-- 5 · Architecture -->
+<section class="slide s-arch" aria-label="Slide 5 of 11: how a plan is made">
+  <h2>Code decides. The model words it.</h2>
+  <div class="center"><div class="arch">
+    <div class="slip node"><span class="n-t">Your form</span><span class="n-d">payer · amount · country · options</span></div>
+    <div class="slip node"><div class="chain"><span>platform_rails</span><span>rail_eligibility</span><span>treaty_lookup</span><span>fx_quote</span><span>fee_calc</span></div></div>
+    <div class="slip node"><span class="n-t">Code decides</span><span class="n-d">route · line 10 · amounts</span></div>
+    <div class="slip node"><span class="n-t">Qwen words it</span><span class="n-d"><span class="mono">qwen3.8-max</span>, temp 0</span></div>
+    <div class="slip node g"><span class="n-t">Guardrail checks</span><span class="n-d">no unsourced figure</span></div>
+  </div>
+  <div class="spine"><b>neatlogs</b><div class="kinds"><span>WORKFLOW</span><span>AGENT</span><span>TOOL</span><span>RETRIEVER</span><span>LLM</span><span>GUARDRAIL</span><span class="e">EVALUATOR</span></div></div></div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">05 / 11</span></div>
+  <aside class="speaker-notes">A fixed evidence plan runs before any prose: what the payer offers, whether each option can receive in your
+    country, the treaty position, the ECB rate, then Decimal arithmetic. Code picks the route and line 10. Qwen only writes the
+    explanation, and a provenance guardrail blocks any figure that isn't in a tool output. Every step is a neatlogs span; a
+    later receipt becomes an EVALUATOR span in the same session.</aside>
+</section>
+
+<!-- 6 · Live demo -->
+<section class="slide s-demo" aria-label="Slide 6 of 11: the live app">
+  <p class="label kicker">Specimen · live at app.cair.edycu.dev</p>
+  <div class="grid center">
+    <div class="frame">
+      <div class="frame-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="url">app.cair.edycu.dev/plan/01M4JNMB…</span></div>
+      <div class="shot">
+        <img src="../assets/shots/plan-pair.webp" width="1600" height="1067" alt="Cair — the live app: the payout form and the plan for Devpost, $7,000, Indonesia">
+        <span class="callout" style="left:37.9%;top:22.2%">1</span>
+        <span class="callout r" style="left:37.9%;top:28.6%">2</span>
+        <span class="callout" style="left:37.9%;top:62%">3</span>
+        <span class="callout o" style="left:37.9%;top:94.6%">4</span>
+      </div>
+    </div>
+    <div>
+      <ol class="legend">
+        <li><span class="callout">1</span><span>Payoneer delivers, footnoted to its page</span></li>
+        <li><span class="callout r">2</span><span>Wise refused, in Wise's words</span></li>
+        <li><span class="callout">3</span><span>Line 10: leave blank</span></li>
+        <li><span class="callout o">4</span><span>At most $4,900.00, fee unclear</span></li>
+      </ol>
+      <div class="verify-mini"><img src="../assets/shots/verify-top.webp" width="1600" height="911" alt="Cair — /verify: plans read back from neatlogs over MCP, redacted"></div>
+      <p class="verify-cap">/verify · traces read back over MCP</p>
+    </div>
+  </div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">06 / 11</span></div>
+  <aside class="speaker-notes">This is the live app on the hero question: Devpost, seven thousand dollars, Indonesia. Each verdict cites its
+    source; press Confirm and a confirm span lands in the same neatlogs session. The /verify page reads the last plans back
+    from neatlogs over MCP, so a judge can check the traces without an account.</aside>
+</section>
+
+<!-- 7 · Measured -->
+<section class="slide s-measured" aria-label="Slide 7 of 11: one call against the agent">
+  <h2>Same model, 48 questions.</h2>
+  <div class="center"><div class="metrics">
+    <div class="slip metric">
+      <h3>Recommends a dead route</h3>
+      <p class="dir">fewer is better</p>
+      <div class="bar v1"><span class="who">one call</span><span class="track"><i style="--v:.375;--n:0"></i></span><span class="val">18 / 48</span></div>
+      <div class="bar v1s"><span class="who">+ sheet</span><span class="track"><i style="--v:.0417;--n:1"></i></span><span class="val">2 / 48</span></div>
+      <div class="bar cair"><span class="who">Cair</span><span class="track"><i style="--v:0;--n:2"></i></span><span class="val">0 / 48</span></div>
+    </div>
+    <div class="slip metric">
+      <h3>Says UNCLEAR when unsourced</h3>
+      <p class="dir">more is better</p>
+      <div class="bar v1"><span class="who">one call</span><span class="track"><i style="--v:.0769;--n:0"></i><i class="range" style="--v:.0769;--v2:.1608;--n:0"></i></span><span class="val">11–23 / 143</span></div>
+      <div class="bar v1s"><span class="who">+ sheet</span><span class="track"><i style="--v:.7692;--n:1"></i></span><span class="val">110 / 143</span></div>
+      <div class="bar cair"><span class="who">Cair</span><span class="track"><i style="--v:1;--n:2"></i></span><span class="val">143 / 143</span></div>
+    </div>
+  </div>
+  </div>
+  <div class="foot"><span>eval-v1-r1…r3 · eval-v1s-r1 · eval-v2-r10 · qwen3.8-max, temperature 0</span><span class="pg">07 / 11</span></div>
+  <aside class="speaker-notes">Forty-eight frozen scenarios, labelled from the sourced sheet before any agent code existed. One model call
+    with no tools recommended a dead route eighteen times, in every run. Even with the whole rules sheet pasted into the prompt it
+    still slipped twice. Cair: zero. And every one of Cair's 359 figures traces to a tool output.</aside>
+</section>
+
+<!-- 8 · Failure -->
+<section class="slide s-fail" aria-label="Slide 8 of 11: a run where an action failed">
+  <p class="label kicker">Returned item · trace d1fa1ed7…</p>
+  <h2>The rate API fails. The plan finishes.</h2>
+  <div class="grid center">
+    <ol class="slip steps">
+      <li class="err"><span class="nm">fx_quote</span><span class="st err">Error</span><span class="what">fx_quote unavailable</span></li>
+      <li class="err"><span class="nm">fx_quote · retry</span><span class="st err">Error</span><span class="what">same failure</span></li>
+      <li><span class="nm">fx_quote_fallback</span><span class="st stale">Stale</span><span class="what">last ECB rate · 17881 · 2026-10-09</span></li>
+      <li><span class="nm">provenance_guardrail</span><span class="st ok">Passed</span><span class="what">no new figures</span></li>
+    </ol>
+    <div class="tallies">
+      <div class="slip tally"><b>48 / 48</b><span>plans completed</span></div>
+      <div class="slip tally"><b>350 / 350</b><span>figures sourced</span></div>
+    </div>
+  </div>
+  <div class="foot"><span>scripts/eval.py --fail fx_quote · eval-fail-fx_quote-r9</span><span class="pg">08 / 11</span></div>
+  <aside class="speaker-notes">We forced the FX tool to fail on every call. The agent retried once, fell back to the last ECB rate it had
+    fetched, stamped it stale with its date, and finished the plan. All 48 plans completed; 24 used the fallback — every USD
+    payer. It never asks the model for a rate.</aside>
+</section>
+
+<!-- 9 · Instruments -->
+<section class="slide s-inst" aria-label="Slide 9 of 11: neatlogs, Entire and cfo.ai">
+  <h2>Three instruments.</h2>
+  <div class="center inst">
+    <div class="slip"><h3>neatlogs</h3><p>One trace per plan. <span class="mono">search_traces</span> found two real bugs; <span class="mono">/verify</span> reads traces back.</p><p class="ev">rca-01.md · evidence/traces/</p></div>
+    <div class="slip"><h3>Entire</h3><p>Graph search ranked the fixed rule first. Checkpoints off: public repo.</p><p class="ev">evidence/entire/</p></div>
+    <div class="slip"><h3>cfo.ai</h3><p>Inputs measured: cost, speed, hosting.</p><span class="pending">Model pending</span><p class="ev">docs/BUSINESS-PLAN.md</p></div>
+  </div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">09 / 11</span></div>
+  <aside class="speaker-notes">neatlogs is where the failures were found: search_traces for blocked guardrails surfaced an amount parsed as a
+    year and refusals repeating the user's zero percent — both fixed and re-run. Entire's local code graph was used while
+    building; its outputs are committed. The cfo.ai model is not entered yet; the inputs it needs are measured and on file.</aside>
+</section>
+
+<!-- 10 · Cost + limits -->
+<section class="slide s-cost" aria-label="Slide 10 of 11: cost, speed and honest limits">
+  <h2>Cheap to run. Honest about limits.</h2>
+  <div class="grid center">
+    <div class="ledger">
+      <div class="row"><b>$0.0033</b><span>of LLM per plan</span></div>
+      <div class="row"><b>5.50 s</b><span>median · p95 10.31 s</span></div>
+      <div class="row"><b>$15.26</b><span>hosting per month</span></div>
+    </div>
+    <div class="slip limits">
+      <ul>
+        <li>Three countries fully sourced; others UNCLEAR.</li>
+        <li>Forward receipts from real users: n = 0.</li>
+        <li>Explains forms; never files them.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>bench-20261010T085809Z · BUSINESS-PLAN.md · README honest limits</span><span class="pg">10 / 11</span></div>
+  <aside class="speaker-notes">A plan costs about a third of a cent of model time and takes five and a half seconds at the median. The limits
+    are on the slide because a tool that refuses unsourced claims shouldn't hide its own: three fully sourced countries, no
+    forward receipts from real users yet, and it is not tax advice.</aside>
+</section>
+
+<!-- 11 · The ask -->
+<section class="slide s-ask" aria-label="Slide 11 of 11: try it">
+  <svg class="rosette" data-rosette viewBox="0 0 1100 1100" aria-hidden="true" focusable="false"></svg>
+  <div class="grid">
+    <div>
+      <p class="label kicker">The ask</p>
+      <h2>Try it on the form you have open.</h2>
+      <div class="links">
+        <div><span>Live</span>app.cair.edycu.dev</div>
+        <div><span>Code</span>github.com/edycutjong/cair</div>
+        <div><span>Site</span>cair.edycu.dev</div>
+      </div>
+      <p class="closer">The payout route a chatbot can't get wrong.</p>
+    </div>
+    <div class="slip qr-card">
+      <svg class="qr" viewBox="-2 -2 29 29" role="img" aria-label="QR code: https://app.cair.edycu.dev" shape-rendering="crispEdges"><rect x="-2" y="-2" width="29" height="29" fill="#F6F9F5"/><path fill="#13241B" d="M0 0h7v1h-7zM8 0h2v1h-2zM11 0h6v1h-6zM18 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM9 1h2v1h-2zM13 1h1v1h-1zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM9 2h1v1h-1zM14 2h1v1h-1zM18 2h1v1h-1zM20 2h3v1h-3zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h1v1h-1zM10 3h1v1h-1zM12 3h3v1h-3zM16 3h1v1h-1zM18 3h1v1h-1zM20 3h3v1h-3zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h2v1h-2zM11 4h5v1h-5zM18 4h1v1h-1zM20 4h3v1h-3zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM11 5h3v1h-3zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h7v1h-7zM8 7h1v1h-1zM12 7h1v1h-1zM16 7h1v1h-1zM0 8h1v1h-1zM4 8h1v1h-1zM6 8h5v1h-5zM12 8h1v1h-1zM16 8h6v1h-6zM24 8h1v1h-1zM0 9h1v1h-1zM3 9h1v1h-1zM7 9h1v1h-1zM10 9h1v1h-1zM15 9h3v1h-3zM20 9h2v1h-2zM23 9h1v1h-1zM0 10h3v1h-3zM4 10h1v1h-1zM6 10h2v1h-2zM11 10h2v1h-2zM15 10h1v1h-1zM17 10h1v1h-1zM19 10h1v1h-1zM21 10h2v1h-2zM3 11h3v1h-3zM9 11h1v1h-1zM11 11h2v1h-2zM14 11h4v1h-4zM22 11h2v1h-2zM0 12h4v1h-4zM6 12h1v1h-1zM10 12h3v1h-3zM15 12h1v1h-1zM17 12h3v1h-3zM21 12h4v1h-4zM0 13h4v1h-4zM9 13h2v1h-2zM12 13h6v1h-6zM20 13h1v1h-1zM23 13h1v1h-1zM3 14h5v1h-5zM10 14h2v1h-2zM13 14h1v1h-1zM15 14h1v1h-1zM17 14h1v1h-1zM19 14h4v1h-4zM2 15h1v1h-1zM7 15h3v1h-3zM12 15h1v1h-1zM14 15h4v1h-4zM19 15h2v1h-2zM22 15h2v1h-2zM0 16h4v1h-4zM6 16h1v1h-1zM8 16h1v1h-1zM10 16h1v1h-1zM16 16h7v1h-7zM8 17h1v1h-1zM11 17h1v1h-1zM13 17h1v1h-1zM16 17h1v1h-1zM20 17h1v1h-1zM0 18h7v1h-7zM8 18h1v1h-1zM10 18h3v1h-3zM14 18h1v1h-1zM16 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM0 19h1v1h-1zM6 19h1v1h-1zM9 19h4v1h-4zM14 19h1v1h-1zM16 19h1v1h-1zM20 19h5v1h-5zM0 20h1v1h-1zM2 20h3v1h-3zM6 20h1v1h-1zM8 20h2v1h-2zM12 20h1v1h-1zM14 20h1v1h-1zM16 20h7v1h-7zM0 21h1v1h-1zM2 21h3v1h-3zM6 21h1v1h-1zM9 21h3v1h-3zM14 21h3v1h-3zM18 21h2v1h-2zM22 21h3v1h-3zM0 22h1v1h-1zM2 22h3v1h-3zM6 22h1v1h-1zM10 22h2v1h-2zM13 22h6v1h-6zM21 22h1v1h-1zM23 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM9 23h4v1h-4zM15 23h1v1h-1zM18 23h6v1h-6zM0 24h7v1h-7zM8 24h2v1h-2zM12 24h1v1h-1zM15 24h1v1h-1zM22 24h3v1h-3z"/></svg>
+      <p>app.cair.edycu.dev</p>
+    </div>
+  </div>
+  <div class="foot"><span>Cair · Edy Team · neatHack 2026 · v0.1.2</span><span class="pg">11 / 11</span></div>
+  <aside class="speaker-notes">Open it next to a real payout form: Devpost, seven thousand, Indonesia, tick Payoneer and Wise. You'll see
+    Wise refused in Wise's own words and every number footnoted. In Indonesian, money that has finally been paid out is said to
+    be "cair". That's the goal.</aside>
+</section>
+
+</main>
+</div>
+
+<nav class="chrome" aria-label="Slide navigation">
+  <button type="button" id="prev" aria-label="Previous slide" title="Previous (←)">←</button>
+  <button type="button" id="ovb" aria-label="Slide overview" title="Overview (Esc)">▦</button>
+  <button type="button" id="next" aria-label="Next slide" title="Next (→ or Space)">→</button>
+</nav>
+<p class="sr" id="counter" aria-live="polite">Slide 1 of 11</p>
+<div class="notes-panel" id="notes" aria-live="polite"><div class="t">Speaker notes</div><div id="notes-text"></div></div>
+<div class="overview" id="overview" aria-label="Slide overview"><div class="ov-grid" id="ov-grid"></div></div>
+
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var slides = [].slice.call(stage.querySelectorAll('.slide'));
+  var counter = document.getElementById('counter'), notesText = document.getElementById('notes-text');
+  var cur = 0, total = slides.length;
+
+  /* Scale the 1920×1080 stage to the visible area. clientWidth/Height, not innerWidth: on phones innerWidth reports
+     the zoomed-out layout width and the deck would render at the wrong size. */
+  function fit() {
+    var w = document.documentElement.clientWidth, h = document.documentElement.clientHeight;
+    stage.style.setProperty('--s', Math.min(w / 1920, h / 1080));
+  }
+  window.addEventListener('resize', fit); window.addEventListener('orientationchange', fit); fit();
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function go(n) {
+    n = Math.max(0, Math.min(total - 1, n));
+    slides[cur].classList.remove('active');
+    cur = n;
+    slides[cur].classList.add('active');
+    counter.textContent = 'Slide ' + (cur + 1) + ' of ' + total;
+    var notes = slides[cur].querySelector('.speaker-notes');
+    notesText.textContent = notes ? notes.textContent.replace(/\s+/g, ' ').trim() : '';
+    if (location.hash !== '#' + (cur + 1)) history.replaceState(null, '', '#' + (cur + 1));
+  }
+  var start = parseInt((location.hash || '').slice(1), 10);
+  go(isNaN(start) ? 0 : start - 1);
+
+  document.getElementById('prev').addEventListener('click', function () { go(cur - 1); });
+  document.getElementById('next').addEventListener('click', function () { go(cur + 1); });
+  document.getElementById('ovb').addEventListener('click', function () { toggleOverview(); });
+
+  /* Overview: real thumbnails (clones scaled down), click to jump. */
+  var ov = document.getElementById('ov-grid');
+  function buildOverview() {
+    ov.innerHTML = '';
+    slides.forEach(function (s, i) {
+      var t = document.createElement('div');
+      t.className = 'thumb' + (i === cur ? ' cur' : ''); t.tabIndex = 0; t.setAttribute('role', 'button');
+      t.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+      var c = s.cloneNode(true); c.classList.add('active'); c.removeAttribute('aria-label');
+      t.appendChild(c);
+      var num = document.createElement('span'); num.className = 'num'; num.textContent = pad(i + 1); t.appendChild(num);
+      t.addEventListener('click', function () { toggleOverview(false); go(i); });
+      t.addEventListener('keydown', function (e) { if (e.key === 'Enter') { toggleOverview(false); go(i); } });
+      ov.appendChild(t);
+    });
+    requestAnimationFrame(function () {
+      [].forEach.call(ov.querySelectorAll('.thumb'), function (t) {
+        t.firstChild.style.transform = 'scale(' + (t.clientWidth / 1920) + ')';
+      });
+    });
+  }
+  function toggleOverview(on) {
+    var show = on === undefined ? !document.body.classList.contains('ov') : on;
+    document.body.classList.toggle('ov', show);
+    if (show) buildOverview();
+  }
+
+  /* Presenter: notes panel; the cursor hides after 2 s idle. */
+  var idleT;
+  function wake() {
+    document.body.classList.remove('idle');
+    clearTimeout(idleT);
+    if (document.body.classList.contains('presenter')) idleT = setTimeout(function () { document.body.classList.add('idle'); }, 2000);
+  }
+  document.addEventListener('mousemove', wake);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === ' ' || k === 'PageDown') { e.preventDefault(); go(cur + 1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); go(cur - 1); }
+    else if (k === 'Home') go(0);
+    else if (k === 'End') go(total - 1);
+    else if (k === 'Escape') toggleOverview();
+    else if (k === 'p' || k === 'P') { document.body.classList.toggle('presenter'); wake(); }
+    else if (k === 'c' || k === 'C') document.body.classList.toggle('debug-contrast');
+  });
+
+  /* Touch: swipe. */
+  var x0 = null;
+  document.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1));
+  });
+
+  /* Guilloche rosettes (cover and closing). */
+  function rosette(svg, cx, cy, R, A, k, n) {
+    var r = R / (k + 1), q = (R - r) / r, sc = R / (R - r + A), out = '';
+    for (var i = 0; i < n; i++) {
+      var rot = (i / n) * (2 * Math.PI / k), d = '';
+      for (var s = 0; s <= 540; s++) {
+        var t = (s / 540) * 2 * Math.PI;
+        var x0 = (R - r) * Math.cos(t) + A * Math.cos(q * t), y0 = (R - r) * Math.sin(t) - A * Math.sin(q * t);
+        var x = cx + sc * (x0 * Math.cos(rot) - y0 * Math.sin(rot)), y = cy + sc * (x0 * Math.sin(rot) + y0 * Math.cos(rot));
+        d += (s ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+      }
+      out += '<path d="' + d + 'Z"/>';
+    }
+    svg.innerHTML = out;
+  }
+  [].forEach.call(document.querySelectorAll('[data-rosette]'), function (svg) { rosette(svg, 550, 550, 530, 74, 18, 12); });
+})();
+</script>
+</body>
+</html>
