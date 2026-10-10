@@ -179,7 +179,8 @@ recovery run) shows the two ERROR spans and the fallback span. → [`evidence/re
    the live pages (`evidence/hand-check-2026-10-10.md`).
 3. Payoneer's receiving fee and conversion margin are not published as single numbers, so "what lands" is an upper
    bound. Receipts are user-reported.
-4. Receipts so far are the builder's own: the Tarmac replay (n = 1) plus QA test receipts. Forward receipts from real
+4. Receipts so far are the builder's own: the Tarmac replay (n = 1) plus one QA test receipt
+   ([`evidence/receipts-live-2026-10-10.md`](evidence/receipts-live-2026-10-10.md)). Forward receipts from real
    users (a plan made before the money moved): n = 0.
 5. Cair explains forms; it never files them. Not tax advice.
 
@@ -206,7 +207,7 @@ make ci             # ruff · mypy · pytest with coverage · pip-audit · gitle
 make e2e            # Playwright: boots the app with no keys, drives it in a browser
 ```
 
-The tests below run with no keys and no network. That is a statement about the **tests**, not the product: the product
+The tests below run with no API keys; the model, the ECB rate and neatlogs are stubbed. That is a statement about the **tests**, not the product: the product
 runs on the real model, the real ECB rate and the real neatlogs project, and the eval, ablation, forced-failure and
 latency numbers in this README come from such runs ([DEMO.md](DEMO.md) §3); the held-out guardrail test feeds fixed
 sentences to the guardrail with the model call stubbed.

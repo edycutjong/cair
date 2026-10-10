@@ -53,7 +53,8 @@ product: `pytest` runs the deterministic core without network or keys, and the C
 - The evaluation measures fidelity to the sourced rules sheet, not tax correctness; the labels and the agent read the
   same sheet (three cells were re-checked by hand against the live pages).
 - Payoneer's receiving fee and conversion margin are unpublished, so "what lands" is an upper bound. Receipts so far
-  are the builder's own: one replay of a known outcome (n = 1) plus QA test receipts (/verify counts 2); forward
+  are the builder's own: one replay of a known outcome (n = 1) plus one QA test receipt (/verify counts 2,
+  [`evidence/receipts-live-2026-10-10.md`](https://github.com/edycutjong/cair/blob/main/evidence/receipts-live-2026-10-10.md)); forward
   receipts from real users: n = 0.
 - The guardrail is rule-based: expect new phrasings to slip through at roughly the held-out rate, which is why the
   route, line 10 and every amount are decided by code, not by the model's prose.

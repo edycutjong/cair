@@ -937,7 +937,7 @@ section { position: relative; }
             <div><p class="label">Landed</p><p class="rf">$4,897.00</p><p class="vtext">builder-reported</p></div>
             <div><p class="label">Verdict</p><p class="rf blue"><span class="stamp landed">Landed</span></p><p class="vtext">within sourced bound</p></div>
           </div>
-          <p class="receipt-note">Landed <span class="nw">2026-09-23</span> · $3.00 not explained by the sourced rules · partial replay, because the fee is UNCLEAR · EVALUATOR trace <span class="mono">f5a47b9c…</span> · builder-reported, n = 1 (plus one QA test receipt)</p>
+          <p class="receipt-note">Landed <span class="nw">2026-09-23</span> · $3.00 not explained by the sourced rules · partial replay, because the fee is UNCLEAR · EVALUATOR trace <span class="mono">f5a47b9c…</span> · builder-reported, n = 1 (plus one <a href="https://github.com/edycutjong/cair/blob/main/evidence/receipts-live-2026-10-10.md">QA test receipt</a>)</p>
         </div>
       </article>
     </div>
@@ -1025,7 +1025,7 @@ section { position: relative; }
         <div class="ans"><p>Nothing on the product path: the live app calls the real model, the real ECB reference rate (via Frankfurter) and the
           real neatlogs project. The eval, ablation, latency and forced-failure numbers on this page come from such runs (the failure is
           injected on purpose). Two things are scripted: the guardrail's held-out test feeds it fixed sentences with the model call
-          stubbed, and the 571 tests and the CI pipeline run without network or keys.</p></div>
+          stubbed, and the 571 tests run with the model, the ECB rate and neatlogs stubbed; CI uses no API keys.</p></div>
       </details>
       <details>
         <summary><span class="qn">Q. 3</span><span>What happens when a tool fails?</span><span class="pm" aria-hidden="true"></span></summary>
