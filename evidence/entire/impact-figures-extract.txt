@@ -1,0 +1,51 @@
+$ entire graph impact --symbol cair/figures.py:extract --repo . --depth 2
+# 2026-10-10T07:35:03Z at ef20d8d
+Index: cache-miss (704ms) | Query: 1ms | Total: 705ms
+Completeness: ok for this query (2 this query files failed to parse; 3 total diagnostics in this snapshot)
+- partial E_MINIFIED: evidence/traces/live-hero.json
+- partial E_MINIFIED: evidence/traces/rca01-after.json
+No exact match for "cair/figures.py:extract". Closest 3 by identifier-token match:
+- Cair (README.md:1) [section]  --symbol Cair --file README.md --line 1
+- extract (cair/figures.py:49) [function]  --symbol extract --file cair/figures.py --line 49
+- figures (evidence/eval-fail-fx_quote-r1-20261010T072752Z.json:183) [section]  --symbol figures --file evidence/eval-fail-fx_quote-r1-20261010T072752Z.json --line 183
+
+README.md:1-1 Cair [section]
+  1→ # Cair
+
+cair/figures.py:49-83 extract [function]
+  49→ def extract(text: str) -> list[dict]:
+  50→     """Return figures in `text`: [{'kind': money|pct|article|number, 'value': Decimal|int, 'raw': str}]."""
+  51→     masked = ALLOW_RE.sub(lambda m: " " * len(m.group(0)), text)
+  52→     found: list[dict] = []
+  53→     spans: list[tuple[int, int]] = []
+  54→ 
+  55→     def taken(a: int, b: int) -> bool:
+  56→         return any(a < y and x < b for x, y in spans)
+  57→ 
+  58→     for m in ARTICLE_RE.finditer(text):  # articles are read from the unmasked text
+  59→         found.append({"kind": "article", "value": int(m.group(1)), "raw": m.group(0)})
+  60→         spans.append(m.span())
+  61→     for rx, kind in ((PCT_RE, "pct"), (MONEY_RE, "money")):
+  62→         for m in rx.finditer(masked):
+  63→             if taken(*m.span()):
+  64→                 continue
+  65→             raw = next(g for g in m.groups() if g)
+  66→             val = _dec(raw)
+  67→             if val is None:
+  68→                 continue
+  69→             if kind == "money" and re.search(r"juta|jt", m.group(0), re.I):
+  70→                 val *= 1_000_000
+  71→             if kind == "money" and re.search(r"million", m.group(0), re.I):
+  72→                 val *= 1_000_000
+  73→             found.append({"kind": kind, "value": val, "raw": m.group(0).strip()})
+  74→             spans.append(m.span())
+  75→     for m in BARE_RE.finditer(masked):
+  76→         if taken(*m.span()):
+  77→             continue
+  78→         val = _dec(m.group(1))
+  79→         if val is None or val < 10:  # small bare integers are counts and list markers, not claims
+  80→             continue
+  81→         found.append({"kind": "number", "value": val, "raw": m.group(1)})
+  82→         spans.append(m.span())
+  83→     return found
+# exit=0

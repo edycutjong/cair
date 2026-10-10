@@ -50,8 +50,11 @@ def rail_eligibility(country: str, payer: str, rail: str) -> dict:
     _maybe_fail("rail_eligibility")
     sheet = rules.sheet()
     fact = sheet.get(country, payer, rail, "deliverable")
-    value = fact.value if fact and fact.value in {"YES", "NO", UNCLEAR} else UNCLEAR
-    return {"country": country, "rail": rail, "deliverable": value, "source": _src(fact, sheet) if value != UNCLEAR or fact else None}
+    if fact is not None and fact.value == "OFFERED":  # "the payer offers it" says nothing about this country
+        fact = None
+    value = fact.value if fact else UNCLEAR
+    return {"country": country, "rail": rail, "deliverable": value,
+            "source": _src(fact, sheet) if fact and fact.source_id else None}
 
 
 def treaty_lookup(country: str, query: str = treaty.QUERY) -> dict:

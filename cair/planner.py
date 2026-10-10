@@ -62,10 +62,15 @@ class Attempts:
 def payout_plan(plan_id: str, payer: str, country: str, amount_usd: str, rails_offered: list, exchange: str | None,
                 origin: str, question: str, guardrail: bool = True, fail: str | None = None) -> dict:
     token = tools.FORCE_FAIL.set(fail)
+    usage: list = []
+    utoken = llm.USAGE.set(usage)
     try:
         card = planner(plan_id, payer, country, amount_usd, rails_offered, exchange, question, guardrail)
     finally:
         tools.FORCE_FAIL.reset(token)
+        llm.USAGE.reset(utoken)
+    card["llm_usage"] = {"calls": len(usage), "prompt_tokens": sum(u["prompt"] for u in usage),
+                         "completion_tokens": sum(u["completion"] for u in usage)}
     card["trace_id"] = current_trace_id()
     card["origin"] = origin
     return card
@@ -190,7 +195,7 @@ def build_card(plan_id, payer, country, amount_usd, exchange, rails, recommended
         unclear.append("landed_local")
     return {
         "plan_id": plan_id, "payer": payer, "payer_name": rules.PAYERS.get(payer, payer), "country": country,
-        "country_name": rules.COUNTRIES.get(country, country), "amount": amount_usd, "unit": "USDC" if usdc else "USD",
+        "country_name": rules.COUNTRIES.get(country, "a country not in the rules sheet"), "amount": amount_usd, "unit": "USDC" if usdc else "USD",
         "currency": rules.CURRENCY.get(country), "exchange": exchange, "rails": rails, "recommended": recommended,
         "w8ben": {"applies": w8, "line10": line10, "line10_why": why,
                   "source": pr.get("w8ben_source") if pr else None,
@@ -377,4 +382,4 @@ def run(plan_id: str, payer: str, country: str, amount_usd: int | str, rails_off
         card = payout_plan(plan_id, payer, country, str(amount_usd), list(rails_offered), exchange, origin, question,
                            guardrail, fail)
     return {"text": card["text"], "tool_outputs": card["tool_outputs"], "trace_id": card["trace_id"],
-            "guardrail": card["guardrail"], "recovery": card["recovery"], "card": card}
+            "guardrail": card["guardrail"], "recovery": card["recovery"], "llm_usage": card["llm_usage"], "card": card}

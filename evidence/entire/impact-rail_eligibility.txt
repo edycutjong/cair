@@ -1,0 +1,21 @@
+$ entire graph impact --symbol rail_eligibility --repo . --depth 2
+# 2026-10-10T07:35:11Z at ef20d8d
+Index: cache-miss (711ms) | Query: 0ms | Total: 711ms
+Completeness: no parse failures in Python (29 files parsed); 2 elsewhere (JSON 2) cannot affect this answer — see --format json.
+Impact: rail_eligibility (cair/tools.py:49) def=49 span=49-57 [function]
+Blast radius: 0 callers (0 direct, 0 transitive), 3 callees, 0 type consumers, 0 data flows, 0 co-change files, 0 siblings.
+Callers (0 direct, 0 transitive; who breaks if behavior changes):
+- none
+Callees (3; what it depends on):
+- sheet (cair/rules.py:130)
+- _maybe_fail (cair/tools.py:23)
+- _src (cair/tools.py:28)
+Type consumers (0 in, 0 out; USES_TYPE/PARAM_TYPE/RETURNS_TYPE):
+- none
+Data flows (0 in, 0 out):
+- none
+Co-change coupling (0; files that historically change with cair/tools.py):
+- none
+Same-container siblings (0):
+- none
+# exit=0

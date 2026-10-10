@@ -1,0 +1,9 @@
+$ entire graph stats
+# 2026-10-10T07:35:14Z at ef20d8d
+entire graph stats
+  repo:     <repo>
+  sessions: not found (looked in ~/.claude/projects/-Users-edycu-Hackathon-others-neatlogs-neathack-2026-cair-build)
+
+No coding-agent session transcripts exist for this repo yet, so there is
+nothing to compare. Run some work with `entire graph search` and re-run this.
+# exit=0

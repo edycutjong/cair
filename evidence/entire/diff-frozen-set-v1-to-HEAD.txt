@@ -1,0 +1,860 @@
+$ entire graph diff --base frozen-set-v1 --head HEAD
+# 2026-10-10T07:35:12Z at ef20d8d
+Semantic changes frozen-set-v1..HEAD
+
+cair/app.py (Python)
+  ~ function lifespan body changed (0 dependents)
+  + function client_ip added
+  + function limited added
+  + function identity added
+  + function set_cookies added
+  + function index added
+  + function plan_page added
+  + function rules_page added
+  + function rules_csv added
+  ~ function healthz body changed (0 dependents)
+  + function api_plan added
+  + function api_plan_get added
+  + function api_confirm added
+  + function api_receipt added
+  + function verify added
+
+cair/calc.py (Python)
+  + function q added
+  + function _num added
+  + function fee_calc added
+
+cair/config.py (Python)
+  ~ module cair/config.py body changed (0 dependents)
+
+cair/db.py (Python)
+  + function conn added
+  + function init added
+  + function save_plan added
+  + function get_plan added
+  + function recent_plans added
+  + function save_confirm added
+  + function confirms added
+  + function save_receipt added
+  + function receipts added
+  + function counts added
+
+cair/figures.py (Python)
+  + function _dec added
+  + function extract added
+  + function taken added
+  + function sourced_values added
+  + function walk added
+  + function is_sourced added
+  + function unsourced added
+
+cair/fx.py (Python)
+  + class FxUnavailable added
+  + function live added
+  + function cached added
+  + function _save added
+
+cair/guardrail.py (Python)
+  + function check added
+  + function run added
+  + function no_source added
+
+cair/llm.py (Python)
+  ~ function client body changed (4 dependents)
+  ~ function chat signature changed (4 dependents)
+
+cair/planner.py (Python)
+  + class Attempts added
+  + method Attempts.__init__ added
+  + method Attempts.call added
+  + function payout_plan added
+  + function planner added
+  + function build_card added
+  + function _facts_for_llm added
+  + function explain added
+  + function language added
+  + function strip_summary added
+  + function template_explanation added
+  + function _money added
+  + function render_text added
+  + function run added
+
+cair/reconcile.py (Python)
+  + function read_back added
+  + function compare added
+  + function reconcile added
+
+cair/scoring.py (Python)
+  + function summary added
+  + function rail_names added
+  + function mentions added
+  + function recommended added
+  + function sentences added
+  + function prose added
+  + function score added
+  + function aggregate added
+
+cair/static/app.js (JavaScript)
+  + function $ added
+  + function syncPayer added
+  + function post added
+  + function wire added
+
+cair/static/cair.css (CSS)
+  + selector html added
+  + selector body added
+  + selector a added
+  + selector mono added
+  + selector masthead added
+  + selector brand added
+  + selector brand-mark added
+  + selector main added
+  + selector intro added
+  + selector eyebrow added
+  + selector h1 added
+  + selector lede added
+  + selector layout added
+  + selector slip added
+  + selector box-label added
+  + selector ask added
+  + selector field added
+  + selector textarea added
+  + selector rails added
+  + selector check added
+  + selector btn added
+  + selector btn-small added
+  + selector hint added
+  + selector fine added
+  + selector state-after added
+  + selector plan added
+  + selector plan-head added
+  + selector plan-title added
+  + selector plan-meta added
+  + selector box added
+  + selector rails-list added
+  + selector rail added
+  + selector rail-name added
+  + selector is-rec added
+  + selector quote added
+  + selector nosrc added
+  + selector stamp added
+  + selector stamp-before added
+  + selector rec added
+  + selector sup added
+  + selector form-lines added
+  + selector confirm added
+  + selector money added
+  + selector big added
+  + selector big-label added
+  + selector numeral added
+  + selector checklist added
+  + selector notes added
+  + selector perforation added
+  + selector receipt added
+  + selector receipt-stamp added
+  + selector big-stamp added
+  + selector share added
+  + selector foot added
+  + selector table-wrap added
+  + selector rules added
+  + selector fact added
+  + selector verify-list added
+  + selector spans added
+  + selector layout added
+  + selector ask added
+  + selector body added
+  + selector rail added
+  + selector perforation added
+
+cair/templates/_card.html (HTML)
+  + document _card added
+  + element fn--c.plan_id---loop.index added
+  + element stamps--c.plan_id added
+
+cair/templates/_stamp.html (HTML)
+  + document _stamp added
+
+cair/templates/base.html (HTML)
+  + document base added
+  + element main added
+
+cair/templates/index.html (HTML)
+  + document index added
+  + element ask added
+  + element payer added
+  + element amount added
+  + element country added
+  + element rails-box added
+  + element usdc-box added
+  + element chain added
+  + element exchange added
+  + element question added
+  + element go added
+  + element status added
+  + element result added
+
+cair/templates/rules.html (HTML)
+  + document rules added
+
+cair/templates/verify.html (HTML)
+  + document verify added
+
+cair/tools.py (Python)
+  + class ToolFailure added
+  + function _maybe_fail added
+  + function _src added
+  + function platform_rails added
+  + function rail_eligibility added
+  + function treaty_lookup added
+  + function fx_quote added
+  + function fx_quote_fallback added
+  + function exchange_networks added
+  + function fee_calc added
+
+cair/tracing.py (Python)
+  + function current_trace_id added
+
+cair/treaty.py (Python)
+  + function _tok added
+  + function index added
+  + function nearest added
+
+cair/view.py (Python)
+  + function form_options added
+  + function validate added
+  + function _short added
+  + function card_view added
+  + function note added
+  + function money added
+  + function confirmable added
+  + function stamp_view added
+  + function rules_rows added
+  + function band added
+  + function verify_rows added
+
+docs/METRICS.md (Markdown)
+  + section How-Cair-is-measured added
+  + section The-set added
+  + section The-answer-contract added
+  + code_fence code_fence_1_text added
+  + code_fence code_fence_2_text added
+  + section Metrics-scored-on-the-whole-rendered-answer:-card-prose added
+  + section What-counts-as-a-figure-cair/figures.py added
+  + section Runs-reported added
+  + section Non-circular-checks added
+
+evidence/eval-ablation-r1-20261010T072323Z.json (JSON)
+  + section meta added
+  + section run added
+  + section planner added
+  + section guardrail added
+  + section forced_failure added
+  + section model added
+  + section temperature added
+  + section extra_body added
+  + section enable_thinking added
+  + section llm_endpoint added
+  + section sheet_version added
+  + section frozen_set_sha256 added
+  + section git_sha added
+  + section started_utc added
+  + section finished_utc added
+  + section errors added
+  + section rescored_with_git_sha added
+  + section aggregate added
+  + section scenarios added
+  + section U added
+  + section P added
+  + section U_or_P added
+  + section K_fields_honored added
+  + section K_scenarios_ok added
+  + section N_traceable added
+  + section N_pct added
+  + section summary_missing added
+  + section id added
+  + section K_fields added
+  + section K_needed added
+  + section K_ok added
+  + section N_figures added
+  + section N_sourced added
+  + section unsourced added
+  + section summary_present added
+  + section reasons added
+  + section trace_id added
+  + section latency_s added
+  + section error added
+  + section text added
+  + section tool_outputs added
+  + section payer added
+  + section known_payer added
+  + section offered_rails added
+  + section w8ben_applies added
+  + section w8ben_source added
+  + section value added
+  + section source_id added
+  + section source_url added
+  + section accessed_at added
+  + section row added
+  + section quote added
+  + section country added
+  + section rail added
+  + section deliverable added
+  + section source added
+  + section other_income_article added
+  + section article_source added
+  + section withholding_default added
+  + section withholding_source added
+  + section treaty_text_indexed added
+  + section article_count added
+  + section has_article_titled_other_income added
+  + section nearest added
+  + section article added
+  + section title added
+  + section score added
+  + section base added
+  + section rate added
+  + section as_of added
+  + section stale added
+  + section fetched_at added
+  + section gross added
+  + section unit added
+  + section local_currency added
+  + section inputs added
+  + section receiving_fee_usd added
+  + section fx_margin_pct added
+  + section fx_rate added
+  + section withheld added
+  + section after_withholding added
+  + section landed_usd added
+  + section upper_bound_usd added
+  + section upper_bound_note added
+  + section landed_local added
+  + section upper_bound_local added
+  + section upper_bound_local_note added
+  + section recovery added
+  + section exchange added
+  + section chain added
+  + section sourced_yes_networks added
+  + section always added
+
+evidence/eval-ablation-r2-20261010T072713Z.json (JSON)
+  + section meta added
+  + section run added
+  + section planner added
+  + section guardrail added
+  + section forced_failure added
+  + section model added
+  + section temperature added
+  + section extra_body added
+  + section enable_thinking added
+  + section llm_endpoint added
+  + section sheet_version added
+  + section frozen_set_sha256 added
+  + section git_sha added
+  + section started_utc added
+  + section finished_utc added
+  + section errors added
+  + section rescored_with_git_sha added
+  + section aggregate added
+  + section scenarios added
+  + section U added
+  + section P added
+  + section U_or_P added
+  + section K_fields_honored added
+  + section K_scenarios_ok added
+  + section N_traceable added
+  + section N_pct added
+  + section summary_missing added
+  + section id added
+  + section K_fields added
+  + section K_needed added
+  + section K_ok added
+  + section N_figures added
+  + section N_sourced added
+  + section unsourced added
+  + section summary_present added
+  + section reasons added
+  + section trace_id added
+  + section latency_s added
+  + section error added
+  + section text added
+  + section tool_outputs added
+  + section payer added
+  + section known_payer added
+  + section offered_rails added
+  + section w8ben_applies added
+  + section w8ben_source added
+  + section value added
+  + section source_id added
+  + section source_url added
+  + section accessed_at added
+  + section row added
+  + section quote added
+  + section country added
+  + section rail added
+  + section deliverable added
+  + section source added
+  + section other_income_article added
+  + section article_source added
+  + section withholding_default added
+  + section withholding_source added
+  + section treaty_text_indexed added
+  + section article_count added
+  + section has_article_titled_other_income added
+  + section nearest added
+  + section article added
+  + section title added
+  + section score added
+  + section base added
+  + section rate added
+  + section as_of added
+  + section stale added
+  + section fetched_at added
+  + section gross added
+  + section unit added
+  + section local_currency added
+  + section inputs added
+  + section receiving_fee_usd added
+  + section fx_margin_pct added
+  + section fx_rate added
+  + section withheld added
+  + section after_withholding added
+  + section landed_usd added
+  + section upper_bound_usd added
+  + section upper_bound_note added
+  + section landed_local added
+  + section upper_bound_local added
+  + section upper_bound_local_note added
+  + section recovery added
+  + section exchange added
+  + section chain added
+  + section sourced_yes_networks added
+  + section always added
+
+evidence/eval-fail-fx_quote-r1-20261010T072752Z.json (JSON)
+  + section meta added
+  + section run added
+  + section planner added
+  + section guardrail added
+  + section forced_failure added
+  + section model added
+  + section temperature added
+  + section extra_body added
+  + section enable_thinking added
+  + section llm_endpoint added
+  + section sheet_version added
+  + section frozen_set_sha256 added
+  + section git_sha added
+  + section started_utc added
+  + section finished_utc added
+  + section errors added
+  + section rescored_with_git_sha added
+  + section aggregate added
+  + section scenarios added
+  + section U added
+  + section P added
+  + section U_or_P added
+  + section K_fields_honored added
+  + section K_scenarios_ok added
+  + section N_traceable added
+  + section N_pct added
+  + section summary_missing added
+  + section id added
+  + section K_fields added
+  + section K_needed added
+  + section K_ok added
+  + section N_figures added
+  + section N_sourced added
+  + section unsourced added
+  + section summary_present added
+  + section reasons added
+  + section trace_id added
+  + section latency_s added
+  + section error added
+  + section text added
+  + section tool_outputs added
+  + section payer added
+  + section known_payer added
+  + section offered_rails added
+  + section w8ben_applies added
+  + section w8ben_source added
+  + section value added
+  + section source_id added
+  + section source_url added
+  + section accessed_at added
+  + section row added
+  + section quote added
+  + section country added
+  + section rail added
+  + section deliverable added
+  + section source added
+  + section other_income_article added
+  + section article_source added
+  + section withholding_default added
+  + section withholding_source added
+  + section treaty_text_indexed added
+  + section article_count added
+  + section has_article_titled_other_income added
+  + section nearest added
+  + section article added
+  + section title added
+  + section score added
+  + section base added
+  + section rate added
+  + section as_of added
+  + section stale added
+  + section fetched_at added
+  + section reason added
+  + section gross added
+  + section unit added
+  + section local_currency added
+  + section inputs added
+  + section receiving_fee_usd added
+  + section fx_margin_pct added
+  + section fx_rate added
+  + section withheld added
+  + section after_withholding added
+  + section landed_usd added
+  + section upper_bound_usd added
+  + section upper_bound_note added
+  + section landed_local added
+  + section upper_bound_local added
+  + section upper_bound_local_note added
+  + section passed added
+  + section figures added
+  + section claims added
+  + section echoed_from_question added
+  + section attempt added
+  + section recovery added
+  + section tool added
+  + section action added
+  + section exchange added
+  + section chain added
+  + section sourced_yes_networks added
+  + section always added
+
+evidence/eval-v1-r1-20261010T071611Z.json (JSON)
+  + section meta added
+  + section run added
+  + section planner added
+  + section guardrail added
+  + section forced_failure added
+  + section model added
+  + section temperature added
+  + section extra_body added
+  + section enable_thinking added
+  + section llm_endpoint added
+  + section sheet_version added
+  + section frozen_set_sha256 added
+  + section git_sha added
+  + section started_utc added
+  + section finished_utc added
+  + section errors added
+  + section rescored_with_git_sha added
+  + section aggregate added
+  + section scenarios added
+  + section U added
+  + section P added
+  + section U_or_P added
+  + section K_fields_honored added
+  + section K_scenarios_ok added
+  + section N_traceable added
+  + section N_pct added
+  + section summary_missing added
+  + section id added
+  + section K_fields added
+  + section K_needed added
+  + section K_ok added
+  + section N_figures added
+  + section N_sourced added
+  + section unsourced added
+  + section summary_present added
+  + section reasons added
+  + section trace_id added
+  + section latency_s added
+  + section error added
+  + section text added
+  + section recovery added
+
+evidence/eval-v2-r1-20261010T072235Z.json (JSON)
+  + section meta added
+  + section run added
+  + section planner added
+  + section guardrail added
+  + section forced_failure added
+  + section model added
+  + section temperature added
+  + section extra_body added
+  + section enable_thinking added
+  + section llm_endpoint added
+  + section sheet_version added
+  + section frozen_set_sha256 added
+  + section git_sha added
+  + section started_utc added
+  + section finished_utc added
+  + section errors added
+  + section rescored_with_git_sha added
+  + section aggregate added
+  + section scenarios added
+  + section U added
+  + section P added
+  + section U_or_P added
+  + section K_fields_honored added
+  + section K_scenarios_ok added
+  + section N_traceable added
+  + section N_pct added
+  + section summary_missing added
+  + section id added
+  + section K_fields added
+  + section K_needed added
+  + section K_ok added
+  + section N_figures added
+  + section N_sourced added
+  + section unsourced added
+  + section summary_present added
+  + section reasons added
+  + section trace_id added
+  + section latency_s added
+  + section error added
+  + section text added
+  + section tool_outputs added
+  + section payer added
+  + section known_payer added
+  + section offered_rails added
+  + section w8ben_applies added
+  + section w8ben_source added
+  + section value added
+  + section source_id added
+  + section source_url added
+  + section accessed_at added
+  + section row added
+  + section quote added
+  + section country added
+  + section rail added
+  + section deliverable added
+  + section source added
+  + section other_income_article added
+  + section article_source added
+  + section withholding_default added
+  + section withholding_source added
+  + section treaty_text_indexed added
+  + section article_count added
+  + section has_article_titled_other_income added
+  + section nearest added
+  + section article added
+  + section title added
+  + section score added
+  + section base added
+  + section rate added
+  + section as_of added
+  + section stale added
+  + section fetched_at added
+  + section gross added
+  + section unit added
+  + section local_currency added
+  + section inputs added
+  + section receiving_fee_usd added
+  + section fx_margin_pct added
+  + section fx_rate added
+  + section withheld added
+  + section after_withholding added
+  + section landed_usd added
+  + section upper_bound_usd added
+  + section upper_bound_note added
+  + section landed_local added
+  + section upper_bound_local added
+  + section upper_bound_local_note added
+  + section passed added
+  + section figures added
+  + section claims added
+  + section attempt added
+  + section recovery added
+  + section exchange added
+  + section chain added
+  + section sourced_yes_networks added
+  + section always added
+  + section tool added
+  + section action added
+
+evidence/eval-v2-r2-20261010T072626Z.json (JSON)
+  + section meta added
+  + section run added
+  + section planner added
+  + section guardrail added
+  + section forced_failure added
+  + section model added
+  + section temperature added
+  + section extra_body added
+  + section enable_thinking added
+  + section llm_endpoint added
+  + section sheet_version added
+  + section frozen_set_sha256 added
+  + section git_sha added
+  + section started_utc added
+  + section finished_utc added
+  + section errors added
+  + section rescored_with_git_sha added
+  + section aggregate added
+  + section scenarios added
+  + section U added
+  + section P added
+  + section U_or_P added
+  + section K_fields_honored added
+  + section K_scenarios_ok added
+  + section N_traceable added
+  + section N_pct added
+  + section summary_missing added
+  + section id added
+  + section K_fields added
+  + section K_needed added
+  + section K_ok added
+  + section N_figures added
+  + section N_sourced added
+  + section unsourced added
+  + section summary_present added
+  + section reasons added
+  + section trace_id added
+  + section latency_s added
+  + section error added
+  + section text added
+  + section tool_outputs added
+  + section payer added
+  + section known_payer added
+  + section offered_rails added
+  + section w8ben_applies added
+  + section w8ben_source added
+  + section value added
+  + section source_id added
+  + section source_url added
+  + section accessed_at added
+  + section row added
+  + section quote added
+  + section country added
+  + section rail added
+  + section deliverable added
+  + section source added
+  + section other_income_article added
+  + section article_source added
+  + section withholding_default added
+  + section withholding_source added
+  + section treaty_text_indexed added
+  + section article_count added
+  + section has_article_titled_other_income added
+  + section nearest added
+  + section article added
+  + section title added
+  + section score added
+  + section base added
+  + section rate added
+  + section as_of added
+  + section stale added
+  + section fetched_at added
+  + section gross added
+  + section unit added
+  + section local_currency added
+  + section inputs added
+  + section receiving_fee_usd added
+  + section fx_margin_pct added
+  + section fx_rate added
+  + section withheld added
+  + section after_withholding added
+  + section landed_usd added
+  + section upper_bound_usd added
+  + section upper_bound_note added
+  + section landed_local added
+  + section upper_bound_local added
+  + section upper_bound_local_note added
+  + section passed added
+  + section figures added
+  + section claims added
+  + section echoed_from_question added
+  + section attempt added
+  + section recovery added
+  + section exchange added
+  + section chain added
+  + section sourced_yes_networks added
+  + section always added
+
+hackathon.md (Markdown)
+  ~ module hackathon.md body changed (0 dependents)
+
+pytest.ini (INI)
+  + document pytest added
+
+scripts/eval.py (Python)
+  + function v1_user added
+  + function _v1_agent added
+  + function v1_plan added
+  + function run_one added
+  + function rescore added
+  + function check_set added
+  + function main added
+
+tests/conftest.py (Python)
+  + function _neatlogs_local added
+  + function fixed_fx added
+  + function live added
+  + function llm_says added
+  + function setter added
+  + function chat added
+
+tests/test_invariants.py (Python)
+  + function card_for added
+  + function test_guardrail_blocks_unsourced_number added
+  + function test_guardrail_allows_line_numbers added
+  + function test_guardrail_passes_sourced_figures added
+  + function test_refused_rail_never_recommended added
+  + function test_no_route_when_nothing_delivers added
+  + function test_line10_blank_without_article added
+  + function test_line10_unclear_when_applicability_unsourced added
+  + function test_guardrail_blocks_article_on_line10 added
+  + function test_no_withholding_unless_w8ben_applies added
+  + function test_guardrail_blocks_rate_for_unclear_payer added
+  + function test_unclear_landed_cannot_be_upgraded_by_the_llm added
+  + function test_landed_unclear_when_w8ben_unclear added
+  + function test_fee_calc_no_withholding_when_w8ben_no added
+  + function test_fee_calc_reads_sheet_columns added
+  + function test_calc_uses_bankers_rounding added
+  + function test_fx_failure_retries_then_uses_last_ecb_rate_stamped_stale added
+  + function test_fx_failure_without_snapshot_is_unclear added
+  + function test_treaty_failure_makes_line10_unclear_not_guessed added
+  + function test_llm_down_card_still_renders_from_tools added
+  + function test_forced_failure_is_scoped_to_one_plan added
+  + function test_refusal_repeating_the_users_number_is_blocked_then_retried added
+  + function test_explanation_language_follows_the_question added
+
+tests/test_labels.py (Python)
+  + function test_sheet_loads_and_every_fact_is_sourced_or_unclear added
+  + function test_sheet_refuses_a_fact_filled_twice added
+  + function test_sheet_refuses_an_unsourced_fact added
+  + function test_hero_labels_from_sheet added
+  + function test_india_line10_unclear_because_other_income_applicability_unsourced added
+  + function test_usdc_labels_follow_the_exchange_page added
+  + function test_frozen_set_labels_match_sheet added
+
+tests/test_reconcile.py (Python)
+  + function test_reconcile_full_reports_error_pct added
+  + function test_reconcile_partial_when_fee_unclear added
+  + function test_reconcile_partial_outside_bound added
+
+tests/test_scoring.py (Python)
+  + function test_good_answer_scores_clean added
+  + function test_bad_answer_is_undeliverable_and_misstates_the_form added
+  + function test_prose_endorsement_of_a_refused_rail_counts_as_U added
+  + function test_negated_mention_is_not_U added
+  + function test_zero_percent_withholding_claim_is_P added
+  + function test_unclear_payer_stating_a_rate_is_P added
+  + function test_figures_allowlist_skips_line_numbers_forms_years_and_durations added
+  + function test_figures_parse_indonesian_and_english_grouping added
+  + function test_unsourced_number_is_reported added
+  + function test_unclear_payer_saying_no_withholding_is_P added
+  + function test_fx_rate_unit_is_not_a_figure added
+  + function test_amount_in_2000s_is_not_masked_as_a_year added
+  + function test_negated_withholding_sentence_is_not_P added
+  + function test_indonesian_refusal_is_not_a_line10_claim added
+
+Warnings
+  ! W_UNSUPPORTED_FILE cair/static/favicon.svg
+    file skipped; no parser for this file type, so its changes are not analyzed
+    head version has no supported parser
+# exit=0

@@ -1,0 +1,65 @@
+$ entire graph impact --symbol fee_calc --repo . --depth 2
+# 2026-10-10T07:35:02Z at ef20d8d
+Index: cache-miss (717ms) | Query: 0ms | Total: 718ms
+Completeness: ok for this query (2 this query files failed to parse; 3 total diagnostics in this snapshot)
+- partial E_MINIFIED: evidence/traces/live-hero.json
+- partial E_MINIFIED: evidence/traces/rca01-after.json
+"fee_calc" matches 2 definitions; all are listed, the first 2 with source.
+- fee_calc (cair/calc.py:26) [function]  --symbol fee_calc --file cair/calc.py --line 26
+- fee_calc (cair/tools.py:109) [function]  --symbol fee_calc --file cair/tools.py --line 109
+
+cair/calc.py:26-71 fee_calc [function]
+  26→ def fee_calc(gross_usd: str, unit: str, w8ben_applies: str, withholding_default: str | None,
+  27→              receiving_fee_usd: str | None, fx_margin_pct: str | None, fx_rate: str | None, local_ccy: str) -> dict:
+  28→     gross = Decimal(gross_usd)
+  29→     out: dict = {"gross": q(gross, unit), "unit": unit, "local_currency": local_ccy, "inputs": {
+  30→         "w8ben_applies": w8ben_applies, "withholding_default": withholding_default or UNCLEAR,
+  31→         "receiving_fee_usd": receiving_fee_usd or UNCLEAR, "fx_margin_pct": fx_margin_pct or UNCLEAR,
+  32→         "fx_rate": fx_rate or UNCLEAR}}
+  33→ 
+  34→     rate_pct = _num(withholding_default)
+  35→     if w8ben_applies == "YES" and rate_pct is not None:
+  36→         withheld = gross * rate_pct / 100
+  37→         out["withheld"] = q(withheld, unit)
+  38→         after = gross - withheld
+  39→         out["after_withholding"] = q(after, unit)
+  40→     elif w8ben_applies == "NO":
+  41→         withheld, after = Decimal(0), gross
+  42→         out["withheld"] = "0.00"
+  43→         out["after_withholding"] = q(after, unit)
+  44→     else:
+  45→         withheld, after = None, None
+  46→         out["withheld"] = UNCLEAR
+  47→ 
+  48→     fee = _num(receiving_fee_usd)
+  49→     if after is not None and fee is not None:
+  50→         landed = after - fee
+  51→         out["landed_usd"] = q(landed, unit)
+  52→         bound = None
+  53→     else:
+  54→         landed = None
+  55→         out["landed_usd"] = UNCLEAR
+  56→         bound = after if after is not None else gross
+  57→         out["upper_bound_usd"] = q(bound, unit)
+  58→         out["upper_bound_note"] = ("before the receiving fee" if after is not None
+  59→                                    else "before any withholding and fees")
+  60→ 
+  61→     rate = _num(fx_rate)
+  62→     margin = _num(fx_margin_pct)
+  63→     if landed is not None and rate is not None and margin is not None and unit == "USD":
+  64→         out["landed_local"] = q(landed * rate * (1 - margin / 100), local_ccy)
+  65→     else:
+  66→         out["landed_local"] = UNCLEAR
+  67→         if rate is not None and unit == "USD":
+  68→             base = landed if landed is not None else bound
+  69→             out["upper_bound_local"] = q(base * rate, local_ccy)
+  70→             out["upper_bound_local_note"] = "at the ECB reference rate, before the provider's conversion margin"
+  71→     return out
+
+cair/tools.py:109-113 fee_calc [function]
+  109→ def fee_calc(gross: str, unit: str, w8ben_applies: str, withholding_default: str | None,
+  110→              receiving_fee_usd: str | None, fx_margin_pct: str | None, fx_rate: str | None, local_ccy: str) -> dict:
+  111→     _maybe_fail("fee_calc")
+  112→     return calc.fee_calc(gross, unit, w8ben_applies, withholding_default, receiving_fee_usd, fx_margin_pct,
+  113→                          fx_rate, local_ccy)
+# exit=0

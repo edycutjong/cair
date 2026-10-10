@@ -165,3 +165,11 @@ def test_refusal_repeating_the_users_number_is_blocked_then_retried(fixed_fx, ll
 def test_explanation_language_follows_the_question():
     assert planner.language("Saya di Jakarta, menang $7,000 dari Devpost. Pilih yang mana?") == "Indonesian"
     assert planner.language("I'm in Jakarta and won $7,000 on Devpost. Which one?") == "English"
+
+
+def test_unlisted_country_is_blocked_no_source_without_borrowed_sources(fixed_fx, llm_says):
+    llm_says(OK_TEXT)
+    card = card_for(country="OTHER", rails_offered=["payoneer", "wise"])
+    assert all(r["verdict"] == "UNCLEAR" and r["source"] is None for r in card["rails"])
+    assert card["guardrail"][0]["reason"] == "no_source" and card["explanation_source"] == "template"
+    assert "RECOMMENDED RAIL: UNCLEAR" in card["text"]

@@ -1,5 +1,5 @@
 $ entire graph doctor
-# 2026-10-10T07:05:31Z at fcc1b20
+# 2026-10-10T07:35:02Z at ef20d8d
 ENTIRE_CLI_VERSION=0.11.4
 ENTIRE_REPO_ROOT=<repo>
 ENTIRE_PLUGIN_DATA_DIR=~/.local/share/entire/plugins/data/graph
