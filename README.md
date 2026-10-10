@@ -25,6 +25,7 @@
   ![Qwen Cloud](https://img.shields.io/badge/Qwen_Cloud-615CED?style=flat)
   ![Tests](https://img.shields.io/badge/tests-92_passing-brightgreen?style=flat)
   [![CI](https://github.com/edycutjong/cair/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/cair/actions/workflows/ci.yml)
+  [![Release](https://img.shields.io/github/v/release/edycutjong/cair?sort=semver)](https://github.com/edycutjong/cair/releases/latest)
   [![CodeQL](https://github.com/edycutjong/cair/actions/workflows/codeql.yml/badge.svg)](https://github.com/edycutjong/cair/actions/workflows/codeql.yml)
   [![License](https://img.shields.io/badge/License-MIT-yellow)](https://opensource.org/licenses/MIT)
 
@@ -212,7 +213,7 @@ such a run ([DEMO.md](DEMO.md) §3).
 | Permission boundary | no public route returns a key or token; the public plan API carries no raw tool errors; the builder-only origin cannot be forged (`tests/test_boundary.py`) | passing |
 | Browser E2E | Playwright (Chromium): the hero plan, an unlisted country, a bad amount, `/judge` with no session, no horizontal overflow at 375 / 768 / 1440 px | 23 passing |
 | Lighthouse (local, desktop) | `/`, `/judge`, `/rules` | accessibility 100, best practices 100, SEO 100, performance 91–100 |
-| Security | CodeQL (python) · gitleaks over full history · pip-audit · Dependabot (pip + actions) · secret scanning with push protection | 0 findings at the last run |
+| Security | CodeQL (python) · gitleaks over full history · pip-audit · Dependabot (pip + actions) · secret scanning with push protection | CodeQL's first run found 2 issues: one fixed (and pinned by a test), one dismissed as a false positive with the reason recorded; 0 open. gitleaks, pip-audit, Dependabot alerts: 0 |
 
 The pipeline ([`ci.yml`](.github/workflows/ci.yml)) runs quality and dependency audit in parallel, then a boot-and-smoke
 build, then E2E and Lighthouse (advisory), with a deploy gate on `main`. A judge-facing summary with the receipts:
