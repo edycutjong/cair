@@ -88,7 +88,7 @@ a:hover { color: var(--ink); }
 .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .skip { position: absolute; left: 12px; top: -80px; z-index: 50; background: var(--ink); color: var(--paper); padding: 10px 14px; border-radius: 3px; }
 .skip:focus { top: 12px; color: var(--paper); }
-code, .mono { font-family: var(--font-data); font-size: .84em; letter-spacing: -.01em; }
+code, .mono { font-family: var(--font-data); font-size: max(12px, .84em); letter-spacing: -.01em; }
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
 
 /* ---------- labels: pre-printed form labels, small caps ---------- */
@@ -148,13 +148,14 @@ code, .mono { font-family: var(--font-data); font-size: .84em; letter-spacing: -
 .hero-copy { grid-area: copy; padding-top: 6px; }
 .hero-slip { grid-area: slip; }
 .hero .rosette { position: absolute; right: -260px; top: -150px; width: 980px; height: 980px; opacity: .8; pointer-events: none; }
-.headline { font: 400 clamp(46px, 4.9vw, 68px)/.98 var(--font-display); letter-spacing: -.018em; margin: 18px 0 26px;
+.headline { font: 400 clamp(46px, 4.9vw, 68px)/.98 var(--font-display); letter-spacing: -.018em; word-spacing: .08em; margin: 18px 0 26px;
   max-width: 13.2em; text-wrap: balance; }
 .headline .w { display: inline-block; }
 .headline em { font-style: normal; color: var(--before); white-space: nowrap; }
 .headline .cm { color: var(--ink); }
 .fn { font: 500 .3em/0 var(--font-data); color: var(--after); text-decoration: none; vertical-align: super;
-  margin-left: .06em; letter-spacing: 0; padding: 0 .1em; border-radius: 2px; transition: background-color .2s var(--ease); }
+  margin-left: .06em; letter-spacing: 0; padding: 0 .1em; border-radius: 2px; transition: background-color .2s var(--ease); position: relative; }
+.fn::before { content: ""; position: absolute; inset: -9px -8px; }
 .fn:hover { background: var(--wash-after); color: var(--after); }
 .motion .headline .w { animation: rise .7s var(--ease) both; animation-delay: calc(120ms + var(--i) * 55ms); }
 @keyframes rise { from { opacity: 0; transform: translateY(.38em); } }
@@ -281,7 +282,7 @@ section { position: relative; }
 .rb-cmd { font: 500 13px/1.5 var(--font-data); color: var(--ink); margin: 6px 0 0; overflow-wrap: anywhere; }
 .rb-cmd::before { content: "$ "; color: var(--muted); }
 .spans { list-style: none; margin: 0; padding: 12px 20px 8px; font: 400 12.75px/1.5 var(--font-data); }
-.spans li { display: grid; grid-template-columns: 88px minmax(0, 1fr) 76px; gap: 0 10px; padding: 6px 0; border-bottom: 1px dotted var(--rule); }
+.spans li { display: grid; grid-template-columns: 104px minmax(0, 1fr) 76px; gap: 0 10px; padding: 6px 0; border-bottom: 1px dotted var(--rule); }
 .spans li:last-child { border-bottom: 0; }
 .spans .kind { color: var(--muted); font-size: 12px; letter-spacing: .04em; padding-top: 1px; }
 .spans .nm { color: var(--ink); font-weight: 500; overflow-wrap: anywhere; }
@@ -364,7 +365,7 @@ section { position: relative; }
 .card h3 { font: 400 clamp(23px, 2vw, 28px)/1.12 var(--font-display); margin: 0; letter-spacing: -.005em; }
 .card p { margin: 0; font-size: 16px; line-height: 1.55; }
 .card .chip { align-self: flex-start; font: 400 12px/1 var(--font-data); color: var(--muted); border: 1px solid var(--rule); background: var(--bg);
-  border-radius: 999px; padding: 6px 10px; }
+  border-radius: 14px; padding: 5px 10px; line-height: 1.4; }
 .card .ico { width: 40px; height: 40px; color: var(--ink); }
 .card .ico .acc { color: var(--after); } .card .ico .red { color: var(--before); }
 .card:hover .ico .draw { stroke-dashoffset: 0; }
@@ -376,7 +377,7 @@ section { position: relative; }
 .c-receipt { grid-column: span 6; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 36px; align-items: center; }
 .flow { list-style: none; margin: 6px 0 4px; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 6px; }
 .flow li { display: inline-flex; align-items: center; gap: 6px; }
-.flow .step { font: 500 13px/1 var(--font-data); padding: 9px 11px; border: 1px solid var(--rule); border-radius: 3px; background: var(--paper); }
+.flow .step { font: 500 13px/1.3 var(--font-data); padding: 9px 11px; border: 1px solid var(--rule); border-radius: 3px; background: var(--paper); }
 .flow .step.k-ret { border-style: dashed; }
 .flow .step.k-llm { background: var(--bg); }
 .flow .step.k-guard { border-color: var(--after); color: var(--after); }
@@ -459,6 +460,7 @@ section { position: relative; }
 .st-label { font: 700 12.5px/1.3 var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--before); }
 .receipt-figs .vtext { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
 .frame-link { display: block; color: inherit; text-decoration: none; }
+.frame-link:focus-visible { outline-offset: -6px; }
 .frame-link:hover img { filter: brightness(1.02); }
 .frame-link:hover .url { border-color: var(--after); color: var(--after); }
 .url { transition: border-color .2s var(--ease), color .2s var(--ease); }
@@ -470,6 +472,7 @@ section { position: relative; }
 .key dt { margin: 0; }
 .key div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: baseline; }
 .key dd { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.45; }
+.ey-x { white-space: nowrap; }
 .kchip { display: inline-block; font: 700 12px/1 var(--font-body); letter-spacing: .13em; text-transform: uppercase; padding: 4px 6px 3px;
   border: 1.5px solid currentColor; border-radius: 2px; white-space: nowrap; }
 .kchip.k-src { font: 500 12px/1 var(--font-data); letter-spacing: 0; text-transform: none; color: var(--after); border-color: color-mix(in srgb, var(--after) 35%, transparent); }
@@ -531,7 +534,11 @@ section { position: relative; }
   .receipt-figs { grid-template-columns: minmax(0, 1fr); }
   .receipt-figs div { border-right: 0; border-bottom: 1px solid var(--rule); }
   .receipt-figs div:last-child { border-bottom: 0; }
-  .spans li { grid-template-columns: 74px minmax(0, 1fr) 64px; }
+  .spans li { grid-template-columns: minmax(0, 1fr) auto; }
+  .spans .kind { grid-column: 1 / -1; padding-left: 0 !important; }
+  .spans .out { grid-column: 1 / -1; }
+  .spans li:has(.d1) :is(.kind, .nm, .out) { padding-left: 12px !important; }
+  .spans li:has(.d2) :is(.kind, .nm, .out) { padding-left: 24px !important; }
   .faq summary { grid-template-columns: minmax(0, 1fr) 24px; }
   .faq summary .qn { display: none; }
   .faq .ans { padding: 0 20px 20px; }
@@ -542,8 +549,12 @@ section { position: relative; }
   .hero-copy .ctas .btn-blue { flex-basis: 100%; }
 }
 @keyframes slip-in-flat { from { opacity: 0; transform: translateY(16px); } }
+@media (max-width: 414px) { .ey-x { display: none; } }
+@media (pointer: coarse) { .box a.ev, .inst .links a, .rb-foot a, .aside-slip a.ev { display: inline-flex; align-items: center; min-height: 26px; } }
+@media (max-resolution: 1.49dppx) { .hero-slip { transform: none; } .motion .hero-slip { animation-name: slip-in-flat; } }
 @media (hover: none) { .src[data-tip]:not(:focus-visible):hover::after { content: none; } }
-@media (forced-colors: active) { .strike { text-decoration: line-through; background: none; } }
+@media (forced-colors: active) { .strike { text-decoration: line-through; background: none; }
+  .track { border: 1px solid CanvasText; } .track i { background: CanvasText; forced-color-adjust: none; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
@@ -553,7 +564,8 @@ section { position: relative; }
   .slip, .ledger { box-shadow: none; }
   .ledger { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .faq details .ans { display: block; }
-  .sec { padding-top: 32px; break-inside: avoid; }
+  .sec { padding-top: 32px; break-inside: auto; }
+  .slip, .ledger, .frame, .metric, .card, .quote, .faq details { break-inside: avoid; }
   .strike { background-size: 100% 2px !important; } .stamp, .spans li { opacity: 1 !important; transform: none !important; }
   .stamp.unclear { transform: rotate(-3deg) !important; } .stamp.refused { transform: rotate(-5deg) !important; }
   .track i { transform: none !important; }
@@ -589,12 +601,12 @@ section { position: relative; }
   <svg class="rosette" id="rosette" viewBox="0 0 980 980" aria-hidden="true" focusable="false"></svg>
   <div class="wrap hero-grid">
     <div class="hero-top">
-      <p class="label kicker">Remittance advice · neatHack 2026 · an agent that works</p>
+      <p class="label kicker"><span>Remittance advice · neatHack 2026<span class="ey-x"> · an agent that works</span></span></p>
       <h1 class="headline" id="h1"><span class="w" style="--i:0">The</span> <span class="w" style="--i:1">payout</span> <span class="w" style="--i:2">agent</span> <span class="w" style="--i:3">that</span> <em><span class="w" style="--i:4">says</span> <span class="w" style="--i:5">no<span class="cm">,</span></span></em> <span class="w" style="--i:6">and</span> <span class="w" style="--i:7">footnotes</span> <span class="w" style="--i:8">every</span> <span class="w" style="--i:9">yes.<a class="fn" href="#n1" aria-label="Footnote 1">1</a></span></h1>
     </div>
     <div class="hero-copy">
-      <p class="sub">Devpost's claim form offers a winner in Jakarta <b>Wise</b>, whose own help page says Indonesian addresses
-        “can no longer hold money”. Cair refuses routes like that and footnotes every figure it gives. A tool-less model call picked a dead route in <b>18 of 48</b> frozen cases. Cair: <b>0 of 48</b>.</p>
+      <p class="sub">Devpost's prize-claim help lists <b>Wise</b> as a payout option. Wise's own help page says Indonesian addresses
+        “can no longer hold money”. One model call with no tools picked a dead route in <b>18 of 48</b> frozen cases. Cair: <b>0 of 48</b>.</p>
       <div class="ctas">
         <a class="btn btn-ink" href="https://github.com/edycutjong/cair" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>View on GitHub</a>
         <a class="btn btn-line" href="pitch/"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="10" rx="1"/><path d="M10 13.5v3M6.5 16.5h7"/></svg>Pitch deck</a>
@@ -615,12 +627,12 @@ section { position: relative; }
         <div>
           <p class="label">Payout plan · specimen</p>
           <p class="slip-title">Devpost → Indonesia</p>
-          <p class="slip-meta">$7,000 prize · <span class="nw">one call: trace 929a3781…</span> <span class="nw">(eval v1-r1)</span> · <span class="nw">Cair: trace 58636870…</span> <span class="nw">(live plan)</span></p>
+          <p class="slip-meta">$7,000 prize · <span class="nw">one call: trace 929a3781…</span> <span class="nw">(eval v1-r1,</span> asked in Indonesian, PayPal also listed) · <span class="nw">Cair: trace 58636870…</span> <span class="nw">(live plan)</span></p>
         </div>
       </div>
 
       <div class="before">
-        <p class="label">One tool-less model call said</p>
+        <p class="label">One model call, no tools, said</p>
         <p class="said"><s class="strike" lang="id" style="--d:.15s">Pilihan Payout Terbaik: Wise</s><span class="vh"> (struck through: no source)</span></p>
         <p class="gloss"><span class="nosrc">No source</span> “Best payout option: Wise”, translated</p>
         <p class="said"><s class="strike" lang="id" style="--d:.35s">biaya konversi yang sangat kecil (biasanya di bawah 1%)</s><span class="vh"> (struck through: no source)</span></p>
@@ -647,21 +659,21 @@ section { position: relative; }
         <div class="lands">
           <p class="label">In your Payoneer — at most</p>
           <div class="amount-line">
-            <span class="amount" id="hero-amount">$4,900.00</span><a class="src" href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json" data-tip="fee_calc · Decimal arithmetic on sourced cells; no figure comes from the model" aria-label="fee_calc: Decimal arithmetic on sourced cells; no figure comes from the model">fee_calc</a>
+            <span class="amount" id="hero-amount">$4,900.00</span><a class="src" href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json" data-tip="fee_calc · Decimal arithmetic on sourced cells; the model computes no figure, and the ones it writes are checked against tool outputs" aria-label="fee_calc: Decimal arithmetic on sourced cells; the model computes no figure, and the ones it writes are checked against tool outputs">fee_calc</a>
             <span class="stamp unclear" style="--d:.75s">Unclear</span>
           </div>
-          <p class="small">$7,000.00 minus 30% US withholding ($2,100.00<a class="src" href="https://www.irs.gov/publications/p515" rel="noopener" data-tip="treaty_lookup · IRS-P515-30 · IRS Publication 515 · read 2026-10-10" aria-label="IRS-P515-30: treaty_lookup · IRS Publication 515 · read 2026-10-10">IRS-P515-30</a>), before a receiving fee Payoneer does not publish.</p>
+          <p class="small">$7,000.00 minus 30% US withholding ($2,100.00<a class="src" href="https://www.irs.gov/publications/p515" rel="noopener" data-tip="treaty_lookup · IRS-P515-30 · IRS Publication 515 · read 2026-10-10" aria-label="IRS-P515-30: treaty_lookup · IRS Publication 515 · read 2026-10-10">IRS-P515-30</a>), before a receiving fee Payoneer does not state as a single number.</p>
         </div>
         <p class="guard"><span>provenance_guardrail · <b>PASSED</b></span><span>10 spans · 7,063 ms</span></p>
       </div>
     </figure>
-  <div class="key hero-key">
+    <div class="key hero-key">
       <p class="label" id="key-h">Key to the slip</p>
       <dl aria-labelledby="key-h">
-      <div><dt><span class="kchip k-src">WISE-ID</span></dt><dd>a source reference: the tool and the primary page behind the line. Hover for the detail; click or tap to open the page.</dd></div>
-      <div><dt><span class="kchip k-ref">Refused</span></dt><dd>the provider's own page rules the route out, so it can never be the pick.</dd></div>
-      <div><dt><span class="kchip k-unc">Unclear</span></dt><dd>no primary source states it, so Cair gives a bound instead of a guess.</dd></div>
-      <div><dt><span class="kchip k-no">No source</span></dt><dd>a figure or claim with no tool behind it: the guardrail strikes it.</dd></div>
+        <div><dt><span class="kchip k-src">WISE-ID</span></dt><dd>its source: hover for the detail, click or tap to open</dd></div>
+        <div><dt><span class="kchip k-ref">Refused</span></dt><dd>the provider's own page rules it out</dd></div>
+        <div><dt><span class="kchip k-unc">Unclear</span></dt><dd>no primary source, so a bound, not a guess</dd></div>
+        <div><dt><span class="kchip k-no">No source</span></dt><dd>no tool behind it: the guardrail strikes it</dd></div>
       </dl>
     </div>
   </div>
@@ -679,7 +691,7 @@ section { position: relative; }
           <span class="box-no">Box 1</span>
           <span class="fig"><span class="count" data-from="18" data-to="0">0</span><span class="of">/ 48</span></span>
           <p>routes recommended that their own provider rules out</p>
-          <p class="was">one tool-less call: <s>18 / 48</s>, in every run</p>
+          <p class="was">one model call, no tools: <s>18 / 48</s>, in every run</p>
           <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-v2-r10-20261010T085601Z.json">eval-v2-r10 · eval-v1-r1…r3</a>
         </div>
         <div class="box">
@@ -700,7 +712,7 @@ section { position: relative; }
           <span class="box-no">Box 4</span>
           <span class="fig"><span class="count" data-from="0" data-to="143">143</span><span class="of">/ 143</span></span>
           <p>fields with no primary source, kept UNCLEAR</p>
-          <p class="was">one tool-less call: 11–23 / 143</p>
+          <p class="was">one model call, no tools: 11–23 / 143</p>
           <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-v2-r10-20261010T085601Z.json">eval-v2-r10</a>
         </div>
       </div>
@@ -712,7 +724,7 @@ section { position: relative; }
   <div class="wrap">
     <div class="sec-head">
       <p class="label kicker">Specimen · the query that matters</p>
-      <h2 class="h2" id="sp">One question, asked the way winners ask it.</h2>
+      <h2 class="h2" id="sp">One question, in a winner's words.</h2>
     </div>
     <p class="ask-quote">I'm in Jakarta. I won $7,000 in a Devpost hackathon. The claim form lets me pick Payoneer or Wise. Which one, and what do I write on the <span class="nw">W-8BEN</span>?</p>
     <p class="ask-how">Asked on the form as <b>Devpost · 7000 · Indonesia · Payoneer and Wise</b>. Below: the plan it returned, and that plan's own trace.</p>
@@ -758,9 +770,9 @@ section { position: relative; }
     <div class="sec-head">
       <p class="label kicker">Statement of account · one call against the agent</p>
       <h2 class="h2" id="me">Same model. Same 48 questions. Different answers.</h2>
-      <p class="lede">The 48 scenarios — 3 countries × 4 payers × 3 amounts, plus 12 leading prompts — were labelled from the sourced
-        rules sheet before any planner code existed (tag <code class="nw">frozen-set-v1</code>). <b>v1</b> is one tool-less call. <b>v1s</b> is one
-        call with the whole rules sheet pasted in, so every sourced fact is in its prompt.</p>
+      <p class="lede">48 scenarios (3 countries × 4 payers × 3 amounts, plus 12 leading prompts), labelled from the sourced rules sheet
+        before any planner code existed (tag <code class="nw">frozen-set-v1</code>). <b>v1</b>: one model call, no tools. <b>v1s</b>: the same call
+        with the whole rules sheet pasted in.</p>
     </div>
     <div class="metrics" id="metrics">
       <div class="slip metric">
@@ -802,10 +814,9 @@ section { position: relative; }
     </div>
     <div class="slip aside-slip">
       <span class="fig-ink">9</span>
-      <p>figures the tools never produced reach the page when the guardrail is removed — the user's “zero percent” and
-        “Article 21” repeated back, in 8 of 48 plans. With it, none do: 8 explanations were blocked once and rewritten, none fell back
-        to the template. The final run is the tenth on this set; earlier runs blocked or fell back, and rca-01.md traces two of
-        those to bugs that were fixed.
+      <p>figures the tools never produced reach the page without the guardrail — the user's “zero percent” and “Article 21”
+        echoed back, in 8 of 48 plans. With it, none: 8 explanations were blocked once and rewritten, none fell back. This is the
+        tenth run on the set; rca-01.md traces two earlier failures to bugs that were fixed.
         <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-v2-r10-20261010T085601Z.json">eval-v2-r10</a> ·
         <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-ablation-r10-20261010T085647Z.json">eval-ablation-r10</a> ·
         <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/rca-01.md">rca-01.md</a></p>
@@ -818,7 +829,7 @@ section { position: relative; }
     <div class="sec-head">
       <p class="label kicker">Returned item · a run where an action failed</p>
       <h2 class="h2" id="re">The rate API goes down. The plan still finishes, and says so.</h2>
-      <p class="lede"><code>scripts/eval.py --fail fx_quote</code> makes the ECB rate tool raise on every call. The agent retries once,
+      <p class="lede"><code>scripts/eval.py --planner v2 --fail fx_quote</code> makes the ECB rate tool raise on every call. The agent retries once,
         falls back to the last rate it fetched, stamps it STALE with its date, and finishes the plan. It never asks the model for a rate.</p>
     </div>
     <div class="recovery-grid">
@@ -838,7 +849,7 @@ section { position: relative; }
       </div>
       <div>
         <div class="tally">
-          <div class="slip t"><span class="fig2">48 / 48</span><p>plans completed with the FX tool failing on every call (U 0 · P 0) · latest run, fail-fx_quote-r9</p></div>
+          <div class="slip t"><span class="fig2">48 / 48</span><p>plans completed with the FX tool failing on every call, with no dead route and no contradicted tax fact · run fail-fx_quote-r9</p></div>
           <div class="slip t"><span class="fig2">24</span><p>plans took the stale-rate fallback — every USD payer; USDC plans never call it</p></div>
           <div class="slip t"><span class="fig2">350 / 350</span><p>figures still traced to a tool output</p></div>
         </div>
@@ -873,32 +884,29 @@ section { position: relative; }
           <li><span class="step k-llm">explain</span><span class="sep" aria-hidden="true">→</span></li>
           <li><span class="step k-guard">guardrail</span></li>
         </ol>
-        <p>What the payer offers and whether a <span class="nw">W-8BEN</span> applies → can each option receive in your country → the treaty position
-          → the ECB rate (or, for USDC, the networks the exchange accepts) → Decimal arithmetic. Each tool reads sourced rows
-          (fee_calc computes on them) and is retried once before its documented fallback.</p>
+        <p>Payer rails and <span class="nw">W-8BEN</span> → can each option receive here → treaty position → ECB rate (or USDC networks)
+          → Decimal arithmetic. Each step is retried once, then takes its documented fallback.</p>
         <span class="chip">@neatlogs.span · TOOL · RETRIEVER · GUARDRAIL</span>
       </article>
       <article class="slip card c-code">
         <svg class="ico" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 10h17M8 16h24M8 22h14"/><path class="acc" d="M8 30h10" stroke="currentColor"/><path class="draw red" d="M26 25l6 6M32 25l-6 6" stroke="currentColor"/></svg>
         <h3>The route is code. The prose is Qwen.</h3>
-        <p>The route, line 10 and every amount come from sourced rows; the model writes the explanation, nothing else. A refused
-          route can never be the recommendation.</p>
+        <p>Route, line 10 and every amount come from sourced rows; Qwen only writes the explanation. A refused route is never the pick.</p>
         <span class="chip">qwen3.8-max · temperature 0</span>
       </article>
       <article class="slip card c-guard">
         <svg class="ico" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 5l12 5v9c0 8-5.5 13-12 16-6.5-3-12-8-12-16v-9z"/><path class="draw acc" d="M14.5 20l4 4 7.5-8" stroke="currentColor"/></svg>
         <h3>A guardrail that reads like an auditor.</h3>
-        <p>No figure, rate or article that isn't in a tool output; no endorsing a refused route. Blocked → one retry → a template
-          built from the tools. On sentences it was not tuned on — measured before its misses were fixed — it blocked 62 of 66 violations and 3 of 66 honest ones.</p>
+        <p>A figure, rate or article that is not in a tool output, or praise for a refused route, is blocked → one retry → a template.
+          On a scripted held-out set, before its misses were fixed: 62 of 66 violations blocked, and 3 of 66 honest sentences.</p>
         <span class="chip">GUARDRAIL · held-out r4</span>
       </article>
       <article class="slip card c-rules">
         <div>
           <svg class="ico" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="7" y="5" width="26" height="30" rx="1.5"/><path d="M12 13h16M12 19h16M12 25h9"/><path class="draw acc" d="M24 28.5l2.5 2.5 4.5-5" stroke="currentColor"/></svg>
           <h3>UNCLEAR is an answer.</h3>
-          <p>The rules sheet is public: 45 rows, 42 citing a primary page and the date it was read. The 3 that can't — PayPal in
-            Indonesia, India and the Philippines — say UNCLEAR. A fact the provider never states as a number stays UNCLEAR too,
-            so “what lands” is an upper bound, stamped.</p>
+          <p>45 public rows; 42 cite a primary page and the date it was read. The other 3 — PayPal in Indonesia, India and the
+            Philippines — say UNCLEAR, as does any fee no provider states as a number.</p>
           <span class="chip">data/rules_sheet.csv</span>
         </div>
         <div class="rules-rows"><ul class="rr-list" aria-label="Three rows of the rules sheet">
@@ -918,8 +926,8 @@ section { position: relative; }
         <div>
           <svg class="ico" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 5h22v30l-3.7-2.4L23.6 35l-3.6-2.4L16.4 35l-3.7-2.4L9 35z"/><path d="M14 13h12M14 19h12"/><path class="draw acc" d="M14 25h7" stroke="currentColor"/></svg>
           <h3>Promises, checked against what landed.</h3>
-          <p>Tell Cair what arrived: the reconciler reads its own quote back from the neatlogs trace over MCP and writes an EVALUATOR
-            span into the same session. First receipt — the builder's own $7,000 Devpost prize, a replay of a known outcome, not a prediction:</p>
+          <p>Tell Cair what arrived: it reads its own quote back from the neatlogs trace over MCP and writes an EVALUATOR span. First
+            receipt: the builder's own $7,000 Devpost prize — a replay of a known outcome.</p>
           <span class="chip">MCP get_trace_context · EVALUATOR</span>
         </div>
         <div>
@@ -938,19 +946,17 @@ section { position: relative; }
 <section class="sec" id="instruments" aria-labelledby="in">
   <div class="wrap">
     <div class="sec-head">
-      <p class="label kicker">Three instruments, used for real</p>
-      <h2 class="h2" id="in">neatlogs to see it. Entire to search it. cfo.ai to cost it.</h2>
+      <p class="label kicker">Three instruments · cfo.ai pending</p>
+      <h2 class="h2" id="in">neatlogs to see it. Entire to search it. cfo.ai to cost it, once the model is in.</h2>
     </div>
     <div class="instruments">
       <article class="slip inst inst-neat">
         <div class="inst-head"><h3>neatlogs</h3><span class="role">traces · debugging · read-back</span></div>
         <ul>
-          <li><b>Every plan is one trace</b>: WORKFLOW → AGENT → TOOL and RETRIEVER spans → LLM → GUARDRAIL, with the session and a
-            hashed end-user bound per request. Eval runs are tagged <code>eval</code> · <code>v1</code> · <code>v2</code> · <code>ablation</code>.</li>
-          <li><b>Finding failures</b>: <code>search_traces "provenance_guardrail BLOCKED"</code> over MCP returned the blocked plans;
-            <code>get_trace_context</code> put the model's text beside the verdict. Two real bugs came out of it — an amount in the 2000s
-            parsed as a year, refusals that repeated the user's “0%” — both fixed and re-run.</li>
-          <li><b>Reading results back in the product</b>: the public <a href="https://app.cair.edycu.dev/verify" rel="noopener">/verify</a> page and the
+          <li><b>One trace per plan</b>: WORKFLOW → AGENT → TOOL / RETRIEVER → LLM → GUARDRAIL, bound to a hashed end-user id; eval runs are tagged.</li>
+          <li><b>Finding failures</b>: <code>search_traces "provenance_guardrail BLOCKED"</code> over MCP surfaced two real bugs — an amount
+            in the 2000s read as a year, refusals echoing the user's “0%” — both fixed and re-run.</li>
+          <li><b>Read back in the product</b>: the public <a href="https://app.cair.edycu.dev/verify" rel="noopener">/verify</a> page and the
             receipt reconciler read traces over MCP; confirm and EVALUATOR spans are written server-side, so the write key never reaches the browser.</li>
         </ul>
         <a class="shot" href="https://app.cair.edycu.dev/verify" rel="noopener" aria-label="Open /verify on the live app">
@@ -960,17 +966,16 @@ section { position: relative; }
       </article>
       <article class="slip inst">
         <div class="inst-head"><h3>Entire</h3><span class="role">code graph · local, no egress</span></div>
-        <p>Run on this repository while building. After the year-parsing fix, <code>entire graph search</code> with a plain-language
-          description of the bug ranked the corrected rule first and its covering test second. <code>impact</code> on
-          <code>rail_eligibility</code> reported 0 callers — the planner passes tools as function values, which the graph does not follow;
-          recorded as found.</p>
+        <p>After the year-parsing fix, <code>entire graph search</code>, given the bug in plain words, ranked the corrected rule first and
+          its test second. <code>impact</code> on <code>rail_eligibility</code> reported 0 callers — probably because the planner passes
+          tools as function values; recorded as found.</p>
         <p class="small">Checkpoints were deliberately left off: they install coding-agent hooks and keep the agent conversation, and this repository is public.</p>
         <div class="links"><a href="https://github.com/edycutjong/cair/tree/main/evidence/entire">evidence/entire/</a></div>
       </article>
       <article class="slip inst">
         <div class="inst-head"><h3>cfo.ai</h3><span class="pending">Model pending</span></div>
         <p>The business plan starts from our own numbers: <b>$0.0033</b> of LLM per plan (bench tokens at list price), <b>p50 5.50 s ·
-          p95 10.31 s</b> (bench, builder's laptop), hosting <b>$15.26 / month</b> (t3.small list price). At an assumed $4 a month, 4 Pro subscribers break even.</p>
+          p95 10.31 s</b> (bench, builder's laptop), hosting <b>$15.26 / month</b> (t3.small list price). At an assumed $4 a month, 4 Pro subscribers cover the server and their own plans (free-tier plans excluded).</p>
         <p class="small">The cfo.ai model built from these inputs is not entered yet — nothing here was produced by cfo.ai.</p>
         <div class="links"><a href="https://github.com/edycutjong/cair/blob/main/docs/BUSINESS-PLAN.md">BUSINESS-PLAN.md</a><a href="https://github.com/edycutjong/cair/blob/main/evidence/bench-20261010T085809Z.json">bench (p50 / p95)</a></div>
       </article>
@@ -1155,14 +1160,16 @@ section { position: relative; }
   }
 
   /* Every moment starts in its final state (the real numbers). It is armed — put back in its "before" state to play —
-     only if it is on screen at load, or still below the fold when the reader first scrolls, wheels, touches or presses a
-     key. A capture, print or crawl that never scrolls therefore sees the real figures, never a pre-animation zero. */
+     only if it is on screen enough to play at once, or still below the fold when the reader first scrolls, wheels,
+     touches or presses a key. Anything partly on screen stays final. A capture, print or crawl that never scrolls
+     therefore sees the real figures, never a pre-animation zero. */
   var staged = [], waiting = [], EV = ['scroll', 'wheel', 'touchstart', 'keydown', 'pointerdown'];
   function stage(el, arm, play, done, threshold) {
     var m = { el: el, arm: arm, play: play, done: done, t: threshold, armed: false, over: false };
     staged.push(m);
-    var r = el.getBoundingClientRect();
-    if (r.top < innerHeight && r.bottom > 0) start(m); else waiting.push(m);
+    var r = el.getBoundingClientRect(), shown = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0);
+    if (r.top >= innerHeight) waiting.push(m);
+    else if (shown >= threshold * r.height) start(m);
   }
   function start(m) {
     m.armed = true; m.arm();

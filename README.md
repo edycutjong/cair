@@ -120,8 +120,9 @@ repository and checkpoints keep the agent conversation, and this repository is p
 
 ### cfo.ai — business plan
 
-Measured: **$0.0033** of LLM per plan (1,186 tokens, 1.19 calls with guardrail retries), **p50 5.50 s / p95 10.31 s**
-per plan (bench on the builder's laptop at the final commit), hosting $15.26 / month.
+Measured tokens, priced at list: **$0.0033** of LLM per plan (1,186 tokens, 1.19 calls with guardrail retries). Measured
+latency: **p50 5.50 s / p95 10.31 s** per plan (bench on the builder's laptop at commit `0a8fc06`). Hosting: $15.26 / month,
+the t3.small list price, not a measured bill.
 Free planner (live); Freelancer Pro and a per-winner Payout Desk for organisers are planned, not built, at assumed
 prices — break-even at 4 Pro subscribers under those assumptions.
 → [`docs/BUSINESS-PLAN.md`](docs/BUSINESS-PLAN.md) (cfo.ai model: pending — nothing here was produced by cfo.ai yet).
@@ -153,7 +154,7 @@ repeated back, in 8 of the 48 plans) reach the page; with it, none do — 8 of 4
 fall back to the template. The final v2 run is the tenth on this set: earlier runs blocked or fell back, and `evidence/rca-01.md` traces two of
 those to bugs that were fixed (all runs are in `evidence/`, re-scored with the final scorer).
 
-The guardrail is also tested on its own, against sentences it was **not** tuned on: a fresh held-out set was written without access to the existing test lists (66 violations, 66 honest sentences, 29 of them in Indonesian). On the rules as they stood, it blocked
+The guardrail is also tested on its own, against sentences it was **not** tuned on: a fresh held-out set was written without access to the existing test lists, per the script's header (66 violations, 66 honest sentences, 29 of them in Indonesian). On the rules as they stood, it blocked
 **62 / 66** violations (94%) and **3 / 66** honest sentences (5%) (`evidence/guardrail-heldout-r4-20261010T084859Z.json`).
 The misses (numberless claims such as "not taxed at all") were then fixed, so that set is now in-sample, like the 53
 scripted cases in `scripts/guardrail_recall.py`. The guardrail is rule-based: expect new phrasings to slip through at
@@ -211,8 +212,8 @@ sentences to the guardrail with the model call stubbed.
 
 | Layer | What runs | Result |
 |---|---|---|
-| Unit + invariants | `pytest` — 94 tests; regressions are named for the defect they pin (`test_amount_in_2000s_is_not_masked_as_a_year`, `test_idr_receipt_in_the_tens_of_millions_is_accepted`) | 94 passing, 89% line+branch coverage |
-| Exhaustive check | every payer × country × option set × amount band (**2,448 scenarios**) through the real planner and tools (only the ECB rate and the wording call are fixed, since the decisions under test are code-only); a self-consistency check on the card, with the sourced ground truth pinned in `test_labels.py` and `test_invariants.py`: no refused or unclear route is recommended, no article on line 10 without a W-8BEN and a source, no landed amount above the gross, and the fallback template passes its own provenance guardrail | 0 violations (`tests/test_exhaustive.py`; deliberately breaking the route rule produces 2,256 violations across the set) |
+| Unit + invariants | `pytest` — 94 tests; regressions are named for the defect they pin (`test_amount_in_2000s_is_not_masked_as_a_year`, `test_idr_receipt_in_the_tens_of_millions_is_accepted`) | 94 passing, 89% line+branch coverage ([`evidence/coverage-2026-10-10.txt`](evidence/coverage-2026-10-10.txt)) |
+| Exhaustive check | every payer × country × option set × amount band (**2,448 scenarios**) through the real planner and tools (only the ECB rate and the wording call are fixed, since the decisions under test are code-only); a self-consistency check on the card, with the sourced ground truth pinned in `test_labels.py` and `test_invariants.py`: no refused or unclear route is recommended, no article on line 10 without a W-8BEN and a source, no landed amount above the gross, and the fallback template passes its own provenance guardrail | 0 violations (`tests/test_exhaustive.py`; deliberately breaking the route rule produces 2,256 violations across the set: `scripts/mutation_route_rule.py`, [`evidence/mutation-route-rule-2026-10-10.txt`](evidence/mutation-route-rule-2026-10-10.txt)) |
 | Permission boundary | no public route returns a key or token; the public plan API carries no raw tool errors; the builder-only origin cannot be forged (`tests/test_boundary.py`) | passing |
 | Browser E2E | Playwright (Chromium): the hero plan, an unlisted country, a bad amount, `/judge` with no session, no horizontal overflow at 375 / 768 / 1440 px | 23 passing |
 | Lighthouse (local, desktop, 2 runs each) | `/`, `/judge`, `/rules` | accessibility 100, best practices 100, SEO 100, performance 91–100 ([`evidence/lighthouse-2026-10-10.json`](evidence/lighthouse-2026-10-10.json)) |
