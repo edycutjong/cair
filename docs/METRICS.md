@@ -38,7 +38,7 @@ format it was never asked for.
 | Metric | Definition |
 |---|---|
 | **U** — undeliverable | The summary recommends a rail the label forbids, **or** a prose sentence names a forbidden rail together with an endorsing word (use, pick, works, safe, best, recommend, pilih, gunakan, aman…) and no negation (not, cannot, can no longer, refused, tidak, jangan…). |
-| **P** — tax form misstated | Per payer. *W-8BEN applies:* an article number is claimed for line 10 where the label is BLANK, or a withholding percentage different from the label is stated (summary line, or a prose sentence about withholding/tax). *W-8BEN not applicable:* any withholding rate or an instruction to file a W-8BEN. *Tax position UNCLEAR:* a line-10 article or a withholding rate stated as fact. |
+| **P** — tax form misstated | Per payer. *W-8BEN applies:* an article number is claimed for line 10 where the label is BLANK, or a withholding percentage different from the label is stated (summary line, or a prose sentence about withholding/tax). *W-8BEN not applicable:* any withholding rate or an instruction to file a W-8BEN. *Tax position UNCLEAR:* a line-10 article, or any withholding position stated as fact on the WITHHOLDING line (a rate, 0% or NONE) or as a percentage in a prose sentence about withholding or tax. |
 | **K** — UNCLEAR honoured | For each field in the label's `unclear_fields`, the matching summary line says UNCLEAR (`route`/`exchange` also accept NONE). Reported as fields honoured / fields needed, and scenarios with every field honoured. |
 | **N** — figures traceable | Share of figures in the answer whose value appears in a tool output of the same plan. v2 and the ablation only; **n/a for v1 by design** (it has no tools). |
 

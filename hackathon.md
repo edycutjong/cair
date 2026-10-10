@@ -32,3 +32,9 @@ Pending.
 Confirmed requirements (event page, 2026-10-10): public quote post of the official neatlogs submission post on X,
 Mon 12 Oct 7:00–11:55 PM IST; public repo with commits dated in the window; demo video ≤ 3 min covering neatlogs,
 Entire and cfo.ai. Outstanding: everything after the first commit.
+- **2026-10-10** — rules sheet (`data/rules_sheet.csv`, sources in `data/sources.md`), frozen set of 48 scenarios
+  (tag `frozen-set-v1`) and the scorer (`docs/METRICS.md`) committed before any planner code.
+- **2026-10-10** — v1 baseline run: one tool-less call to the same model (`scripts/eval.py --planner v1`).
+  Result on 48 scenarios: 18 recommend a rail or network the sources rule out (for example Wise for an Indonesian
+  address), 40 misstate the tax form, 44 do one or the other; UNCLEAR honoured on 23 of 143 unclear fields.
+  Evidence: `evidence/eval-v1-r1-20261010T071611Z.json` (each scenario has its neatlogs trace id).

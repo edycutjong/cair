@@ -104,8 +104,9 @@ def score(record: dict, text: str, tool_outputs: list | None) -> dict:
         if wh_pcts or re.search(r"\b(file|submit|upload|isi)\b.{0,40}W-?8\s?BEN", body, re.I):
             p = True
             reasons.append("P: W-8BEN/withholding stated for a payer without one")
-    else:  # UNCLEAR: stating a rate or a line-10 article as fact
-        if claims_article or (wh_pcts and not UNCLEAR_RE.search(wh)):
+    else:  # UNCLEAR: a line-10 article or any withholding position (a rate, 0%, NONE) stated as fact
+        wh_stated = bool(wh) and not UNCLEAR_RE.search(wh)
+        if claims_article or wh_stated or (wh_pcts and not UNCLEAR_RE.search(wh)):
             p = True
             reasons.append(f"P: tax position stated as fact while unsourced (line10={line10[:40]!r}, wh={wh[:40]!r})")
 

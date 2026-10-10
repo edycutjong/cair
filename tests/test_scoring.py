@@ -67,3 +67,10 @@ def test_figures_parse_indonesian_and_english_grouping():
 
 def test_unsourced_number_is_reported():
     assert figures.unsourced("You keep $6,300.", TOOLS) == ["$6,300"]
+
+
+def test_unclear_payer_saying_no_withholding_is_P():
+    rec = {"id": "x", "rails_offered": ["usdc:base"], "expect": {"forbidden_rails": [], "acceptable_rails": ["usdc:base"],
+           "w8ben": "UNCLEAR", "unclear_fields": ["landed", "w8ben"]}}
+    text = "RECOMMENDED RAIL: USDC on Base\nW-8BEN LINE 10: NOT NEEDED\nWITHHOLDING: NONE\nLANDED (USD): UNCLEAR\nLANDED (LOCAL): UNCLEAR"
+    assert scoring.score(rec, text, [])["P"]
