@@ -5,7 +5,7 @@
   <img src="docs/assets/readme-hero.png" alt="Cair — Choose Wise: refused. Payoneer: at most $4,900, fee UNCLEAR" width="100%">
 
   <p>An agent that plans how a prize or client payment reaches your bank account: it refuses routes that can't deliver,
-  fills W-8BEN line 10 only when a treaty article really applies, computes what lands, and shows the source of every
+  fills W-8BEN line 10 only when a treaty article really applies, computes the most that can land, and shows the source of every
   figure. Every plan is a neatlogs trace.</p>
 
   <br/>
@@ -44,7 +44,7 @@
 Prize winners and freelancers outside the US fill in a payout form once or twice a year, and the form is where the
 money is lost:
 
-- **An option that can't deliver.** Devpost's claim form offers Wise. Wise's own help page: *"personal Wise account
+- **An option that can't deliver.** Devpost's prize-claim help lists Wise as a payout method (the options a winner sees vary by country). Wise's own help page: *"personal Wise account
   holders with an address in Indonesia can no longer hold money or currencies in their account."*
 - **A tax line that invites a false statement.** A chatbot will happily tell you to put "Article 21" on W-8BEN line 10.
   The US–Indonesia treaty has 31 articles and none of them is "Other Income".
@@ -61,8 +61,9 @@ primary source exists the answer is UNCLEAR, never a guess.
 1. **Plan** — a fixed evidence plan: what the payer offers and whether a W-8BEN applies → can each offered option
    receive in your country → the US-treaty position and nearest treaty articles → the ECB reference rate (USD payers)
    or the exchange's accepted networks (USDC payers) → Decimal arithmetic.
-2. **Tools** — six tools, each a neatlogs TOOL or RETRIEVER span, reading `data/rules_sheet.csv` (every fact cell has
-   a primary source and a read date, [`data/sources.md`](data/sources.md)), the treaty texts and the ECB rate.
+2. **Tools** — six tools, each a neatlogs TOOL or RETRIEVER span, reading `data/rules_sheet.csv` (every fact cell with a
+   stated value has a primary source and a read date, [`data/sources.md`](data/sources.md); the 3 PayPal cells with
+   no source say UNCLEAR), the treaty texts and the ECB rate.
 3. **Decide** — code picks the route (never a REFUSED or UNCLEAR one) and line 10 (an article only if a sourced one
    covers the income).
 4. **Verify** — a provenance GUARDRAIL checks the model's explanation: no figure, rate or article that isn't in a tool
@@ -86,7 +87,7 @@ primary source exists the answer is UNCLEAR, never a guess.
 
 Full detail: [ARCHITECTURE.md](ARCHITECTURE.md).
 
-## 🏆 neatlogs, Entire & cfo.ai Integration
+## 🏆 neatlogs, Entire & cfo.ai Integration (cfo.ai model pending)
 
 ### neatlogs — how it was used to build and improve Cair
 
@@ -110,15 +111,15 @@ Full detail: [ARCHITECTURE.md](ARCHITECTURE.md).
 ### Entire — how it was used
 
 Entire's code graph (`entire graph`, local and no-egress) was run on this repository while building: after the year-parsing fix, `search` with a
-plain-language description of the bug ranked the corrected rule first and its covering test second; `impact` was run on `rail_eligibility` before
-the unlisted-country fix and reports 0 callers, because the planner passes the tools as function values
+plain-language description of the bug returned the corrected rule at rank 1 and its covering test at rank 2; `impact` was run on `rail_eligibility` before
+the unlisted-country fix and reports 0 callers, probably because the planner passes the tools as function values
 (`att.call("fx_quote", tools.fx_quote, …)`), which the graph does not follow; the `fee_calc` and `figures.extract`
 queries returned only symbol-disambiguation lists. `diff` summarises every entity changed since the frozen set was
 tagged. Outputs, with the
 commands: [`evidence/entire/`](evidence/entire). Entire checkpoints were deliberately not enabled: `entire enable` installs coding-agent hooks and settings into the
 repository and checkpoints keep the agent conversation, and this repository is public.
 
-### cfo.ai — business plan
+### cfo.ai — business plan (model pending)
 
 Measured tokens, priced at list: **$0.0033** of LLM per plan (1,186 tokens, 1.19 calls with guardrail retries). Measured
 latency: **p50 5.50 s / p95 10.31 s** per plan (bench on the builder's laptop at commit `0a8fc06`). Hosting: $15.26 / month,

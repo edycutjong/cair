@@ -162,11 +162,12 @@ h2 { font-size: 88px; line-height: 1.02; margin-top: 22px; max-width: 1400px; }
 .chat .srcl { margin: 6px 0 4px; font: 400 20px/1.4 var(--font-data); color: var(--muted); }
 .chat .verdict .stamp { font-size: 24px; vertical-align: 14px; margin-left: 14px; }
 .card-shot { justify-self: center; width: 660px; transform: rotate(-.8deg); overflow: hidden; }
-.card-shot img { display: block; width: 100%; border-radius: 6px; }
+.card-shot img { display: block; width: 100%; border-radius: 6px; position: relative; }
+.s-frozen .chat .label { font-size: 26px; }
 
 /* ---------- 5 architecture ---------- */
 .arch { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr 1fr; gap: 0; position: relative; }
-.node { position: relative; padding: 32px 30px 30px; margin-right: 58px; min-height: 330px; display: flex; flex-direction: column; gap: 16px; }
+.node { position: relative; padding: 32px 30px 30px; margin-right: 58px; min-height: 270px; display: flex; flex-direction: column; gap: 16px; }
 .node:last-child { margin-right: 0; }
 .node:not(:last-child)::after { content: ""; position: absolute; right: -52px; top: calc(50% - 10px); width: 46px; height: 20px;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 20'%3E%3Cpath d='M0 10h40' stroke='%2313241B' stroke-width='2.5'/%3E%3Cpath d='M32 2l10 8-10 8' fill='none' stroke='%2313241B' stroke-width='2.5'/%3E%3C/svg%3E") no-repeat center / contain; }
@@ -190,12 +191,12 @@ h2 { font-size: 88px; line-height: 1.02; margin-top: 22px; max-width: 1400px; }
 .url { flex: 1; font: 400 18px/1 var(--font-data); color: var(--muted); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; padding: 9px 16px; }
 .frame .shot { position: relative; }
 .frame .shot img { display: block; width: 100%; border-radius: 0 0 10px 10px; }
-.callout { position: absolute; width: 50px; height: 50px; border-radius: 50%; background: var(--after); color: var(--paper); display: grid; place-items: center;
-  font: 700 24px/1 var(--font-body); box-shadow: 0 0 0 6px color-mix(in srgb, var(--after) 22%, transparent); transform: translate(-50%, -50%); }
+.callout { position: absolute; width: 44px; height: 44px; border-radius: 50%; background: var(--after); color: var(--paper); display: grid; place-items: center;
+  font: 700 22px/1 var(--font-body); box-shadow: 0 0 0 5px color-mix(in srgb, var(--after) 22%, transparent); transform: translate(-50%, -50%); }
 .callout.r { background: var(--before); box-shadow: 0 0 0 6px color-mix(in srgb, var(--before) 22%, transparent); }
 .callout.o { background: var(--unclear); box-shadow: 0 0 0 6px color-mix(in srgb, var(--unclear) 22%, transparent); }
 .legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 26px; }
-.legend li { display: grid; grid-template-columns: 50px 1fr; gap: 18px; align-items: start; font-size: 30px; line-height: 1.3; }
+.legend li { display: grid; grid-template-columns: 44px 1fr; gap: 18px; align-items: start; font-size: 30px; line-height: 1.3; }
 .legend li .callout { position: static; transform: none; }
 .verify-mini { margin-top: 34px; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); }
 .verify-mini img { display: block; width: 100%; }
@@ -254,6 +255,7 @@ h2 { font-size: 88px; line-height: 1.02; margin-top: 22px; max-width: 1400px; }
 .limits { border-radius: 0 6px 6px 0; padding: 46px 52px; display: flex; flex-direction: column; justify-content: space-between; gap: 34px; }
 .limits .row b { display: block; font: 400 104px/1 var(--font-display); }
 .limits .row span { display: block; margin-top: 12px; font-size: 28px; color: var(--muted); }
+.limits .row b .eq { display: inline; margin: 0; font: 300 .8em/1 var(--font-body); color: var(--ink); vertical-align: .08em; }
 .limits ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 26px; }
 .limits li { font-size: 38px; line-height: 1.3; padding-left: 38px; position: relative; }
 .limits li::before { content: ""; position: absolute; left: 0; top: 18px; width: 16px; height: 2px; background: var(--unclear); }
@@ -285,14 +287,14 @@ h2 { font-size: 88px; line-height: 1.02; margin-top: 22px; max-width: 1400px; }
 .notes-panel .t { font: 700 12px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--on-ink-muted); margin-bottom: 8px; }
 body.presenter .notes-panel { display: block; }
 body.presenter.idle, body.presenter.idle * { cursor: none !important; }
-.overview { position: fixed; inset: 0; z-index: 40; background: rgba(19, 36, 27, .97); display: none; overflow: auto; padding: 28px; }
+.overview { position: fixed; inset: 0; z-index: 40; background: var(--ink); display: none; overflow: auto; padding: 28px; }
 body.ov .overview { display: block; }
 .ov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
 .thumb { position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; cursor: pointer; border: 2px solid transparent; background: var(--bg); }
 .thumb:hover, .thumb:focus-visible { border-color: var(--on-ink-after); outline: none; }
 .thumb.cur { border-color: var(--paper); }
 .thumb .slide { visibility: visible; opacity: 1; transform-origin: top left; transition: none; pointer-events: none; }
-.thumb .num { position: absolute; left: 8px; top: 8px; z-index: 2; font: 500 13px/1 var(--font-data); background: var(--ink); color: var(--paper); padding: 5px 7px; border-radius: 3px; }
+.thumb .num { position: absolute; left: 8px; bottom: 8px; z-index: 2; font: 500 13px/1 var(--font-data); background: var(--ink); color: var(--paper); padding: 5px 7px; border-radius: 3px; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .readback li.typing { opacity: 1; } }
 
@@ -366,9 +368,9 @@ body.ov .overview { display: block; }
   <p class="label kicker">Exhibit A · Wise Help Centre</p>
   <blockquote>“…personal Wise account holders with an address in Indonesia <span class="hl">can no longer hold money</span> or currencies in their account.”</blockquote>
   <p class="attr">WISE-ID · wise.com/help · read 2026-10-10</p>
-  <p class="then">Devpost's claim form lists Wise.</p>
+  <p class="then">Devpost's prize-claim help lists Wise.</p>
   <div class="foot"><span>Cair · neatHack 2026 · v0.1.4</span><span class="pg">02 / 11</span></div>
-  <aside class="speaker-notes">This is Wise's own help page. A prize winner in Indonesia who picks Wise, where the form shows it, is choosing a
+  <aside class="speaker-notes">This is Wise's own help page. A prize winner in Indonesia who picks Wise, where their claim form shows it, is choosing a
     route that cannot hold the money. Nobody on the form tells them.</aside>
 </section>
 
@@ -376,9 +378,9 @@ body.ov .overview { display: block; }
 <section class="slide s-problem" aria-label="Slide 3 of 11: three ways a payout breaks">
   <h2>Three ways it breaks.</h2>
   <div class="center items">
-    <div class="slip item"><p class="what">Wise is on the form.</p><p>It can't hold money for an Indonesian address.</p><p class="src">WISE-ID</p></div>
+    <div class="slip item"><p class="what">Devpost lists Wise.</p><p>It can't hold money for an Indonesian address.</p><p class="src">WISE-ID</p></div>
     <div class="slip item"><p class="what">Line 10 invites a guess.</p><p>The treaty has no Other Income article.</p><p class="src">TRTY-ID</p></div>
-    <div class="slip item"><p class="what">Nobody quotes the fee.</p><p>Payoneer: “Varies by marketplace.”</p><p class="src">PAYO-PRICING</p></div>
+    <div class="slip item"><p class="what">The fee has no number.</p><p>Payoneer: “Varies by marketplace.”</p><p class="src">PAYO-PRICING</p></div>
   </div>
   <div class="foot"><span>Cair · neatHack 2026 · v0.1.4</span><span class="pg">03 / 11</span></div>
   <aside class="speaker-notes">Three places the money is lost: an option that can't deliver, a tax line that invites a false statement, and a
@@ -507,7 +509,7 @@ body.ov .overview { display: block; }
 </section>
 
 <!-- 9 · Instruments -->
-<section class="slide s-inst" aria-label="Slide 9 of 11: neatlogs, Entire and cfo.ai">
+<section class="slide s-inst" aria-label="Slide 9 of 11: neatlogs, Entire and cfo.ai (model pending)">
   <h2>Three instruments.</h2>
   <div class="center inst">
     <div class="slip"><h3>neatlogs</h3><p>One trace per plan; <span class="mono">/verify</span> reads them back.</p><p class="proof"><span class="nw">search_traces →</span> <span class="nw">two real bugs, fixed</span></p></div>
@@ -530,7 +532,7 @@ body.ov .overview { display: block; }
       <div class="row"><b>$15.26</b><span>hosting a month, list price</span></div>
     </div>
     <div class="slip limits">
-      <div class="row"><b>n = 0</b><span>forward receipts from real users</span></div>
+      <div class="row"><b>n <span class="eq">=</span> 0</b><span>forward receipts from real users</span></div>
       <ul>
         <li>Three countries fully sourced.</li>
         <li>Explains forms, never files.</li>
@@ -621,11 +623,11 @@ body.ov .overview { display: block; }
       var t = document.createElement('div');
       t.className = 'thumb' + (i === cur ? ' cur' : ''); t.tabIndex = 0; t.setAttribute('role', 'button');
       t.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-      var c = s.cloneNode(true); c.classList.add('active'); c.removeAttribute('aria-label');
+      var c = s.cloneNode(true); c.classList.add('active'); c.removeAttribute('aria-label'); c.inert = true;
       t.appendChild(c);
       var num = document.createElement('span'); num.className = 'num'; num.textContent = pad(i + 1); t.appendChild(num);
-      t.addEventListener('click', function () { toggleOverview(false); go(i); t.blur(); });
-      t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggleOverview(false); go(i); t.blur(); } });
+      t.addEventListener('click', function () { toggleOverview(false); go(i); document.getElementById('ovb').focus(); });
+      t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggleOverview(false); go(i); document.getElementById('ovb').focus(); } });
       ov.appendChild(t);
     });
     requestAnimationFrame(function () {
@@ -637,6 +639,7 @@ body.ov .overview { display: block; }
   function toggleOverview(on) {
     var show = on === undefined ? !document.body.classList.contains('ov') : on;
     document.body.classList.toggle('ov', show);
+    document.getElementById('viewport').inert = show; document.querySelector('.chrome').inert = show;
     if (show) { buildOverview(); var t = ov.querySelectorAll('.thumb')[cur]; if (t) t.focus(); }
   }
 

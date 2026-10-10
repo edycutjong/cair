@@ -98,7 +98,7 @@ code, .mono { font-family: var(--font-data); font-size: max(12px, .84em); letter
 .kicker::before { content: ""; width: 34px; height: 1px; background: var(--muted); }
 
 /* ---------- header ---------- */
-.masthead { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent);
+.masthead { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 94%, transparent);
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid transparent;
   transition: border-color .25s var(--ease), box-shadow .25s var(--ease); }
 .masthead.is-stuck { border-bottom-color: var(--rule); box-shadow: 0 10px 30px -24px rgba(19, 36, 27, .5); }
@@ -553,7 +553,7 @@ section { position: relative; }
 @media (pointer: coarse) { .box a.ev, .inst .links a, .rb-foot a, .aside-slip a.ev { display: inline-flex; align-items: center; min-height: 26px; } }
 @media (max-resolution: 1.49dppx) { .hero-slip { transform: none; } .motion .hero-slip { animation-name: slip-in-flat; } }
 @media (hover: none) { .src[data-tip]:not(:focus-visible):hover::after { content: none; } }
-@media (forced-colors: active) { .strike { text-decoration: line-through; background: none; }
+@media (forced-colors: active) { .strike { text-decoration: line-through; background: none; } .headline { line-height: 1.2; }
   .track { border: 1px solid CanvasText; } .track i { background: CanvasText; forced-color-adjust: none; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -569,6 +569,7 @@ section { position: relative; }
   .strike { background-size: 100% 2px !important; } .stamp, .spans li { opacity: 1 !important; transform: none !important; }
   .stamp.unclear { transform: rotate(-3deg) !important; } .stamp.refused { transform: rotate(-5deg) !important; }
   .track i { transform: none !important; }
+  .hero-slip, .motion .hero-slip { animation: none !important; opacity: 1 !important; transform: none !important; }
 }
 </style>
 </head>
@@ -605,8 +606,8 @@ section { position: relative; }
       <h1 class="headline" id="h1"><span class="w" style="--i:0">The</span> <span class="w" style="--i:1">payout</span> <span class="w" style="--i:2">agent</span> <span class="w" style="--i:3">that</span> <em><span class="w" style="--i:4">says</span> <span class="w" style="--i:5">no<span class="cm">,</span></span></em> <span class="w" style="--i:6">and</span> <span class="w" style="--i:7">footnotes</span> <span class="w" style="--i:8">every</span> <span class="w" style="--i:9">yes.<a class="fn" href="#n1" aria-label="Footnote 1">1</a></span></h1>
     </div>
     <div class="hero-copy">
-      <p class="sub">Devpost's prize-claim help lists <b>Wise</b> as a payout option. Wise's own help page says Indonesian addresses
-        “can no longer hold money”. One model call with no tools picked a dead route in <b>18 of 48</b> frozen cases. Cair: <b>0 of 48</b>.</p>
+      <p class="sub">Devpost's prize-claim help lists <b>Wise</b> as a payout option. Wise's own help page says personal accounts with an Indonesian
+        address “can no longer hold money”. One model call with no tools picked a dead route in <b>18 of 48</b> frozen cases. Cair: <b>0 of 48</b>.</p>
       <div class="ctas">
         <a class="btn btn-ink" href="https://github.com/edycutjong/cair" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>View on GitHub</a>
         <a class="btn btn-line" href="pitch/"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="10" rx="1"/><path d="M10 13.5v3M6.5 16.5h7"/></svg>Pitch deck</a>
@@ -673,7 +674,7 @@ section { position: relative; }
         <div><dt><span class="kchip k-src">WISE-ID</span></dt><dd>its source: hover for the detail, click or tap to open</dd></div>
         <div><dt><span class="kchip k-ref">Refused</span></dt><dd>the provider's own page rules it out</dd></div>
         <div><dt><span class="kchip k-unc">Unclear</span></dt><dd>no primary source, so a bound, not a guess</dd></div>
-        <div><dt><span class="kchip k-no">No source</span></dt><dd>no tool behind it: the guardrail strikes it</dd></div>
+        <div><dt><span class="kchip k-no">No source</span></dt><dd>no tool behind it: the guardrail would block it</dd></div>
       </dl>
     </div>
   </div>
@@ -724,7 +725,7 @@ section { position: relative; }
   <div class="wrap">
     <div class="sec-head">
       <p class="label kicker">Specimen · the query that matters</p>
-      <h2 class="h2" id="sp">One question, in a winner's words.</h2>
+      <h2 class="h2" id="sp">One question, as a winner might put it.</h2>
     </div>
     <p class="ask-quote">I'm in Jakarta. I won $7,000 in a Devpost hackathon. The claim form lets me pick Payoneer or Wise. Which one, and what do I write on the <span class="nw">W-8BEN</span>?</p>
     <p class="ask-how">Asked on the form as <b>Devpost · 7000 · Indonesia · Payoneer and Wise</b>. Below: the plan it returned, and that plan's own trace.</p>
@@ -933,10 +934,10 @@ section { position: relative; }
         <div>
           <div class="receipt-figs">
             <div><p class="label">Quoted</p><p class="rf">$4,900.00</p><p class="vtext">at most, before the fee</p></div>
-            <div><p class="label">Landed</p><p class="rf">$4,897.00</p><p class="vtext">in Payoneer</p></div>
+            <div><p class="label">Landed</p><p class="rf">$4,897.00</p><p class="vtext">builder-reported</p></div>
             <div><p class="label">Verdict</p><p class="rf blue"><span class="stamp landed">Landed</span></p><p class="vtext">within sourced bound</p></div>
           </div>
-          <p class="receipt-note">Landed <span class="nw">2026-09-23</span> · $3.00 not explained by the sourced rules · partial replay, because the fee is UNCLEAR · EVALUATOR trace <span class="mono">f5a47b9c…</span> · builder-reported, n = 1</p>
+          <p class="receipt-note">Landed <span class="nw">2026-09-23</span> · $3.00 not explained by the sourced rules · partial replay, because the fee is UNCLEAR · EVALUATOR trace <span class="mono">f5a47b9c…</span> · builder-reported, n = 1 (plus one QA test receipt)</p>
         </div>
       </article>
     </div>
@@ -966,8 +967,8 @@ section { position: relative; }
       </article>
       <article class="slip inst">
         <div class="inst-head"><h3>Entire</h3><span class="role">code graph · local, no egress</span></div>
-        <p>After the year-parsing fix, <code>entire graph search</code>, given the bug in plain words, ranked the corrected rule first and
-          its test second. <code>impact</code> on <code>rail_eligibility</code> reported 0 callers — probably because the planner passes
+        <p>After the year-parsing fix, <code>entire graph search</code>, given the bug in plain words, returned the corrected rule at rank 1 and
+          its test at rank 2. <code>impact</code> on <code>rail_eligibility</code> reported 0 callers — probably because the planner passes
           tools as function values; recorded as found.</p>
         <p class="small">Checkpoints were deliberately left off: they install coding-agent hooks and keep the agent conversation, and this repository is public.</p>
         <div class="links"><a href="https://github.com/edycutjong/cair/tree/main/evidence/entire">evidence/entire/</a></div>
@@ -1050,7 +1051,7 @@ section { position: relative; }
       </details>
       <details>
         <summary><span class="qn">Q. 7</span><span>Is this tax advice?</span><span class="pm" aria-hidden="true"></span></summary>
-        <div class="ans"><p>No. Cair explains payout forms; it never files them. Every rule shows its source and the date it was read.</p></div>
+        <div class="ans"><p>No. Cair explains payout forms; it never files them. Every sourced rule shows its source and the date it was read; a rule with no primary source says UNCLEAR.</p></div>
       </details>
     </div>
   </div>
@@ -1182,6 +1183,7 @@ section { position: relative; }
   }
   EV.forEach(function (ev) { addEventListener(ev, reader, { capture: true, passive: true }); });
   addEventListener('beforeprint', function () {
+    [].forEach.call(document.querySelectorAll('img[loading=lazy]'), function (im) { im.loading = 'eager'; });
     staged.forEach(function (m) { if (m.armed && !m.over) { m.over = true; m.done(); } });
   });
 

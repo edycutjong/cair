@@ -1,0 +1,36 @@
+# ~/.local/bin/entire enable --help  (Entire CLI 0.11.4, run 2026-10-10T14:45Z; read only — Entire was never enabled on this repository)
+Enable Entire with session tracking for your AI agent workflows.
+
+If Entire is not yet configured, this runs the full configuration flow.
+If Entire is already configured but disabled, this re-enables it.
+
+If the current directory is not a git repository, Entire can initialize one
+for you and create an initial commit. It never creates or pushes to a remote —
+publish the repository yourself when you're ready.
+
+Usage:
+  entire enable [flags]
+
+Flags:
+      --absolute-git-hook-path               Embed full binary path in git hooks (for GUI git clients that don't source shell profiles)
+      --agent string                         Agent to set up hooks for (e.g., antigravity, claude-code, codex, copilot-cli, cursor, factoryai-droid, opencode, pi; external agents on $PATH are also available). Enables non-interactive mode.
+      --agent-help-skill entire agent-help   Install the stable Entire agent-help skill (points agents at entire agent-help) for selected agent(s)
+      --checkpoint-backend string            Checkpoint storage backend: refs (default; one git ref per checkpoint) or branch (legacy shared entire/checkpoints/v1 branch)
+      --checkpoint-push-remote string        Git remote for checkpoint uploads (saved to .entire/settings.local.json, even with --project)
+      --checkpoint-remote string             Checkpoint remote in provider:owner/repo format; providers: github, gitlab (e.g., github:org/checkpoints-repo)
+  -f, --force                                Force reinstall hooks (removes existing Entire hooks first)
+  -h, --help                                 help for enable
+      --import-history                       During first-time setup, import the selected agents' existing session history (last 30 days) without prompting
+      --init-repo                            If not a git repo, initialize one non-interactively
+      --initial-commit-message string        Commit message for the initial commit when bootstrapping a new repo
+      --local                                Write settings to .entire/settings.local.json instead of .entire/settings.json
+      --no-init-repo                         If not a git repo, exit instead of prompting to initialize one
+      --project                              Write settings to .entire/settings.json even if it already exists
+      --search-skill                         Install the optional Entire search skill for selected agent(s)
+      --skip-initial-commit                  Don't create the initial commit when bootstrapping a new repo
+      --skip-push-sessions                   Disable automatic pushing of session logs on git push
+      --telemetry                            Enable anonymous usage analytics (default true)
+  -y, --yes                                  Accept all defaults without prompting (in a non-repo directory: init git and commit; then enable all agents and accept telemetry). Does not import existing agent history — see --import-history
+
+Global Flags:
+      --context name   Act as this saved login name for this command only — including the git and agent processes it spawns — instead of the active context (entire auth contexts lists them)
