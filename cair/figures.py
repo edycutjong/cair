@@ -22,6 +22,7 @@ _ALLOW = [
     r"\b1\s?(?:USD|USDC|US\$)\s?=",  # the unit side of an exchange rate ("1 USD = 17881 IDR")
 ]
 ALLOW_RE = re.compile("|".join(_ALLOW), re.I)
+URL_RE = re.compile(r"(?:https?|hxxps?)://\S+|\bwww\.\S+|\b[\w-]+(?:\.[\w-]+)*\.(?:com|io|dev|org|net|co|id|app)/\S*", re.I)
 
 _NUM = r"\d{1,3}(?:[,.\s]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?"
 MULT = {"k": 1_000, "rb": 1_000, "ribu": 1_000, "thousand": 1_000, "m": 1_000_000, "jt": 1_000_000,
@@ -96,6 +97,7 @@ def _dec(raw: str) -> Decimal | None:
 
 def extract(text: str) -> list[dict]:
     """Return figures in `text`: [{'kind': money|pct|article|number, 'value': Decimal|int, 'raw': str}]."""
+    text = URL_RE.sub(lambda m: " " * len(m.group(0)), text)  # ids inside links are not figures (links are checked apart)
     masked = ALLOW_RE.sub(lambda m: " " * len(m.group(0)), text)
     found: list[dict] = []
     spans: list[tuple[int, int]] = []

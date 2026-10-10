@@ -89,7 +89,7 @@ def endorses_unclear(sentence: str, rail: str, strong_only: bool = False) -> boo
     """The sentence recommends a rail whose deliverability is UNCLEAR without saying so. For rails the plan never
     checked, only a direct recommendation counts, and reporting what a source says does not."""
     rec = STRONG_REC if strong_only else REC
-    if strong_only and ATTRIBUTED.search(sentence):
-        return False
+    if ATTRIBUTED.search(sentence) and not STRONG_REC.search(sentence):
+        return False  # reporting what a source says ("the blog states USDC works via …") is not a recommendation
     return (mentions(sentence, rail) and bool(rec.search(sentence)) and not refuses(sentence)
             and not UNCLEAR_WORD.search(sentence))

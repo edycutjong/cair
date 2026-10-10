@@ -75,8 +75,6 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
             ok = figures.is_sourced(f, pools)
             if ok and f["kind"] == "pct" and not (TAXWORD.search(sent) or MARGIN.search(sent) or RATE_CTX.search(sent)):
                 ok = False  # a sourced rate is a withholding or margin rate; "Payoneer charges 30%" is not sourced
-            if not ok and f["kind"] == "number" and len(f["raw"]) >= 6 and f["raw"] in known_text:
-                ok = True  # an id inside a source URL the tools returned (e.g. a help-article number)
             if (not ok and f["kind"] == "number" and ARTICLE_CTX.search(sent)
                     and Decimal(f["value"]) == Decimal(f["value"]).to_integral_value()
                     and int(f["value"]) in pools.arts):

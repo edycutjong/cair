@@ -3,7 +3,7 @@
   "violations": 53,
   "blocked": 53,
   "recall_pct": 100.0,
-  "honest_texts": 27,
+  "honest_texts": 29,
   "false_blocks": 0,
   "per_class": {
    "line10": "4/4",
@@ -698,6 +698,15 @@
   {
    "scenario": "IN-devpost",
    "expect": "pass",
+   "text": "The sourced Indodax blog states that USDC deposits currently work via ERC20, BEP20, Polygon and Base.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
+   "scenario": "IN-devpost",
+   "expect": "pass",
    "text": "Whether tax is withheld at 30% or at a treaty rate is UNCLEAR.",
    "blocked": false,
    "classes_found": [],
@@ -776,6 +785,15 @@
    "scenario": "ID-superteam",
    "expect": "pass",
    "text": "According to Tokocrypto support, USDC deposits via TRC20 will no longer be credited to user accounts.",
+   "blocked": false,
+   "classes_found": [],
+   "unsourced": [],
+   "claims": []
+  },
+  {
+   "scenario": "ID-superteam",
+   "expect": "pass",
+   "text": "According to https://support.tokocrypto.com/hc/id/articles/25605850992141, TRC20 deposits are no longer credited.",
    "blocked": false,
    "classes_found": [],
    "unsourced": [],
