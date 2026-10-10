@@ -59,5 +59,6 @@ product: `pytest` runs the deterministic core without network or keys, and the C
 ## Links
 
 [Live app](https://app.cair.edycu.dev) · [Verify](https://app.cair.edycu.dev/verify) ·
-[Rules sheet](https://app.cair.edycu.dev/rules) · [Repository](https://github.com/edycutjong/cair) ·
+[Rules sheet](https://app.cair.edycu.dev/rules) · [Website](https://cair.edycu.dev) ·
+[Pitch deck](https://cair.edycu.dev/pitch/) · [Repository](https://github.com/edycutjong/cair) ·
 [README](https://github.com/edycutjong/cair#readme)

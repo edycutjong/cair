@@ -11,6 +11,8 @@
   <br/>
 
   [![Live App](https://img.shields.io/badge/🚀_Live-App-06b6d4?style=for-the-badge)](https://app.cair.edycu.dev)
+  [![Website](https://img.shields.io/badge/🌐_Site-cair.edycu.dev-1C4C9C?style=for-the-badge)](https://cair.edycu.dev)
+  [![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-f59e0b?style=for-the-badge)](https://cair.edycu.dev/pitch/)
   [![Read the Traces](https://img.shields.io/badge/🔍_Verify-Traces-f59e0b?style=for-the-badge)](https://app.cair.edycu.dev/verify)
   [![For Judges](https://img.shields.io/badge/📌_Judge-Page-0f766e?style=for-the-badge)](https://app.cair.edycu.dev/judge)
   [![Rules Sheet](https://img.shields.io/badge/📋_Rules-Sheet-ef4444?style=for-the-badge)](https://app.cair.edycu.dev/rules)
@@ -223,6 +225,7 @@ Angular-style commit messages only after that pipeline passes. A judge-facing su
 ## 📽️ Demo Materials
 
 - Judges: [/judge](https://app.cair.edycu.dev/judge) · live app: [app.cair.edycu.dev](https://app.cair.edycu.dev) · traces read back: [/verify](https://app.cair.edycu.dev/verify) · rules sheet: [/rules](https://app.cair.edycu.dev/rules)
+- Website: [cair.edycu.dev](https://cair.edycu.dev) · pitch deck: [cair.edycu.dev/pitch](https://cair.edycu.dev/pitch/) (11 slides; arrow keys, P for speaker notes)
 - Reproduce every number: [DEMO.md](DEMO.md) · business plan: [docs/BUSINESS-PLAN.md](docs/BUSINESS-PLAN.md)
 
 ## 📄 License
