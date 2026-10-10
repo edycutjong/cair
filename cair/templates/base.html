@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Cair — the payout route a chatbot can't get wrong{% endblock %}</title>
+<meta name="description" content="Tell Cair who's paying you, how much, and where you live. It refuses routes that can't deliver and sources every amount, rate and treaty article it shows.">
+<meta property="og:title" content="Cair — the payout route a chatbot can't get wrong">
+<meta property="og:description" content="Refuses payout routes that can't deliver. Sources every amount, rate and treaty article. Every plan is a neatlogs trace.">
+<meta property="og:site_name" content="Cair">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Public+Sans:wght@400;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/cair.css?v=3">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+<header class="masthead">
+  <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">C</span>Cair</a>
+  <nav aria-label="Main">
+    <a href="/rules">Rules sheet</a>
+    <a href="/verify">Verify</a>
+    <a href="https://github.com/edycutjong/cair" rel="noopener">Code</a>
+  </nav>
+</header>
+<main id="main">{% block main %}{% endblock %}</main>
+<footer class="foot">
+  <p>Cair explains payout forms; it never files them. Every figure shows its source. Not tax advice.</p>
+  <p class="mono">Built during neatHack · traced with neatlogs · <a href="/verify">see the read-back</a></p>
+</footer>
+{% block scripts %}{% endblock %}
+</body>
+</html>

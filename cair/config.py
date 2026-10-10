@@ -38,3 +38,4 @@ LLM_MODEL = os.environ.get("QWEN_MODEL", "qwen-max")
 DB_PATH = Path(os.environ.get("CAIR_DB", str(ROOT / "var" / "cair.db")))
 FX_BASE_URL = os.environ.get("CAIR_FX_URL", "https://api.frankfurter.dev/v2/providers/ecb")
 BUILDER_TOKEN = os.environ.get("CAIR_BUILDER_TOKEN", "")
+SECURE_COOKIES = os.environ.get("CAIR_SECURE_COOKIES", "1") == "1"

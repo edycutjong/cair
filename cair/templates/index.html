@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block main %}
+<section class="intro">
+  <p class="eyebrow">Payout planner for prize winners and freelancers outside the US</p>
+  <h1>The payout route a chatbot <em>can't</em> get wrong.</h1>
+  <p class="lede">Tell Cair who is paying you, how much, and where you live. It refuses payout options that can't
+  deliver to your country, tells you what goes on W-8BEN line 10, and shows the source of every amount, rate and
+  treaty article. Where no primary source exists, it says <b class="state-unclear">UNCLEAR</b>.</p>
+</section>
+
+<div class="layout">
+<form id="ask" class="slip ask" autocomplete="off" novalidate>
+  {% set p = form.prefill %}
+  <h2 class="box-label">Your payout</h2>
+  <label class="field"><span>Who is paying you?</span>
+    <select name="payer" id="payer">
+      {% for k, v in form.payers.items() %}<option value="{{k}}" {% if p and p.payer==k %}selected{% endif %}>{{v}}</option>{% endfor %}
+    </select></label>
+  <label class="field"><span>How much (USD)?</span>
+    <input name="amount" id="amount" inputmode="decimal" value="{{ p.amount if p else '7000' }}" required></label>
+  <label class="field"><span>Where do you live?</span>
+    <select name="country" id="country">
+      {% for k, v in form.countries.items() %}<option value="{{k}}" {% if (p and p.country==k) or (not p and k=='ID') %}selected{% endif %}>{{v}}</option>{% endfor %}
+    </select></label>
+  <fieldset class="field rails" id="rails-box"><legend>Which options does the payout form show you?</legend>
+    {% for k, v in form.rails.items() %}
+    <label class="check"><input type="checkbox" name="rails" value="{{k}}" {% if k in ['payoneer','wise'] %}checked{% endif %}> {{v}}</label>
+    {% endfor %}
+  </fieldset>
+  <div id="usdc-box" class="usdc" hidden>
+    <label class="field"><span>Network the organizer pays on <small>(from the event's rules)</small></span>
+      <select name="chain" id="chain">{% for k, v in form.chains.items() %}<option value="{{k}}" {% if k=='base' %}selected{% endif %}>{{v}}</option>{% endfor %}</select></label>
+    <label class="field"><span>Where will you receive it?</span>
+      <select name="exchange" id="exchange">{% for k, v in form.exchanges.items() %}<option value="{{k}}">{{v}}</option>{% endfor %}</select></label>
+  </div>
+  <label class="field"><span>Anything else? <small>(optional — your own words, any language)</small></span>
+    <textarea name="question" id="question" rows="2" maxlength="500" placeholder="e.g. Which one, and what do I write on the W-8BEN?"></textarea></label>
+  <button type="submit" class="btn" id="go">Plan my payout</button>
+  <p class="hint" id="status" role="status" aria-live="polite"></p>
+  <p class="fine">About 10–20 seconds: six checks run in a fixed order, then the explanation is checked against them.</p>
+</form>
+
+<section id="result" class="result" aria-live="polite">
+  {% if card %}{% include "_card.html" %}{% else %}
+  <div class="slip placeholder">
+    <h2 class="box-label">What you get</h2>
+    <ol class="steps">
+      <li><b>Which option</b> — every option on your form marked <span class="state-after">DELIVERS</span>, <span class="state-before">REFUSED</span> or <span class="state-unclear">UNCLEAR</span>, with the provider's own sentence.</li>
+      <li><b>Your W-8BEN</b> — line 10 left blank unless a treaty article really covers your income.</li>
+      <li><b>What lands</b> — withholding and fees computed in code, at the ECB reference rate, every figure footnoted.</li>
+      <li><b>Proof</b> — each plan is one neatlogs trace; <a href="/verify">read it back</a>.</li>
+    </ol>
+  </div>
+  {% endif %}
+</section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/app.js?v=3" defer></script>{% endblock %}

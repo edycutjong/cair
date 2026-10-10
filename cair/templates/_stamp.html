@@ -1,0 +1,4 @@
+<div class="receipt-stamp {{ 'is-partial' if r.partial else '' }}">
+  <p class="stamp stamp-after big-stamp">{{ r.title }}</p>
+  <p class="fine">{{ r.verdict }}{% if r.label %} · <b>{{ r.label }}</b>{% endif %}{% if r.partial %} · <b>PARTIAL — fee UNCLEAR</b>{% endif %}{% if r.source %} · quote from {{ r.source }}{% endif %}{% if r.trace %} · <span class="mono">evaluator trace {{ r.trace[:12] }}…</span>{% endif %}</p>
+</div>

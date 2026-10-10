@@ -58,3 +58,14 @@ def run(text: str, tool_outputs: list, card: dict, attempt: int, question: str =
         sp.set_attribute("neatlogs.guardrail.output", json.dumps(
             {"verdict": "PASSED" if verdict["passed"] else "BLOCKED", **verdict}, ensure_ascii=False)[:4000])
     return verdict
+
+
+def no_source(card: dict) -> dict:
+    """Deterministic block: nothing in the rules sheet covers this payer/country, so there is nothing to explain."""
+    with neatlogs.trace("provenance_guardrail", kind="GUARDRAIL") as sp:
+        verdict = {"passed": False, "score": 0.0, "reason": "no_source", "figures": 0, "unsourced": [], "claims": [],
+                   "detail": f"no sourced rule for {card['payer']} in {card['country']}", "attempt": 0}
+        sp.set_attribute("neatlogs.guardrail.passed", False)
+        sp.set_attribute("neatlogs.guardrail.score", 0.0)
+        sp.set_attribute("neatlogs.guardrail.output", json.dumps({"verdict": "BLOCKED", **verdict}))
+    return verdict

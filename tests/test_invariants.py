@@ -160,3 +160,8 @@ def test_refusal_repeating_the_users_number_is_blocked_then_retried(fixed_fx, ll
     llm_says("I can't say the withholding is 0%; the plan says 30%.", "I can't confirm that; the plan says 30%.")
     card = card_for(question=q)
     assert card["explanation_source"] == "llm" and [g["passed"] for g in card["guardrail"]] == [False, True]
+
+
+def test_explanation_language_follows_the_question():
+    assert planner.language("Saya di Jakarta, menang $7,000 dari Devpost. Pilih yang mana?") == "Indonesian"
+    assert planner.language("I'm in Jakarta and won $7,000 on Devpost. Which one?") == "English"

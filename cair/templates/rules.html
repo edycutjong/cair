@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Rules sheet — Cair{% endblock %}
+{% block main %}
+<section class="intro">
+  <p class="eyebrow">Open data · version {{ version }}</p>
+  <h1>Every fact Cair is allowed to state.</h1>
+  <p class="lede">One row per fact, each with its primary source and the date it was read. A fact with no primary
+  source is <b class="state-unclear">UNCLEAR</b>, and Cair says so. <a href="/rules.csv">Download the CSV</a> ·
+  <a href="https://github.com/edycutjong/cair/blob/main/data/sources.md" rel="noopener">verbatim quotes</a>.</p>
+</section>
+<div class="slip table-wrap">
+<table class="rules">
+  <thead><tr><th>Country</th><th>Payer</th><th>Rail / row</th><th>Fact</th><th>Source</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td data-k="Country">{{ r.country }}</td><td data-k="Payer">{{ r.payer }}</td><td data-k="Rail" class="mono">{{ r.rail }}</td>
+      <td data-k="Fact">
+        {% for k in ['deliverable','w8ben_applies','treaty_other_income_article','withholding_default','receiving_fee_usd','fx_margin_pct'] %}{% if r[k] %}<span class="fact {{ 'state-unclear' if r[k]=='UNCLEAR' else ('state-before' if r[k]=='NO' else '') }}">{{ k|replace('_',' ') }} = <b>{{ r[k] }}</b></span> {% endif %}{% endfor %}
+      </td>
+      <td data-k="Source" class="mono">{% if r.source_url %}<a href="{{ r.source_url }}" rel="noopener" target="_blank">{{ r.source_id }}</a> · {{ r.accessed_at }}{% if r.quote %}<q class="quote">{{ r.quote[:180] }}</q>{% endif %}{% else %}<span class="nosrc">no primary source</span>{% endif %}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

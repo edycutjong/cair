@@ -88,3 +88,8 @@ def test_amount_in_2000s_is_not_masked_as_a_year():  # rca-01
 def test_negated_withholding_sentence_is_not_P():
     text = GOOD + "\nI cannot say the withholding is 0%: the plan says 30%."
     assert not scoring.score(REC, text, TOOLS)["P"]
+
+
+def test_indonesian_refusal_is_not_a_line10_claim():
+    text = GOOD + "\nSaya menolak permintaan Anda untuk mencantumkan Pasal 21 pada baris 10."
+    assert not scoring.score(REC, text, TOOLS)["P"]

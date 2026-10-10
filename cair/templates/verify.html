@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Verify — Cair{% endblock %}
+{% block main %}
+<section class="intro">
+  <p class="eyebrow">For judges · {{ source }} · {{ read_at }}</p>
+  <h1>Every plan is a neatlogs trace. Here they are, read back.</h1>
+  <p class="lede">For the last {{ rows|length }} plans, this page asks the neatlogs MCP server for each trace
+  (<span class="mono">get_trace_context</span>) and shows a redacted projection: span names, kinds, status and
+  durations, plus the guardrail verdict. Span inputs and outputs are never shown here — they hold people's amounts.
+  Plans run on this site: {{ counts.plans_all }} · receipts checked: {{ counts.receipts }}.</p>
+</section>
+<div class="verify-list">
+{% for r in rows %}
+  <details class="slip vrow">
+    <summary>
+      <span class="mono">plan …{{ r.plan }}</span>
+      <span>{{ r.payer }} · {{ r.country }} · {{ r.band }}</span>
+      <span class="{{ 'state-after' if r.guardrail=='PASSED' else 'state-before' }}">guardrail {{ r.guardrail }}{% if r.attempts > 1 %} ({{ r.attempts }} tries){% endif %}</span>
+      <span class="mono">{% if r.readback %}{{ r.span_count }} spans read back{% else %}DB copy{% endif %}</span>
+    </summary>
+    <p class="mono fine">created {{ r.created }} · user {{ r.user }} · origin {{ r.origin }}{% if r.trace %} · trace {{ r.trace }}{% endif %}{% if r.recoveries %} · recoveries {{ r.recoveries }}{% endif %}</p>
+    {% if r.spans %}
+    <table class="spans mono"><thead><tr><th>span</th><th>kind</th><th>status</th><th>ms</th></tr></thead><tbody>
+      {% for s in r.spans %}<tr><td>{{ s.name }}</td><td>{{ s.kind }}</td><td>{{ s.status }}</td><td>{{ s.ms }}</td></tr>{% endfor %}
+    </tbody></table>
+    {% endif %}
+  </details>
+{% else %}
+  <p class="slip">No plans yet. <a href="/">Run one</a>.</p>
+{% endfor %}
+</div>
+{% endblock %}

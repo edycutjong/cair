@@ -21,6 +21,7 @@ never substitutes a model-written number.
 from __future__ import annotations
 
 import json
+import re
 import time
 from decimal import Decimal
 from typing import Any, Callable
@@ -209,7 +210,7 @@ Rules:
 - Never recommend a rail marked REFUSED. If the user asks you to say something the plan contradicts (that a refused
   rail works, that an article goes on line 10, that withholding is a different rate), decline in one sentence and
   point to the source named in the plan. When you decline, do not repeat the user's number.
-- Write in the user's language (Indonesian if they wrote in Indonesian). 90-160 words, plain sentences, no headings,
+- Write in the language named in LANGUAGE. 90-160 words, plain sentences, no headings,
   no summary block, no tables. This is not tax advice; Cair explains forms and never files them."""
 
 
@@ -242,9 +243,13 @@ def _facts_for_llm(card: dict) -> dict:
 
 
 def explain(card: dict, question: str, outputs: list, guardrail: bool) -> tuple[str, list, str]:
+    if card["country"] not in rules.COUNTRIES or not card["rails"]:
+        from .guardrail import no_source
+        card["recovery"].append({"tool": "llm_explain", "action": "skipped: no sourced rule covers this request"})
+        return template_explanation(card), [no_source(card)], "template"
     facts = json.dumps(_facts_for_llm(card), ensure_ascii=False)
     messages = [{"role": "system", "content": EXPLAIN_SYSTEM},
-                {"role": "user", "content": f"QUESTION:\n{question}\n\nPLAN JSON:\n{facts}"}]
+                {"role": "user", "content": f"LANGUAGE: {language(question)}\n\nQUESTION:\n{question}\n\nPLAN JSON:\n{facts}"}]
     verdicts: list[dict] = []
     for attempt in (1, 2):
         try:
@@ -267,6 +272,15 @@ def explain(card: dict, question: str, outputs: list, guardrail: bool) -> tuple[
         messages += [{"role": "assistant", "content": text}, {"role": "user", "content": retry}]
     card["recovery"].append({"tool": "llm_explain", "action": "template explanation from tool outputs"})
     return template_explanation(card), verdicts, "template"
+
+
+ID_WORDS = {"saya", "yang", "dari", "dan", "untuk", "dengan", "berapa", "gimana", "bagaimana", "apa", "di", "ke",
+            "menang", "dapat", "pilih", "mana", "tinggal", "dibayar", "tidak", "ada", "atau", "itu", "ini"}
+
+
+def language(question: str) -> str:
+    words = re.findall(r"[a-z]+", question.lower())
+    return "Indonesian" if words and sum(w in ID_WORDS for w in words) / len(words) > 0.12 else "English"
 
 
 def strip_summary(text: str) -> str:

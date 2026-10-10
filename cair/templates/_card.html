@@ -1,0 +1,120 @@
+{% set c = card.card %}
+<article class="slip plan" data-plan="{{ c.plan_id }}">
+  <header class="plan-head">
+    <div>
+      <p class="box-label">Payout plan</p>
+      <h2 class="plan-title">{{ c.payer_name }} → {{ c.country_name }}</h2>
+    </div>
+    <div class="plan-meta mono">
+      <span>plan {{ c.plan_id[-8:] }}</span>
+      {% if c.trace_id %}<span title="neatlogs trace id">trace {{ c.trace_id[:12] }}…</span>{% endif %}
+    </div>
+  </header>
+
+  <section class="box">
+    <h3 class="box-label">Which option</h3>
+    <ul class="rails-list">
+    {% for r in card.rails %}
+      <li class="rail rail-{{ r.verdict|lower }}{% if r.recommended %} is-rec{% endif %}">
+        <span class="rail-name">{{ r.name }}</span>
+        <span class="verdict">{% if r.verdict == 'DELIVERS' %}DELIVERS{% elif r.verdict == 'REFUSED' %}<span class="stamp stamp-before">REFUSED</span>{% else %}<span class="stamp stamp-unclear">UNCLEAR</span>{% endif %}{% if r.fn %}<sup><a href="#fn-{{c.plan_id}}-{{r.fn}}">{{ r.fn }}</a></sup>{% endif %}</span>
+        {% if r.source and r.source.quote and r.verdict != 'DELIVERS' %}<q class="quote">{{ r.source.quote[:220] }}</q>{% endif %}
+        {% if not r.source %}<span class="nosrc">no primary source checked</span>{% endif %}
+        {% if r.recommended and 'rail' in card.confirmable %}
+          <button class="confirm{% if 'rail' in card.confirmed %} is-done{% endif %}" data-line="rail" aria-pressed="{{ 'true' if 'rail' in card.confirmed else 'false' }}">{% if 'rail' in card.confirmed %}Confirmed{% else %}Confirm{% endif %}</button>
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+    {% if card.rec_name %}<p class="rec">Pick <b>{{ card.rec_name }}</b>.</p>{% else %}<p class="rec rec-none">Cair does not pick a route: none of the options has a sourced DELIVERS.</p>{% endif %}
+    {% if card.usdc %}
+      {% set nets = c.rails[0].sourced_yes_networks if c.rails else [] %}
+      {% if nets %}<p class="fine">Networks this exchange's own pages confirm for USDC: {{ nets|join(', ') }}.</p>{% endif %}
+      <p class="fine">Send a small test transaction first and check the network on the exchange's deposit screen.</p>
+    {% endif %}
+  </section>
+
+  <section class="box">
+    <h3 class="box-label">Your W-8BEN{% if card.w8_fn %}<sup><a href="#fn-{{c.plan_id}}-{{card.w8_fn}}">{{ card.w8_fn }}</a></sup>{% endif %}</h3>
+    {% if card.w8.applies == 'YES' %}
+      <dl class="form-lines">
+        <div><dt>Lines 1–8</dt><dd>Your own details, as on your passport. Cair does not fill these.</dd></div>
+        <div><dt>Line 9</dt><dd>Only if you claim treaty benefits (IRS instructions). Cair does not decide this line.</dd></div>
+        <div class="line10"><dt>Line 10</dt><dd>
+          {% if card.w8.line10 == 'BLANK' %}<b class="state-after">Leave blank</b>{% elif card.w8.line10 == 'UNCLEAR' %}<span class="stamp stamp-unclear">UNCLEAR</span>{% else %}<b>{{ card.w8.line10 }}</b>{% endif %}{% if card.l10_fn %}<sup><a href="#fn-{{c.plan_id}}-{{card.l10_fn}}">{{ card.l10_fn }}</a></sup>{% endif %}
+          — {{ card.w8.line10_why }}.
+          {% if card.w8.nearest_articles %}<span class="fine">Nearest articles in the treaty text: {% for a in card.w8.nearest_articles %}Art. {{a.article}} {{a.title}}{% if not loop.last %}; {% endif %}{% endfor %}.</span>{% endif %}
+          {% if 'line10' in card.confirmable %}<button class="confirm{% if 'line10' in card.confirmed %} is-done{% endif %}" data-line="line10" aria-pressed="{{ 'true' if 'line10' in card.confirmed else 'false' }}">{% if 'line10' in card.confirmed %}Confirmed{% else %}Confirm{% endif %}</button>{% endif %}
+        </dd></div>
+      </dl>
+    {% elif card.w8.applies == 'NO' %}
+      <p>No W-8BEN for this payer — {{ card.w8.line10_why }}.</p>
+    {% else %}
+      <p><span class="stamp stamp-unclear">UNCLEAR</span> {{ card.w8.line10_why }}. Cair will not state a tax rate for this payer.</p>
+    {% endif %}
+  </section>
+
+  <section class="box lands">
+    <h3 class="box-label">What lands</h3>
+    <table class="money">
+      <tr><th scope="row">Gross</th><td>{{ card.landed.gross }}</td></tr>
+      {% if card.w8.applies == 'YES' %}
+      <tr><th scope="row">US withholding {{ card.wh.rate }}{% if card.wh_fn %}<sup><a href="#fn-{{c.plan_id}}-{{card.wh_fn}}">{{ card.wh_fn }}</a></sup>{% endif %}</th><td>{% if card.landed.withheld %}− {{ card.landed.withheld }}{% else %}UNCLEAR{% endif %}</td></tr>
+      {% elif card.landed.withheld_unclear %}
+      <tr><th scope="row">US withholding</th><td><span class="state-unclear">UNCLEAR</span></td></tr>
+      {% endif %}
+    </table>
+    <div class="big">
+      {% if card.landed.usd %}
+        <p class="big-label">In your {{ card.rec_name or 'account' }}</p><p class="numeral">{{ card.landed.usd }}<sup><a href="#fn-{{c.plan_id}}-{{card.landed.calc_fn}}">{{ card.landed.calc_fn }}</a></sup></p>
+      {% elif card.landed.usd_bound %}
+        <p class="big-label">In your {{ card.rec_name or 'account' }} — at most</p>
+        <p class="numeral is-bound">{{ card.landed.usd_bound }}<sup><a href="#fn-{{c.plan_id}}-{{card.landed.calc_fn}}">{{ card.landed.calc_fn }}</a></sup> <span class="stamp stamp-unclear">UNCLEAR</span></p>
+        <p class="fine">{{ card.landed.usd_bound_note|sentence }} — the provider does not publish it, so Cair does not guess it.</p>
+      {% else %}<p class="numeral"><span class="stamp stamp-unclear">UNCLEAR</span></p>{% endif %}
+      {% if card.landed.local %}
+        <p class="big-label">To your bank</p><p class="numeral small">{{ card.landed.local }}</p>
+      {% elif card.landed.local_bound %}
+        <p class="big-label">To your bank — at most</p><p class="numeral small is-bound">{{ card.landed.local_bound }}{% if card.landed.fx_fn %}<sup><a href="#fn-{{c.plan_id}}-{{card.landed.fx_fn}}">{{ card.landed.fx_fn }}</a></sup>{% endif %}</p>
+        <p class="fine">{{ card.landed.local_bound_note|sentence }}.{% if card.fx.stale %} <b class="state-unclear">Stale rate</b>: the live ECB call failed, so this is the last rate Cair fetched ({{ card.fx.as_of }}).{% endif %}</p>
+      {% endif %}
+    </div>
+  </section>
+
+  {% if c.explanation %}
+  <section class="box explain">
+    <h3 class="box-label">In plain words</h3>
+    <p>{{ c.explanation }}</p>
+  </section>
+  {% endif %}
+
+  <section class="box checks">
+    <h3 class="box-label">How this plan was checked</h3>
+    <ul class="checklist mono">
+      <li>6 tools ran in a fixed order; the route was decided by code, not by the model.</li>
+      {% if card.guard %}<li>Provenance guardrail: <b class="{{ 'state-after' if card.guard.passed else 'state-before' }}">{{ 'PASSED' if card.guard.passed else 'BLOCKED' }}</b>{% if card.guard_attempts > 1 %} on attempt {{ card.guard_attempts }}{% endif %}{% if card.guard.reason %} ({{ card.guard.reason }}){% endif %}.</li>{% endif %}
+      {% if c.explanation_source == 'template' %}<li>The explanation above is a fixed template built from the tool outputs.</li>{% endif %}
+      {% for r in card.recovery %}{% if r.action %}<li class="state-unclear">Recovery: {{ r.tool }} → {{ r.action }}</li>{% endif %}{% endfor %}
+    </ul>
+  </section>
+
+  <ol class="notes mono">
+    {% for n in card.notes %}
+    <li id="fn-{{c.plan_id}}-{{loop.index}}"><span class="tool">{{ n.tool }}</span>{% if n.id %} · {{ n.id }}{% endif %}{% if n.url %} · <a href="{{ n.url }}" rel="noopener" target="_blank">{{ n.short }}</a>{% endif %}{% if n.accessed %} · read {{ n.accessed }}{% endif %}{% if n.extra %} · {{ n.extra }}{% endif %}</li>
+    {% endfor %}
+  </ol>
+
+  <div class="perforation" aria-hidden="true"></div>
+  <section class="counterfoil">
+    <h3 class="box-label">Got paid? Tell Cair what landed</h3>
+    <div id="stamps-{{ c.plan_id }}">{% for r in card.receipts %}{% include "_stamp.html" %}{% endfor %}</div>
+    <form class="receipt" data-plan="{{ c.plan_id }}">
+      <label class="field inline"><span>Amount that landed</span><input name="landed_amount" inputmode="decimal" placeholder="e.g. 4897.00" required></label>
+      <label class="field inline"><span>Currency</span><select name="currency"><option>USD</option>{% if c.currency in ['IDR','INR','PHP'] %}<option>{{ c.currency }}</option>{% endif %}</select></label>
+      <label class="field inline"><span>Date</span><input name="landed_on" type="date"></label>
+      <button class="btn btn-small" type="submit">Check it</button>
+      <p class="fine">Cair reads its quote back from the neatlogs trace and records the comparison. Amounts only — no names.</p>
+    </form>
+  </section>
+  <p class="share mono"><a href="/plan/{{ c.plan_id }}">Link to this plan</a></p>
+</article>
