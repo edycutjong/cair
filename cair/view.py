@@ -27,7 +27,7 @@ def validate(body: dict) -> dict:
         amount = Decimal(str(body.get("amount", "")).replace(",", "").strip())
     except InvalidOperation:
         raise ValueError("Enter the amount in USD, e.g. 7000.") from None
-    if not (Decimal(1) <= amount <= Decimal(1_000_000)):
+    if not amount.is_finite() or not (Decimal(1) <= amount <= Decimal(1_000_000)):
         raise ValueError("Enter an amount between 1 and 1,000,000.")
     amount = amount.quantize(Decimal("0.01"))
     exchange = None
@@ -40,7 +40,9 @@ def validate(body: dict) -> dict:
             raise ValueError("Pick where you will receive the USDC.")
         rails = [f"usdc:{chain}"]
     else:
-        rails = [r for r in body.get("rails", []) if r in rules.RAILS]
+        raw = body.get("rails", [])
+        rails = [r for r in (raw if isinstance(raw, list) else []) if isinstance(r, str) and r in rules.RAILS]
+        rails = list(dict.fromkeys(rails))
         if not rails:
             raise ValueError("Tick the payout options your form shows you.")
     question = str(body.get("question", "")).strip()[:500]
@@ -70,7 +72,7 @@ def card_view(card: dict, confirmed: list[str], receipts: list) -> dict:
             return None
         entry = {"tool": tool, "id": (src or {}).get("source_id", ""), "url": (src or {}).get("source_url", ""),
                  "short": _short((src or {}).get("source_url")), "accessed": (src or {}).get("accessed_at", ""),
-                 "quote": (src or {}).get("quote", ""), "extra": extra}
+                 "quote": (src or {}).get("quote", ""), "extra": extra, "page_date": (src or {}).get("page_date", "")}
         for i, n in enumerate(notes, 1):
             if (n["tool"], n["id"], n["extra"]) == (entry["tool"], entry["id"], entry["extra"]):
                 return i
@@ -88,6 +90,7 @@ def card_view(card: dict, confirmed: list[str], receipts: list) -> dict:
     wh = card["withholding"]
     wh_fn = note("treaty_lookup", wh.get("source")) if wh.get("source") else None
     ld = card["landed"]
+    gross_fn = note("your input", None, "the amount you entered")
     calc_fn = note("fee_calc", None, "Decimal arithmetic on the cells above; no figure comes from the model")
     fxq = card.get("fx") or {}
     fx_fn = None
@@ -113,10 +116,14 @@ def card_view(card: dict, confirmed: list[str], receipts: list) -> dict:
         "usd_bound_note": ld.get("upper_bound_note", ""),
         "local": money(ld.get("landed_local"), ccy), "local_bound": money(ld.get("upper_bound_local"), ccy),
         "local_bound_note": ld.get("upper_bound_local_note", ""), "calc_fn": calc_fn, "fx_fn": fx_fn,
+        "gross_fn": gross_fn,
     }
     guard = card.get("guardrail") or []
     last = guard[-1] if guard else None
-    return {"card": card, "rails": rails, "w8": w8, "w8_fn": w8_fn, "l10_fn": l10_fn, "wh": wh, "wh_fn": wh_fn,
+    nets = sorted({rules.CHAINS.get(n, n) for r in card["rails"] for n in r.get("sourced_yes_networks", [])})
+    gloss = card.get("country") == "ID"
+    return {"card": card, "rails": rails, "networks": nets, "gloss": gloss,
+            "tool_calls": card.get("tool_calls"), "tools_used": card.get("tools_used") or [], "w8": w8, "w8_fn": w8_fn, "l10_fn": l10_fn, "wh": wh, "wh_fn": wh_fn,
             "landed": landed, "fx": fxq, "notes": notes, "usdc": usdc, "confirmed": set(confirmed),
             "confirmable": confirmable(card), "receipts": [stamp_view(dict(r)) for r in receipts],
             "guard": last, "guard_attempts": len(guard), "recovery": card.get("recovery") or [],
@@ -193,6 +200,8 @@ def verify_rows(plans: list) -> tuple[list[dict], str]:
             "guardrail": ("PASSED" if guard[-1]["passed"] else "BLOCKED") if guard else "—",
             "attempts": len(guard), "trace": p["trace_id"], "spans": spans,
             "readback": bool(ctx), "span_count": ctx.get("span_count") if ctx else None,
+            "db_tool_calls": card.get("tool_calls"), "db_route": card.get("recommended") or "none",
+            "db_unclear": len(card.get("unclear") or []),
             "recoveries": len([r for r in card.get("recovery", []) if "action" in r]),
         })
     return rows, source

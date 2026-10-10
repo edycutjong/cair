@@ -1,7 +1,10 @@
 # How Cair is measured
 
 Fixed before any planner code was written (see the commit history: this file and `cair/scoring.py` precede
-`cair/planner.py`). The frozen set is `data/frozen_set.jsonl`, tag `frozen-set-v1`.
+`cair/planner.py`). Later scorer corrections, all made after a false positive was found and followed by re-scoring
+every evidence file with `eval.py --rescore`: the year rule in `cair/figures.py` and the negated-sentence rule in
+`cair/scoring.py` (commit `337316a`, see `evidence/rca-01.md`), Indonesian refusal words (`menolak…`). The v1 U/P/K
+numbers did not change. The frozen set is `data/frozen_set.jsonl`, tag `frozen-set-v1`.
 
 ## The set
 
@@ -67,7 +70,7 @@ Model id, parameters, sheet version and set sha256 are written into every `evide
 
 The eval cannot catch an error in the sheet itself. These can:
 
-- **Hand re-check of 3 cells against the live page** (2026-10-10): `ID,*,wise` deliverable NO (Wise Help Centre
+- **Hand re-check of 3 cells against the live page** (2026-10-10, `evidence/hand-check-2026-10-10.md`): `ID,*,wise` deliverable NO (Wise Help Centre
   wording "can no longer hold money or currencies"), `ID,*,_treaty` NONE (indo.pdf table of articles, 31 articles,
   no "Other Income"), `*,devpost,_payer` YES (Devpost claim help, W-8BEN for international individuals).
 - **A real payout as a replay**: the builder's own $7,000 Devpost prize that landed as $4,897 in Payoneer

@@ -153,3 +153,20 @@ sup { font: 500 11px var(--font-data); margin-left: 2px; } sup a { text-decorati
   .rules td::before { content: attr(data-k); display: block; font: 700 11px var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+.brand { transition: color .15s var(--ease); }
+.brand:hover { color: var(--after); }
+.brand:hover .brand-mark { border-color: var(--after); }
+.vrow summary { transition: color .15s var(--ease); border-radius: 2px; }
+.vrow summary:hover { color: var(--after); }
+.vrow { transition: box-shadow .15s var(--ease); }
+.vrow:hover { box-shadow: 0 1px 0 rgba(19,36,27,.05), 0 14px 34px -18px rgba(19,36,27,.45); }
+.fx { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+.spans-wrap { overflow-x: auto; max-width: 100%; }
+.spans td:first-child { word-break: break-word; }
+.confirm { min-height: 44px; padding: 8px 16px; }
+.check input { width: 22px; height: 22px; }
+sup a { display: inline-block; min-width: 18px; text-align: center; }
+@media (max-width: 600px) {
+  .rail .confirm, .line10 .confirm { width: 100%; margin: 8px 0 0; }
+  .masthead nav a { padding: 12px 4px; }
+}

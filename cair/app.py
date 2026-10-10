@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import re
+import threading
 import time
 from collections import defaultdict, deque
 from contextlib import asynccontextmanager
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 
 import neatlogs
@@ -44,17 +46,18 @@ app.mount("/static", StaticFiles(directory=str(config.ROOT / "cair" / "static"))
 
 # --- per-IP rate limits: /api/plan fronts a paid LLM key -------------------------------------------------------
 _hits: dict[tuple[str, str], deque] = defaultdict(deque)
-LIMITS = {"plan": (12, 600), "write": (60, 600)}
+LIMITS = {"plan": (20, 600), "write": (60, 600), "plan_global": (600, 86400)}
+_hits_lock = threading.Lock()
 
 
 def client_ip(request: Request) -> str:
-    fwd = request.headers.get("x-forwarded-for", "")
-    return fwd.split(",")[0].strip() if fwd else (request.client.host if request.client else "?")
+    # uvicorn runs with --proxy-headers --forwarded-allow-ips 127.0.0.1, and Caddy replaces any X-Forwarded-For sent
+    # by an untrusted client, so request.client.host is the real client. Never read X-Forwarded-For ourselves.
+    return request.client.host if request.client else "?"
 
 
-def limited(request: Request, bucket: str) -> bool:
-    n, window = LIMITS[bucket]
-    q = _hits[(client_ip(request), bucket)]
+def _over(key: tuple[str, str], n: int, window: int) -> bool:
+    q = _hits[key]
     now = time.time()
     while q and now - q[0] > window:
         q.popleft()
@@ -64,19 +67,43 @@ def limited(request: Request, bucket: str) -> bool:
     return False
 
 
+def limited(request: Request, bucket: str) -> bool:
+    with _hits_lock:
+        if len(_hits) > 50_000:  # evict idle keys so the table cannot grow without bound
+            for k in [k for k, q in _hits.items() if not q or time.time() - q[-1] > 86400]:
+                del _hits[k]
+        if bucket == "plan" and _over(("*", "plan_global"), *LIMITS["plan_global"]):
+            return True  # a daily ceiling on paid LLM calls, whatever the source address
+        return _over((client_ip(request), bucket), *LIMITS[bucket])
+
+
 # --- identity: one browser visit = one neatlogs session; the end-user id is a random cookie, stored hashed -----------
+# Cookies are HMAC-signed, so origin (builder / ethjkt / external) cannot be set by hand.
+ORIGINS = {"builder", "ethjkt", "external"}
+
+
+def _sign(v: str) -> str:
+    return v + "." + hmac.new(config.COOKIE_SECRET.encode(), v.encode(), hashlib.sha256).hexdigest()[:20]
+
+
+def _unsign(raw: str | None) -> str | None:
+    if not raw or "." not in raw:
+        return None
+    v, _, mac = raw.rpartition(".")
+    return v if hmac.compare_digest(_sign(v), raw) else None
+
+
 def identity(request: Request) -> tuple[str, str, str, dict]:
-    cookies = {}
-    sid = request.cookies.get("cair_sid") or str(ULID())
-    uid = request.cookies.get("cair_uid") or str(ULID())
-    origin = request.cookies.get("cair_origin") or "external"
-    cookies.update({"cair_sid": sid, "cair_uid": uid})
-    return sid, hashlib.sha256(uid.encode()).hexdigest()[:16], origin, cookies
+    sid = _unsign(request.cookies.get("cair_sid")) or str(ULID())
+    uid = _unsign(request.cookies.get("cair_uid")) or str(ULID())
+    origin = _unsign(request.cookies.get("cair_origin"))
+    origin = origin if origin in ORIGINS else "external"
+    return sid, hashlib.sha256(uid.encode()).hexdigest()[:16], origin, {"cair_sid": sid, "cair_uid": uid}
 
 
 def set_cookies(resp, cookies: dict) -> None:
     for k, v in cookies.items():
-        resp.set_cookie(k, v, max_age=None if k == "cair_sid" else 60 * 60 * 24 * 365, httponly=True, samesite="lax",
+        resp.set_cookie(k, _sign(v), max_age=None if k == "cair_sid" else 60 * 60 * 24 * 365, httponly=True, samesite="lax",
                         secure=config.SECURE_COOKIES)
 
 
@@ -122,13 +149,12 @@ def healthz() -> dict:
 # --- the agent -------------------------------------------------------------------------------------------------------
 @app.post("/api/plan")
 async def api_plan(request: Request):
-    if limited(request, "plan"):
-        return JSONResponse({"error": "Too many plans from this address — try again in a few minutes."}, 429)
-    body = await request.json()
     try:
-        inp = view.validate(body)
+        inp = view.validate(await _json_dict(request))
     except ValueError as e:
         return JSONResponse({"error": str(e)}, 400)
+    if limited(request, "plan"):  # counted after validation: only requests that reach the LLM use the budget
+        return JSONResponse({"error": "Too many plans from this address — try again in a few minutes."}, 429)
     sid, uhash, origin, cookies = identity(request)
     plan_id = str(ULID())
     result = await run_in_threadpool(
@@ -143,15 +169,24 @@ async def api_plan(request: Request):
     return resp
 
 
+async def _json_dict(request: Request) -> dict:
+    try:
+        body = await request.json()
+    except ValueError:
+        return {}
+    return body if isinstance(body, dict) else {}
+
+
 @app.get("/api/plan/{plan_id}")
 def api_plan_get(plan_id: str):
     row = db.get_plan(plan_id)
     if not row:
         raise HTTPException(404, "no such plan")
     card = json.loads(row["card_json"])
-    return {k: card.get(k) for k in ("plan_id", "payer", "country", "amount", "unit", "rails", "recommended", "w8ben",
-                                     "withholding", "fx", "landed", "unclear", "explanation", "guardrail", "recovery",
-                                     "trace_id")}
+    out = {k: card.get(k) for k in ("plan_id", "payer", "country", "amount", "unit", "rails", "recommended", "w8ben",
+                                    "withholding", "fx", "landed", "unclear", "explanation", "guardrail", "trace_id")}
+    out["recovery"] = [{k: v for k, v in r.items() if k != "error"} for r in card.get("recovery", [])]  # no raw errors
+    return out
 
 
 @app.post("/api/plan/{plan_id}/confirm")
@@ -163,7 +198,7 @@ async def api_confirm(request: Request, plan_id: str):
     row = db.get_plan(plan_id)
     if not row:
         raise HTTPException(404, "no such plan")
-    body = await request.json()
+    body = await _json_dict(request)
     line = str(body.get("line", ""))
     card = json.loads(row["card_json"])
     value = view.confirmable(card).get(line)
@@ -187,22 +222,26 @@ async def api_confirm(request: Request, plan_id: str):
 async def api_receipt(request: Request):
     if limited(request, "write"):
         return JSONResponse({"error": "rate limited"}, 429)
-    body = await request.json()
+    body = await _json_dict(request)
     row = db.get_plan(str(body.get("plan_id", "")))
     if not row:
         return JSONResponse({"error": "no such plan"}, 404)
     try:
         amount = Decimal(str(body.get("landed_amount", "")).replace(",", ""))
-        if amount <= 0 or amount > Decimal(10_000_000):
+        if not amount.is_finite() or amount <= 0 or amount > Decimal(10_000_000):
             raise InvalidOperation
-    except InvalidOperation:
+    except (InvalidOperation, ValueError):
         return JSONResponse({"error": "Enter the amount that landed, e.g. 4897.00"}, 400)
     currency = str(body.get("currency", "USD")).upper()
     if currency not in {"USD", "IDR", "INR", "PHP"}:
         return JSONResponse({"error": "unsupported currency"}, 400)
-    landed_on = str(body.get("landed_on") or date.today().isoformat())
-    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", landed_on):
+    try:
+        landed = date.fromisoformat(str(body.get("landed_on") or date.today().isoformat()))
+    except ValueError:
         return JSONResponse({"error": "date must be YYYY-MM-DD"}, 400)
+    if landed > date.today() + timedelta(days=1) or landed.year < 2020:
+        return JSONResponse({"error": "that date is not possible for a received payment"}, 400)
+    landed_on = landed.isoformat()
     card = json.loads(row["card_json"])
     replay = landed_on < row["created_at"][:10]  # money landed before the plan existed: a replay, not a prediction
     label = "REPLAY — known outcome" if replay else None
@@ -215,18 +254,26 @@ async def api_receipt(request: Request):
                      "verdict": result["verdict"], "label": label, "evaluator_trace_id": result.get("evaluator_trace_id"),
                      "consent_public": int(bool(body.get("consent_public")))})
     html = TEMPLATES.get_template("_stamp.html").render(r=view.stamp_view(result))
+    result.pop("evaluator_error", None)  # logged in the trace attempt, not returned to the browser
     return {"result": result, "html": html}
 
 
 # --- judges: read-back from neatlogs, redacted -------------------------------------------------------------------
 _verify_cache: dict = {"at": 0.0, "rows": None, "source": ""}
+_verify_lock = threading.Lock()
+
+
+def _refresh_verify() -> None:
+    with _verify_lock:  # one MCP read-back at a time; concurrent requests reuse its result
+        if time.time() - _verify_cache["at"] > 60 or _verify_cache["rows"] is None:
+            rows, source = view.verify_rows(db.recent_plans(20))
+            _verify_cache.update(at=time.time(), rows=rows, source=source)
 
 
 @app.get("/verify", response_class=HTMLResponse)
 async def verify(request: Request):
     if time.time() - _verify_cache["at"] > 60 or _verify_cache["rows"] is None:
-        rows, source = await run_in_threadpool(view.verify_rows, db.recent_plans(20))
-        _verify_cache.update(at=time.time(), rows=rows, source=source)
+        await run_in_threadpool(_refresh_verify)
     return TEMPLATES.TemplateResponse(request, "verify.html", {
         "rows": _verify_cache["rows"], "source": _verify_cache["source"], "counts": db.counts(),
         "read_at": time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime(_verify_cache["at"]))})

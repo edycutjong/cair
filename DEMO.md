@@ -54,9 +54,11 @@ export NEATLOGS_API_KEY=... QWEN_API_KEY=... QWEN_BASE_URL=https://dashscope-int
 .venv/bin/python scripts/eval.py --rescore evidence/<file>.json # re-score stored answers, no LLM calls
 ```
 
-Each run writes `evidence/eval-<run>-<utc>.json` with the model, parameters, sheet version, set sha256, git sha and,
+Each run writes `evidence/eval-<run>[-<tag>]-<utc>.json` with the model, parameters, sheet version, set sha256, git sha and,
 per scenario, the neatlogs trace id, the full answer and its score. The eval calls the real LLM and the real ECB rate;
-there is no offline demo mode. Results vary a little between runs (LLM wording); the card itself is deterministic.
+there is no offline demo mode. Results vary a little between runs (LLM wording); the card itself is deterministic. The first runs (v1-r1 through the bench) read
+`git_sha` when they finished, so a commit made while a run was in flight can show a sha a few seconds newer than the
+run's start; later runs record the sha at start plus a `git_dirty` flag.
 
 ## 4. Run the app locally
 

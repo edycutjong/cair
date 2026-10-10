@@ -26,6 +26,7 @@ PAYERS = {"devpost": "Devpost", "dorahacks_usdc": "DoraHacks (USDC)", "superteam
 USDC_PAYERS = {"dorahacks_usdc", "superteam_usdc"}
 RAILS = {"payoneer": "Payoneer", "wise": "Wise", "paypal": "PayPal"}
 EXCHANGES = {"indodax": "Indodax", "pintu": "Pintu", "tokocrypto": "Tokocrypto"}
+EXCHANGE_COUNTRY = {"indodax": {"ID"}, "pintu": {"ID"}, "tokocrypto": {"ID"}}  # Indonesian exchanges
 CHAINS = {"ethereum": "Ethereum (ERC-20)", "bsc": "BNB Smart Chain (BEP-20)", "polygon": "Polygon", "base": "Base",
           "solana": "Solana", "arbitrum": "Arbitrum", "optimism": "Optimism", "avalanche": "Avalanche C-Chain",
           "tron": "Tron (TRC-20)", "arc": "Arc", "sei": "SEI (EVM)"}
@@ -84,7 +85,9 @@ def _parse_quotes(text: str) -> dict[str, dict]:
         head, _, body = block.partition("\n")
         url = re.search(r"^URL: (\S+)", body, flags=re.M)
         lines = [ln[2:].strip() for ln in body.splitlines() if ln.startswith("> ")]
-        quotes[head.strip()] = {"url": url.group(1) if url else "", "quote": " ".join(lines)}
+        dated = re.search(r"^URL: \S+ \(([^)]*\d{4}[^)]*)\)", body, flags=re.M)
+        quotes[head.strip()] = {"url": url.group(1) if url else "", "quote": " ".join(lines),
+                                "page_date": dated.group(1) if dated else ""}
     return quotes
 
 

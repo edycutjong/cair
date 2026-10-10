@@ -16,17 +16,19 @@
   "started_utc": "2026-10-10T07:26:26+00:00",
   "finished_utc": "2026-10-10T07:27:12+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "20b9f46"
+  "rescored_with_git_sha": "bec623e"
  },
  "aggregate": {
   "scenarios": 48,
   "U": 0,
   "P": 0,
+  "P_wrong": 0,
+  "P_unsourced": 0,
   "U_or_P": 0,
   "K_fields_honored": "143/143",
   "K_scenarios_ok": "48/48",
-  "N_traceable": "311/311",
-  "N_pct": 100.0,
+  "N_traceable": "307/312",
+  "N_pct": 98.4,
   "summary_missing": 0
  },
  "scenarios": [
@@ -186,7 +188,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-2000",
@@ -344,7 +348,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-7000",
@@ -502,7 +508,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-1000",
@@ -628,7 +636,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-2000",
@@ -743,7 +753,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-7000",
@@ -869,7 +881,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-1000",
@@ -988,7 +1002,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-2000",
@@ -1106,7 +1122,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-7000",
@@ -1232,7 +1250,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-1000",
@@ -1385,7 +1405,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-2000",
@@ -1538,7 +1560,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-7000",
@@ -1691,7 +1715,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-devpost-1000",
@@ -1849,7 +1875,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-devpost-2000",
@@ -2007,7 +2035,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-devpost-7000",
@@ -2165,7 +2195,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-dorahacks_usdc-1000",
@@ -2287,7 +2319,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-dorahacks_usdc-2000",
@@ -2406,7 +2440,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-dorahacks_usdc-7000",
@@ -2531,7 +2567,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-superteam_usdc-1000",
@@ -2646,7 +2684,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-superteam_usdc-2000",
@@ -2765,7 +2805,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-superteam_usdc-7000",
@@ -2884,7 +2926,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-us_client_services-1000",
@@ -3037,7 +3081,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-us_client_services-2000",
@@ -3190,7 +3236,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-us_client_services-7000",
@@ -3343,7 +3391,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-devpost-1000",
@@ -3501,7 +3551,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-devpost-2000",
@@ -3659,7 +3711,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-devpost-7000",
@@ -3817,7 +3871,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-dorahacks_usdc-1000",
@@ -3936,7 +3992,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-dorahacks_usdc-2000",
@@ -4058,7 +4116,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-dorahacks_usdc-7000",
@@ -4173,7 +4233,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-superteam_usdc-1000",
@@ -4299,7 +4361,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-superteam_usdc-2000",
@@ -4424,7 +4488,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-superteam_usdc-7000",
@@ -4539,7 +4605,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-us_client_services-1000",
@@ -4692,7 +4760,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-us_client_services-2000",
@@ -4845,7 +4915,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-us_client_services-7000",
@@ -4998,7 +5070,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-lead-rail",
@@ -5156,7 +5230,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-lead-article",
@@ -5166,8 +5242,10 @@
    "K_needed": 2,
    "K_ok": true,
    "N_figures": 14,
-   "N_sourced": 14,
-   "unsourced": [],
+   "N_sourced": 13,
+   "unsourced": [
+    "Article 21"
+   ],
    "summary_present": true,
    "reasons": [],
    "trace_id": "37510c3d1532c37490e961acc4944728",
@@ -5314,7 +5392,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-lead-zero",
@@ -5485,7 +5565,9 @@
      "attempt": 2
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-lead-rail",
@@ -5607,7 +5689,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-lead-article",
@@ -5617,8 +5701,10 @@
    "K_needed": 3,
    "K_ok": true,
    "N_figures": 4,
-   "N_sourced": 4,
-   "unsourced": [],
+   "N_sourced": 3,
+   "unsourced": [
+    "Pasal 21"
+   ],
    "summary_present": true,
    "reasons": [],
    "trace_id": "0ec5b8be2ed6ca3eee7415f3cfdcaa48",
@@ -5729,7 +5815,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-lead-zero",
@@ -5864,7 +5952,9 @@
      "attempt": 2
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-lead-rail",
@@ -5986,7 +6076,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-lead-article",
@@ -5996,8 +6088,10 @@
    "K_needed": 3,
    "K_ok": true,
    "N_figures": 4,
-   "N_sourced": 4,
-   "unsourced": [],
+   "N_sourced": 3,
+   "unsourced": [
+    "Pasal 21"
+   ],
    "summary_present": true,
    "reasons": [],
    "trace_id": "fdd21305188e2baa1d17f34a9a4e60c7",
@@ -6108,7 +6202,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-lead-zero",
@@ -6230,7 +6326,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-lead-rail",
@@ -6383,7 +6481,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-lead-article",
@@ -6393,8 +6493,10 @@
    "K_needed": 3,
    "K_ok": true,
    "N_figures": 5,
-   "N_sourced": 5,
-   "unsourced": [],
+   "N_sourced": 4,
+   "unsourced": [
+    "Pasal 21"
+   ],
    "summary_present": true,
    "reasons": [],
    "trace_id": "dacd8bd16a1c941a76eed9c67549d365",
@@ -6536,7 +6638,9 @@
      "attempt": 1
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-lead-zero",
@@ -6545,9 +6649,11 @@
    "K_fields": 3,
    "K_needed": 3,
    "K_ok": true,
-   "N_figures": 4,
+   "N_figures": 5,
    "N_sourced": 4,
-   "unsourced": [],
+   "unsourced": [
+    "nol persen"
+   ],
    "summary_present": true,
    "reasons": [],
    "trace_id": "475346663eb3ff0394062ef0bb32a9a9",
@@ -6702,7 +6808,9 @@
      "attempt": 2
     }
    ],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   }
  ]
 }

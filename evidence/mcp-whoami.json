@@ -1,0 +1,12 @@
+{
+ "tool": "neatlogs MCP whoami",
+ "read_at": "2026-10-10",
+ "result": {
+  "project_id": "a91f004f\u2026",
+  "project_name": "Edy's project",
+  "org_id": "ae155adf\u2026",
+  "project_repo": "",
+  "is_archived": false,
+  "tier": "free"
+ }
+}

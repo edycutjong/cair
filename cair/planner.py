@@ -28,13 +28,13 @@ from typing import Any, Callable
 
 import neatlogs
 
-from . import llm, rules, tools
+from . import fx, llm, rules, tools
 from .guardrail import run as guardrail_run
 from .scoring import FIELDS
 from .tracing import current_trace_id
 
 UNCLEAR = rules.UNCLEAR
-RAIL_PREFERENCE = ["payoneer", "wise", "paypal"]
+RAIL_PREFERENCE = ["payoneer", "wise", "paypal"]  # a default order among DELIVERS rails, not a cost ranking
 
 
 class Attempts:
@@ -42,11 +42,13 @@ class Attempts:
 
     def __init__(self) -> None:
         self.log: list[dict] = []
+        self.calls: list[str] = []
 
     def call(self, name: str, fn: Callable[..., Any], *args, fallback: Callable[[str], Any] | None = None):
         last = ""
         for attempt in (1, 2):
             try:
+                self.calls.append(name)
                 return fn(*args)
             except Exception as e:  # the failed span is already marked ERROR by the SDK
                 last = f"{type(e).__name__}: {e}"
@@ -111,7 +113,7 @@ def planner(plan_id: str, payer: str, country: str, amount_usd: str, rails_offer
 
     # 4. FX for USD payers; deposit network for USDC payers.
     fxq = None
-    if not usdc and ccy:
+    if not usdc and ccy in fx.ECB_CURRENCIES:  # VND, NGN: ECB publishes no rate, so local amounts stay UNCLEAR
         fxq = att.call("fx_quote", tools.fx_quote, ccy,
                        fallback=lambda err: tools.fx_quote_fallback(ccy, err))
         if fxq:
@@ -119,7 +121,7 @@ def planner(plan_id: str, payer: str, country: str, amount_usd: str, rails_offer
     if usdc:
         for rail in rails_offered:
             chain = rail.split(":", 1)[1] if rail.startswith("usdc:") else rail
-            ex = att.call("exchange_networks", tools.exchange_networks, exchange or "other", chain)
+            ex = att.call("exchange_networks", tools.exchange_networks, exchange or "other", chain, country)
             if ex:
                 outputs.append(ex)
             verdict = ex["deliverable"] if ex else UNCLEAR
@@ -128,7 +130,7 @@ def planner(plan_id: str, payer: str, country: str, amount_usd: str, rails_offer
                           "verdict": {"YES": "DELIVERS", "NO": "REFUSED"}.get(verdict, UNCLEAR),
                           "source": ex["source"] if ex else None,
                           "sourced_yes_networks": ex["sourced_yes_networks"] if ex else [],
-                          "note": None if ex else "network check failed twice"})
+                          "note": ex.get("note") if ex else "network check failed twice"})
 
     # Decide the route: the first DELIVERS rail in a fixed preference order. Never a REFUSED or UNCLEAR one.
     delivers = [r["rail"] for r in rails if r["verdict"] == "DELIVERS"]
@@ -137,18 +139,24 @@ def planner(plan_id: str, payer: str, country: str, amount_usd: str, rails_offer
 
     # 5. Arithmetic, from sheet cells and the FX tool only.
     tax_w8 = w8 if pr else UNCLEAR
-    wh_default = tr["withholding_default"] if (tr and tax_w8 == "YES") else None
+    art = tr["other_income_article"] if tr else UNCLEAR
+    # A W-8BEN applies, but the treaty position is UNCLEAR: an article could lower the rate, so neither the 30% nor
+    # an "at most" figure built on it is sourced. Withholding becomes UNCLEAR and the bound is "before any withholding".
+    calc_w8 = tax_w8 if (tax_w8 != "YES" or art == "NONE" or art.isdigit()) else UNCLEAR
+    wh_default = tr["withholding_default"] if (tr and calc_w8 == "YES") else None
     sheet = rules.sheet()
     fee_cell = sheet.value(country, payer, recommended, "receiving_fee_usd") if recommended and not usdc else None
     margin_cell = sheet.value(country, payer, recommended, "fx_margin_pct") if recommended and not usdc else None
     rate = fxq["rate"] if fxq and fxq.get("rate") not in (None, UNCLEAR) else None
-    fc = att.call("fee_calc", tools.fee_calc, amount_usd, "USDC" if usdc else "USD", tax_w8, wh_default,
+    fc = att.call("fee_calc", tools.fee_calc, amount_usd, "USDC" if usdc else "USD", calc_w8, wh_default,
                   fee_cell, margin_cell, rate, ccy or "local")
     if fc:
         outputs.append(fc)
 
     card = build_card(plan_id, payer, country, amount_usd, exchange, rails, recommended, pr, tr, fxq, fc, tax_w8)
     card["recovery"] = att.log
+    card["tool_calls"] = len(att.calls) + sum(1 for e in att.log if e.get("action") == "fallback")
+    card["tools_used"] = sorted(set(att.calls))
 
     # 6. Wording. The LLM sees the card's facts (only what is relevant to this payer), never computes.
     explanation, verdicts, source = explain(card, question, outputs, guardrail)
@@ -175,10 +183,14 @@ def build_card(plan_id, payer, country, amount_usd, exchange, rails, recommended
             line10, why = f"ARTICLE {art}", "a sourced article covers this income"
         else:
             line10 = UNCLEAR
-            why = ("an Other Income article exists but no source says it covers a prize" if tr
-                   else "the treaty lookup failed twice")
+            if not tr:
+                why = "the treaty lookup failed twice"
+            elif tr.get("has_article_titled_other_income"):
+                why = "an Other Income article exists but no source says it covers a prize"
+            else:
+                why = "Cair has no sourced treaty data for this country"
             unclear.append("line10")
-        wh = tr["withholding_default"] if tr else UNCLEAR
+        wh = tr["withholding_default"] if (tr and line10 != UNCLEAR) else UNCLEAR
         if wh == UNCLEAR:
             unclear.append("withholding")
     elif w8 == "NO":
@@ -293,6 +305,11 @@ def strip_summary(text: str) -> str:
     return "\n".join(ln for ln in text.splitlines() if not ln.strip().lstrip("*-# ").upper().startswith(labels)).strip()
 
 
+UNCLEAR_LABELS = {"landed": "what lands in USD", "landed_local": "what lands in local currency",
+                  "line10": "W-8BEN line 10", "route": "which option to pick", "withholding": "the withholding rate",
+                  "w8ben": "whether a W-8BEN applies", "exchange": "the deposit network"}
+
+
 def template_explanation(card: dict) -> str:
     rec = next((r for r in card["rails"] if r["rail"] == card["recommended"]), None)
     parts = []
@@ -305,7 +322,8 @@ def template_explanation(card: dict) -> str:
             parts.append(f"{r['name']} is refused: its own page rules it out.")
     parts.append(f"W-8BEN line 10: {card['w8ben']['line10']} ({card['w8ben']['line10_why']}).")
     if card["unclear"]:
-        parts.append("UNCLEAR: " + ", ".join(card["unclear"]) + " — no primary source states them.")
+        parts.append("UNCLEAR: " + ", ".join(UNCLEAR_LABELS.get(u, u) for u in card["unclear"])
+                     + " — no primary source states them.")
     return " ".join(parts)
 
 

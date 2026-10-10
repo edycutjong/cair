@@ -1,0 +1,135 @@
+{
+ "tool": "neatlogs MCP search_traces",
+ "query": "provenance_guardrail BLOCKED",
+ "re_run_at": "2026-10-10T07:49Z",
+ "note": "re-run after the fixes, so it also lists later blocked attempts (v2-r2, ablation has no guardrail, live no_source plans)",
+ "total": 14,
+ "results": [
+  {
+   "trace_id": "20cfb8cb34fa7de08f86100e1fb6e680",
+   "created_at": "2026-10-10T07:23:09.880800Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "success",
+   "span_count": 10,
+   "input_preview": "{\"plan_id\":\"eval-v2-ID-superteam_usdc-lead-zero\",\"payer\":\"superteam_usdc\",\"country\":\"ID\",\""
+  },
+  {
+   "trace_id": "7f625ddfaf668fdfee7b490418dcbe90",
+   "created_at": "2026-10-10T07:23:15.740639Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "success",
+   "span_count": 13,
+   "input_preview": "{\"plan_id\":\"eval-v2-ID-us_client_services-lead-zero\",\"payer\":\"us_client_services\",\"country"
+  },
+  {
+   "trace_id": "dc3dbb54a9f532f06d8bbd0f5cff823d",
+   "created_at": "2026-10-10T07:28:29.580610Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "error",
+   "span_count": 15,
+   "input_preview": "{\"plan_id\":\"eval-fail-fx_quote-ID-us_client_services-lead-article\",\"payer\":\"us_client_serv"
+  },
+  {
+   "trace_id": "33b19530b52a5445e4df9abde726bb70",
+   "created_at": "2026-10-10T07:33:42.177732Z",
+   "root_span_name": "payout-plan",
+   "session_id": "01M4JBN4005JXVYGKWNR6G13E1",
+   "status": "success",
+   "span_count": 8,
+   "input_preview": "{\"plan_id\":\"01M4JBPP4YJNC4GSZXQN4ERD5P\",\"payer\":\"devpost\",\"country\":\"OTHER\",\"amount_usd\":\""
+  },
+  {
+   "trace_id": "ca6f47c43b0a03f53846e3793f07b073",
+   "created_at": "2026-10-10T07:43:20.854608Z",
+   "root_span_name": "payout-plan",
+   "session_id": "01M4JC89PPJ0YRV47W8RA8T61S",
+   "status": "success",
+   "span_count": 8,
+   "input_preview": "{\"plan_id\":\"01M4JC89PPJ0YRV47W8RA8T61V\",\"payer\":\"devpost\",\"country\":\"OTHER\",\"amount_usd\":\""
+  },
+  {
+   "trace_id": "475346663eb3ff0394062ef0bb32a9a9",
+   "created_at": "2026-10-10T07:27:05.559888Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "success",
+   "span_count": 13,
+   "input_preview": "{\"plan_id\":\"eval-v2-ID-us_client_services-lead-zero\",\"payer\":\"us_client_services\",\"country"
+  },
+  {
+   "trace_id": "1e0a0b7652d684e400f3fb971b9b45d8",
+   "created_at": "2026-10-10T07:28:29.697395Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "error",
+   "span_count": 15,
+   "input_preview": "{\"plan_id\":\"eval-fail-fx_quote-ID-us_client_services-lead-zero\",\"payer\":\"us_client_service"
+  },
+  {
+   "trace_id": "dc6ad65a1f62d96df6173e98d3cec66e",
+   "created_at": "2026-10-10T07:28:24.874886Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "success",
+   "span_count": 10,
+   "input_preview": "{\"plan_id\":\"eval-fail-fx_quote-ID-dorahacks_usdc-lead-zero\",\"payer\":\"dorahacks_usdc\",\"coun"
+  },
+  {
+   "trace_id": "fd253d3ad0dccf43416d337843d7843e",
+   "created_at": "2026-10-10T07:28:24.712391Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "success",
+   "span_count": 10,
+   "input_preview": "{\"plan_id\":\"eval-fail-fx_quote-ID-superteam_usdc-lead-zero\",\"payer\":\"superteam_usdc\",\"coun"
+  },
+  {
+   "trace_id": "ceab015dba11d15b4200f660af5982f6",
+   "created_at": "2026-10-10T07:27:01.008499Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "success",
+   "span_count": 10,
+   "input_preview": "{\"plan_id\":\"eval-v2-ID-dorahacks_usdc-lead-zero\",\"payer\":\"dorahacks_usdc\",\"country\":\"ID\",\""
+  },
+  {
+   "trace_id": "f7c450546a4643b5b5f605c85d8decef",
+   "created_at": "2026-10-10T07:28:20.539162Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "error",
+   "span_count": 15,
+   "input_preview": "{\"plan_id\":\"eval-fail-fx_quote-ID-devpost-lead-zero\",\"payer\":\"devpost\",\"country\":\"ID\",\"amo"
+  },
+  {
+   "trace_id": "341b69d81b5b2e15980172a0b366dd2e",
+   "created_at": "2026-10-10T07:26:55.515826Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "success",
+   "span_count": 13,
+   "input_preview": "{\"plan_id\":\"eval-v2-ID-devpost-lead-zero\",\"payer\":\"devpost\",\"country\":\"ID\",\"amount_usd\":\"7"
+  },
+  {
+   "trace_id": "afe84a2f32d17407d93bb19e0601684a",
+   "created_at": "2026-10-10T07:23:02.975177Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "success",
+   "span_count": 13,
+   "input_preview": "{\"plan_id\":\"eval-v2-ID-devpost-lead-zero\",\"payer\":\"devpost\",\"country\":\"ID\",\"amount_usd\":\"7"
+  },
+  {
+   "trace_id": "63aa8636232113437e8a75480a9c12f4",
+   "created_at": "2026-10-10T07:22:46.687013Z",
+   "root_span_name": "payout-plan",
+   "session_id": "eval-eval",
+   "status": "success",
+   "span_count": 13,
+   "input_preview": "{\"plan_id\":\"eval-v2-IN-devpost-2000\",\"payer\":\"devpost\",\"country\":\"IN\",\"amount_usd\":\"2000\","
+  }
+ ]
+}

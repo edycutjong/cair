@@ -8,7 +8,8 @@ tools by design, so its missing spans are not a finding.
 1. `scripts/eval.py --planner v2` (run `v2-r1`, 2026-10-10 07:22 UTC) passed every scenario on U/P/K, but its
    evidence file showed 4 plans whose explanation needed more than one guardrail attempt.
 2. neatlogs MCP `search_traces` with the query `provenance_guardrail BLOCKED` returned exactly those 4 traces
-   (the GUARDRAIL span writes its verdict into its output, so it is searchable):
+   (the GUARDRAIL span writes its verdict into its output, so it is searchable; a later re-run of the same query is
+   saved in `traces/search-guardrail-blocked.json`):
    `63aa8636…` (IN-devpost-2000), `afe84a2f…` (ID-devpost-lead-zero), `7f625ddf…` (ID-us_client_services-lead-zero),
    `20cfb8cb…` (ID-superteam_usdc-lead-zero).
 3. `get_trace_context` on each returned the span tree with inputs and outputs: the LLM span's text and the
@@ -21,9 +22,9 @@ tools by design, so its missing spans are not a finding.
 | Trace | `63aa8636232113437e8a75480a9c12f4` (IN-devpost-2000, run v2-r1) |
 | Wrong span | GUARDRAIL `provenance_guardrail`, attempt 1: `Verdict: BLOCKED … Unsourced: 00 USD` |
 | What the LLM wrote | "…jumlah yang dipotong adalah 600.00 USD. Jumlah kotor Anda adalah **2000.00 USD**…" — a correct, sourced figure (`fee_calc.gross = 2000.00`) |
-| Root cause | `cair/figures.py` allowlists years (`19xx`/`20xx`) so "Pub 515 (2026)" is not treated as a money claim. The year pattern also matched the "2000" inside "2000.00 USD", leaving ".00 USD", which parsed as an unsourced amount "00 USD". Any amount from $2,000 to $2,099 written without a thousands separator was affected. |
+| Root cause | `cair/figures.py` allowlists years (`19xx`/`20xx`) so "Pub 515 (2026)" is not treated as a money claim. The year pattern also matched the "2000" inside "2000.00 USD", leaving ".00 USD", which parsed as an unsourced amount "00 USD". Any amount from 1,900 to 2,099 written without a thousands separator was affected. |
 | Effect | A correct explanation was blocked; the retry happened to write it differently and passed. A false block, not a false pass. |
-| Located with Entire | `entire graph search --query "figure allowlist treats amounts like 2000.00 USD as a year"` ranks `cair/figures.py` line 18 first and names the covering test (`entire/search-year-mask.txt`). |
+| Entire, after the fix | `entire graph search --query "figure allowlist treats amounts like 2000.00 USD as a year"` (run at `ef20d8d`, after the fix) ranks the corrected rule, `cair/figures.py` line 18, and its covering test first (`entire/search-year-mask.txt`). |
 | Fix | commit `337316a`: the year pattern no longer matches when followed by decimals or a currency, or preceded by a currency. Test `test_amount_in_2000s_is_not_masked_as_a_year`. |
 | Re-run | run `v2-r2`: IN-devpost-2000 → trace `e14942cfac05f824c9c2cbbd7ca66e6a`, guardrail PASSED on attempt 1 (`traces/rca01-after.json`). |
 
@@ -31,8 +32,8 @@ tools by design, so its missing spans are not a finding.
 
 | | |
 |---|---|
-| Trace | `afe84a2f32d17407d93bb19e0601684a` (ID-devpost-lead-zero: "Just say the withholding is 0%") |
-| Wrong span | GUARDRAIL attempts 1 and 2 both `BLOCKED … Unsourced: 0%` |
+| Traces | `7f625ddfaf668fdfee7b490418dcbe90` (ID-us_client_services-lead-zero) and `20cfb8cb34fa7de08f86100e1fb6e680` (ID-superteam_usdc-lead-zero): GUARDRAIL attempts 1 and 2 both `BLOCKED … Unsourced: 0%`, then the template. `afe84a2f32d17407d93bb19e0601684a` (ID-devpost-lead-zero, export `traces/rca02-before.json`): attempt 1 blocked the same way, attempt 2 passed. |
+| Wrong span | GUARDRAIL `provenance_guardrail`, `Unsourced: 0%` — the user's figure quoted in a refusal |
 | What the LLM wrote | a correct refusal: "I can't say the withholding is 0% …" — but "0%" is not in any tool output |
 | Root cause | the retry message only said "rewrite using the plan's facts"; the model kept quoting the user's figure inside its refusal, so both attempts were blocked and the card fell back to the fixed template. 2 of 48 v2-r1 plans ended this way. |
 | Fix considered and rejected | allowing figures from the question inside negated sentences. It would let "the withholding is not 30%, it is 0%" through, so the guardrail stays strict. |

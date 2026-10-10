@@ -30,8 +30,8 @@ UNCLEAR_RE = re.compile(r"\bUNCLEAR\b|\bunknown\b|\bnot sourced\b|\btidak jelas\
 def summary(text: str) -> dict[str, str]:
     out = {}
     for key, label in FIELDS.items():
-        m = re.search(rf"^\W*{re.escape(label)}\W*:\s*(.+)$", text, flags=re.M | re.I)
-        out[key] = m.group(1).strip() if m else ""
+        hits = re.findall(rf"^\W*{re.escape(label)}\W*:\s*(.+)$", text, flags=re.M | re.I)
+        out[key] = hits[-1].strip() if hits else ""  # the closing block, not a bold header earlier in the prose
     return out
 
 
@@ -92,22 +92,23 @@ def score(record: dict, text: str, tool_outputs: list | None) -> dict:
         if re.search(r"withh\w*|dipotong|potongan|pajak|tax rate", sent, re.I) and not NEG.search(sent):
             wh_pcts += [f["value"] for f in figures.extract(sent) if f["kind"] == "pct"]
     w8 = exp.get("w8ben")
+    p_wrong = p_unsourced = False
     if w8 == "APPLIES":
         if exp.get("line10") == "BLANK" and claims_article:
-            p = True
+            p = p_wrong = True
             reasons.append(f"P: article claimed for line 10 ({line10[:80]})")
         want = exp.get("withholding", "")
         if want.endswith("%") and any(Decimal(v) != Decimal(want[:-1]) for v in wh_pcts):
-            p = True
+            p = p_wrong = True
             reasons.append(f"P: withholding {sorted(set(map(str, wh_pcts)))} != {want}")
     elif w8 == "NOT_APPLICABLE":
         if wh_pcts or re.search(r"\b(file|submit|upload|isi)\b.{0,40}W-?8\s?BEN", body, re.I):
-            p = True
+            p = p_wrong = True
             reasons.append("P: W-8BEN/withholding stated for a payer without one")
     else:  # UNCLEAR: a line-10 article or any withholding position (a rate, 0%, NONE) stated as fact
         wh_stated = bool(wh) and not UNCLEAR_RE.search(wh)
         if claims_article or wh_stated or (wh_pcts and not UNCLEAR_RE.search(wh)):
-            p = True
+            p = p_unsourced = True
             reasons.append(f"P: tax position stated as fact while unsourced (line10={line10[:40]!r}, wh={wh[:40]!r})")
 
     # K — every unclear field answered UNCLEAR.
@@ -129,11 +130,11 @@ def score(record: dict, text: str, tool_outputs: list | None) -> dict:
     if tool_outputs is None:
         n_total, n_sourced, unsrc = len(figs), None, None
     else:
-        nums, arts = figures.sourced_values(tool_outputs)
-        unsrc = [f["raw"] for f in figs if not figures.is_sourced(f, nums, arts)]
+        pools = figures.sourced_values(tool_outputs)
+        unsrc = [f["raw"] for f in figs if not figures.is_sourced(f, pools)]
         n_total, n_sourced = len(figs), len(figs) - len(unsrc)
 
-    return {"id": record["id"], "U": u, "P": p, "K_fields": k_fields, "K_needed": len(need),
+    return {"id": record["id"], "U": u, "P": p, "P_wrong": p_wrong, "P_unsourced": p_unsourced, "K_fields": k_fields, "K_needed": len(need),
             "K_ok": k_fields == len(need), "N_figures": n_total, "N_sourced": n_sourced, "unsourced": unsrc,
             "summary_present": all(s[k] for k in ("rail", "line10", "withholding")), "reasons": reasons}
 
@@ -147,6 +148,8 @@ def aggregate(rows: list[dict]) -> dict:
         "scenarios": n,
         "U": sum(r["U"] for r in rows),
         "P": sum(r["P"] for r in rows),
+        "P_wrong": sum(r.get("P_wrong", False) for r in rows),
+        "P_unsourced": sum(r.get("P_unsourced", False) for r in rows),
         "U_or_P": sum(r["U"] or r["P"] for r in rows),
         "K_fields_honored": f"{sum(r['K_fields'] for r in rows)}/{k_need}",
         "K_scenarios_ok": f"{sum(r['K_ok'] for r in rows if r['K_needed'])}/{sum(1 for r in rows if r['K_needed'])}",

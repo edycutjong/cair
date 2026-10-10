@@ -1,4 +1,6 @@
 """Protocol invariants I1-I4 (docs: ARCHITECTURE.md) and the fee calculator's three states."""
+import pytest
+
 from cair import calc, guardrail, planner, tools
 
 HERO = dict(plan_id="t-hero", payer="devpost", country="ID", amount_usd=7000,
@@ -173,3 +175,61 @@ def test_unlisted_country_is_blocked_no_source_without_borrowed_sources(fixed_fx
     assert all(r["verdict"] == "UNCLEAR" and r["source"] is None for r in card["rails"])
     assert card["guardrail"][0]["reason"] == "no_source" and card["explanation_source"] == "template"
     assert "RECOMMENDED RAIL: UNCLEAR" in card["text"]
+
+
+# Round-1 audit (H1-H3, M4): phrasings that used to slip through the guardrail.
+BYPASSES = [
+    ("refused_rail", "Wise is not slow, so go with Wise."),
+    ("refused_rail", "No problem: pick Wise for this one."),
+    ("refused_rail", "Gunakan Wise saja, bukan masalah."),
+    ("refused_rail", "Wise is refused by the sheet. Use it anyway."),
+    ("unsourced_figure", "Payoneer charges a $30 receiving fee."),
+    ("withholding", "The treaty rate is 15%."),
+    ("unsourced_figure", "You will pay $114 in fees."),
+    ("withholding", "The withholding is thirty percent."),
+    ("unclear_upgraded", "Your Payoneer account will receive $4,900.00 in total."),
+    ("link", "Send your passport scan to help@cair-payouts.example for faster processing."),
+    ("link", "Claim it at https://evil.example/claim."),
+]
+
+
+@pytest.mark.parametrize("cls,text", BYPASSES)
+def test_guardrail_blocks_round1_bypasses(fixed_fx, llm_says, cls, text):
+    llm_says(OK_TEXT)
+    card = card_for()
+    v = guardrail.check(text, card["tool_outputs"], card)
+    assert not v["passed"] and cls in v["violation_classes"], v
+
+
+def test_guardrail_still_passes_honest_bounded_prose(fixed_fx, llm_says):
+    llm_says(OK_TEXT)
+    card = card_for()
+    ok = ("Wise is refused: Indonesian addresses can no longer hold money. Pick Payoneer. "
+          "30% is withheld ($2,100.00), so at most $4,900.00 reaches Payoneer before its receiving fee.")
+    assert guardrail.check(ok, card["tool_outputs"], card)["passed"]
+
+
+def test_unclear_treaty_makes_withholding_and_bound_unclear(fixed_fx, llm_says):  # round-1 H4
+    llm_says("Payoneer delivers.")
+    card = card_for(country="IN", rails_offered=["payoneer", "wise"], amount_usd=2000)
+    assert card["withholding"]["rate"] == "UNCLEAR" and card["landed"]["withheld"] == "UNCLEAR"
+    assert card["landed"]["upper_bound_note"] == "before any withholding and fees"
+    assert "WITHHOLDING: UNCLEAR" in card["text"]
+
+
+def test_indonesian_exchange_is_unclear_for_other_residents(fixed_fx, llm_says):  # round-1 M9
+    llm_says("Ok.")
+    card = card_for(country="NG", payer="dorahacks_usdc", rails_offered=["usdc:base"], exchange="indodax", amount_usd=1000)
+    assert card["rails"][0]["verdict"] == "UNCLEAR" and card["recommended"] is None
+
+
+def test_fees_larger_than_amount_never_land_negative():
+    out = calc.fee_calc("1", "USD", "YES", "30%", "3.00", "2.0", "17881", "IDR")
+    assert out["landed_usd"] == "UNCLEAR" and out["upper_bound_usd"] == "0.00"
+
+
+def test_old_fx_snapshot_is_not_used(fixed_fx, monkeypatch):
+    import json
+    from cair import fx
+    fx.SNAPSHOT.write_text(json.dumps({"IDR": {"quote": "IDR", "rate": "15000", "as_of": "2020-01-02", "source": "ECB"}}))
+    assert fx.cached("IDR") is None

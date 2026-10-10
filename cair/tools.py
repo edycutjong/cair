@@ -31,6 +31,7 @@ def _src(fact: rules.Fact | None, sheet: rules.Sheet) -> dict | None:
     d = fact.as_dict()
     if fact.source_id in sheet.quotes:
         d["quote"] = sheet.quotes[fact.source_id]["quote"][:400]
+        d["page_date"] = sheet.quotes[fact.source_id].get("page_date", "")
     return d
 
 
@@ -93,12 +94,16 @@ def fx_quote_fallback(quote_ccy: str, error: str) -> dict:
 
 @neatlogs.span(kind="TOOL", tool_name="exchange_networks",
                description="Does this exchange accept USDC deposits on this network? From the exchange's own page")
-def exchange_networks(exchange: str, chain: str) -> dict:
+def exchange_networks(exchange: str, chain: str, country: str = "ID") -> dict:
     _maybe_fail("exchange_networks")
     sheet = rules.sheet()
     rows = sheet.exchange_rows(exchange) if exchange in rules.EXCHANGES else {}
     hit = rows.get(chain)
-    return {"exchange": exchange, "chain": chain, "deliverable": hit.value if hit else UNCLEAR,
+    value = hit.value if hit else UNCLEAR
+    note = None
+    if hit and country not in rules.EXCHANGE_COUNTRY.get(exchange, set()):
+        value, note = UNCLEAR, f"{rules.EXCHANGES[exchange]} is an Indonesian exchange; no source says it serves residents of this country"
+    return {"exchange": exchange, "chain": chain, "deliverable": value, "note": note,
             "source": _src(hit, sheet),
             "sourced_yes_networks": sorted(c for c, f in rows.items() if f.value == "YES"),
             "always": "Send a small test transaction first and check the network on the exchange's deposit screen."}

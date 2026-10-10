@@ -16,13 +16,13 @@
       <span class="mono">plan …{{ r.plan }}</span>
       <span>{{ r.payer }} · {{ r.country }} · {{ r.band }}</span>
       <span class="{{ 'state-after' if r.guardrail=='PASSED' else 'state-before' }}">guardrail {{ r.guardrail }}{% if r.attempts > 1 %} ({{ r.attempts }} tries){% endif %}</span>
-      <span class="mono">{% if r.readback %}{{ r.span_count }} spans read back{% else %}DB copy{% endif %}</span>
+      <span class="mono">{% if r.readback %}neatlogs: {{ r.span_count }} spans{% else %}neatlogs: unavailable{% endif %} · DB: {{ r.db_tool_calls or '—' }} tool calls, route {{ r.db_route }}, {{ r.db_unclear }} UNCLEAR</span>
     </summary>
     <p class="mono fine">created {{ r.created }} · user {{ r.user }} · origin {{ r.origin }}{% if r.trace %} · trace {{ r.trace }}{% endif %}{% if r.recoveries %} · recoveries {{ r.recoveries }}{% endif %}</p>
     {% if r.spans %}
-    <table class="spans mono"><thead><tr><th>span</th><th>kind</th><th>status</th><th>ms</th></tr></thead><tbody>
+    <div class="spans-wrap"><table class="spans mono"><thead><tr><th>span</th><th>kind</th><th>status</th><th>ms</th></tr></thead><tbody>
       {% for s in r.spans %}<tr><td>{{ s.name }}</td><td>{{ s.kind }}</td><td>{{ s.status }}</td><td>{{ s.ms }}</td></tr>{% endfor %}
-    </tbody></table>
+    </tbody></table></div>
     {% endif %}
   </details>
 {% else %}

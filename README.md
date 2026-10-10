@@ -71,17 +71,18 @@ One task, end to end: *get this payout to my account intact*.
 
 ## A run where an action failed
 
-`scripts/eval.py --planner v2 --fail fx_quote` makes the FX tool fail on every call. On all 48 scenarios the agent
-retried, fell back to the last ECB rate it had fetched (stamped STALE with its date) or to UNCLEAR, and finished the
-plan: 48 / 48 completed, U 0, P 0, 302 / 302 figures sourced. Trace `d1fa1ed7…` shows the two ERROR spans and the
+`scripts/eval.py --planner v2 --fail fx_quote` makes the FX tool fail on every call. In the 24 USD-payer scenarios
+(USDC plans never call it) the agent retried once, then fell back to the last ECB rate it had fetched, stamped STALE
+with its date, and finished the plan. All 48 plans completed: U 0, P 0, 302 / 302 figures sourced. Trace `d1fa1ed7…` shows the two ERROR spans and the
 fallback span. → [`evidence/recovery-01.md`](evidence/recovery-01.md)
 
 ## How neatlogs was used to build and improve it
 
 - **Every plan is one trace**: WORKFLOW → AGENT → 6+ TOOL/RETRIEVER spans → LLM → GUARDRAIL, with session and
   hashed end-user bound per request. Eval runs are tagged `eval` / `v1` / `v2` / `ablation`.
-- **Finding failures**: `search_traces "provenance_guardrail BLOCKED"` over the MCP server returned the 4 v2 plans
-  whose explanation had been blocked; `get_trace_context` showed the LLM text next to the guardrail verdict. Two real
+- **Finding failures**: `search_traces "provenance_guardrail BLOCKED"` over the MCP server returned the v2 plans
+  whose explanation had been blocked (`evidence/traces/search-guardrail-blocked.json`, re-run later, so it also lists
+  later blocks); `get_trace_context` showed the LLM text next to the guardrail verdict. Two real
   bugs came out of it (an amount in the 2000s parsed as a year; refusals that repeated the user's "0%"), both fixed and
   re-run. → [`evidence/rca-01.md`](evidence/rca-01.md)
 - **Reading results back in the product**: the receipt reconciler and the public [`/verify`](https://app.cair.edycu.dev/verify)
@@ -96,11 +97,11 @@ fallback span. → [`evidence/recovery-01.md`](evidence/recovery-01.md)
 
 ## How Entire was used
 
-Entire's code graph (`entire graph`, local and no-egress) was run on this repository while building: `search` located
-the fix site for the year-parsing bug from a plain-language description, `impact` was run on `rail_eligibility` before
+Entire's code graph (`entire graph`, local and no-egress) was run on this repository while building: after the year-parsing fix, `search` with a
+plain-language description of the bug ranked the corrected rule and its covering test first; `impact` was run on `rail_eligibility` before
 the unlisted-country fix (and on `fee_calc` and `figures.extract`), and `diff` summarises every entity changed since
 the frozen set was tagged. One limit we hit: `impact` reports 0 callers for the tools, because the planner passes
-them as function values (`attempts.call("fx_quote", tools.fx_quote, …)`), which the graph does not follow. Outputs, with the
+them as function values (`att.call("fx_quote", tools.fx_quote, …)`), which the graph does not follow. Outputs, with the
 commands: [`evidence/entire/`](evidence/entire). Entire checkpoints were deliberately not enabled: they store the
 coding-agent transcript and write agent configuration into the repository.
 
@@ -124,10 +125,11 @@ Full reproduce steps (eval, ablation, forced failure, bench) and things to try o
 - Three countries are fully sourced (Indonesia, India, the Philippines); Vietnam and Nigeria have treaty rows only.
   Anything else is UNCLEAR by design.
 - The eval measures fidelity to the sourced sheet, not tax correctness; three cells were re-checked by hand against
-  the live pages (`docs/METRICS.md`).
+  the live pages (`evidence/hand-check-2026-10-10.md`).
 - Payoneer's receiving fee and conversion margin are not published as single numbers, so "what lands" is an upper
   bound. Receipts are user-reported.
-- Forward receipts (a plan made before the money moved): n = 0 so far. Tarmac replay: n = 1.
+- Receipts so far are the builder's own: the Tarmac replay (n = 1) plus QA test receipts. Forward receipts from real
+  users (a plan made before the money moved): n = 0.
 - Cair explains forms; it never files them. Not tax advice.
 
 ## License

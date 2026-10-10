@@ -27,7 +27,11 @@ _NUM = r"\d{1,3}(?:[,.\s]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?"
 MONEY_RE = re.compile(
     rf"(?:(?:US)?\$|USD|USDC|IDR|Rp\.?|INR|₹|PHP|₱)\s?({_NUM})(?:\s?(?:juta|million|jt))?"
     rf"|({_NUM})\s?(?:USD|USDC|IDR|INR|PHP|dollars?|dolar|rupiah)\b", re.I)
-PCT_RE = re.compile(rf"({_NUM})\s?(?:%|percent|persen)", re.I)
+PCT_RE = re.compile(rf"({_NUM})\s?(?:%|percent|per cent|pct|persen)", re.I)
+# A rate written in words is never in a tool output, so it is always a new figure.
+WORD_PCT_RE = re.compile(r"\b(?:zero|nol|one|two|three|four|five|ten|fifteen|twenty|thirty|forty|fifty|satu|dua|tiga|lima|"
+                         r"sepuluh|lima belas|dua puluh|tiga puluh)(?:[- ](?:one|two|five|puluh|belas))?\s?"
+                         r"(?:%|percent|per cent|persen)", re.I)
 ARTICLE_RE = re.compile(r"\b(?:article|art\.|pasal)\s*(\d{1,2})\b", re.I)
 BARE_RE = re.compile(rf"(?<![\w.])({_NUM})(?![\w.])")
 
@@ -72,6 +76,10 @@ def extract(text: str) -> list[dict]:
                 val *= 1_000_000
             found.append({"kind": kind, "value": val, "raw": m.group(0).strip()})
             spans.append(m.span())
+    for m in WORD_PCT_RE.finditer(text):
+        if not taken(*m.span()):
+            found.append({"kind": "word", "value": m.group(0), "raw": m.group(0)})
+            spans.append(m.span())
     for m in BARE_RE.finditer(masked):
         if taken(*m.span()):
             continue
@@ -83,10 +91,33 @@ def extract(text: str) -> list[dict]:
     return found
 
 
-def sourced_values(tool_outputs: list) -> tuple[set[Decimal], set[int]]:
-    """Every number and article number that appears anywhere in the tool outputs of one plan."""
-    nums: set[Decimal] = set()
-    arts: set[int] = set()
+ARTICLE_KEYS = {"article", "treaty_other_income_article", "other_income_article"}
+MONEY_KEYS = {"gross", "withheld", "after_withholding", "landed_usd", "upper_bound_usd", "landed_local",
+              "upper_bound_local", "rate", "fx_rate", "receiving_fee_usd", "amount", "amount_usd"}
+PCT_KEYS = {"withholding_default", "fx_margin_pct", "withholding_rate"}
+
+
+class Pools:
+    """Typed values a plan's tools produced: money/plain numbers, percentages and treaty-article numbers.
+    Only these named fields count — never BM25 scores, source ids, or numbers inside quoted page text."""
+
+    def __init__(self) -> None:
+        self.money: set[Decimal] = set()
+        self.pct: set[Decimal] = set()
+        self.arts: set[int] = set()
+
+
+def sourced_values(tool_outputs: list) -> Pools:
+    pools = Pools()
+
+    def num(x) -> Decimal | None:
+        if isinstance(x, bool) or x is None:
+            return None
+        if isinstance(x, (int, float, Decimal)):
+            return Decimal(str(x))
+        if isinstance(x, str) and re.fullmatch(rf"\s*(?:{_NUM})%?\s*", x):
+            return _dec(x.strip().rstrip("%"))
+        return None
 
     def walk(x, key: str = "") -> None:
         if isinstance(x, dict):
@@ -95,38 +126,40 @@ def sourced_values(tool_outputs: list) -> tuple[set[Decimal], set[int]]:
         elif isinstance(x, (list, tuple)):
             for v in x:
                 walk(v, key)
-        elif isinstance(x, bool) or x is None:
-            return
-        elif isinstance(x, (int, float, Decimal)):
-            nums.add(Decimal(str(x)))
-            if key in {"article", "treaty_other_income_article"}:
-                arts.add(int(x))
-        elif isinstance(x, str):
-            if key in {"article", "treaty_other_income_article"} and x.isdigit():
-                arts.add(int(x))
-            for f in extract(x):
-                if f["kind"] == "article":
-                    arts.add(f["value"])
-                else:
-                    nums.add(Decimal(f["value"]))
-            d = _dec(x.rstrip("%")) if re.fullmatch(rf"(?:{_NUM})%?", x.strip()) else None
-            if d is not None:
-                nums.add(d)
+        else:
+            d = num(x)
+            if d is None:
+                return
+            if key in MONEY_KEYS:
+                pools.money.add(d)
+            elif key in PCT_KEYS:
+                pools.pct.add(d)
+            elif key in ARTICLE_KEYS and d == d.to_integral_value():
+                pools.arts.add(int(d))
 
     walk(tool_outputs)
-    return nums, arts
+    return pools
 
 
-def is_sourced(fig: dict, nums: set[Decimal], arts: set[int]) -> bool:
+def _places(raw: str) -> int:
+    m = re.search(r"[.,](\d{1,2})(?!\d)", raw)
+    return len(m.group(1)) if m else 0
+
+
+def is_sourced(fig: dict, pools: Pools) -> bool:
+    if fig["kind"] == "word":
+        return False
     if fig["kind"] == "article":
-        return fig["value"] in arts
+        return fig["value"] in pools.arts
     v = Decimal(fig["value"])
-    if v in nums:
+    pool = pools.pct if fig["kind"] == "pct" else pools.money
+    if v in pool:
         return True
-    # Same amount at display precision: 87,616,900.00 vs 87616900, or a rate shown to fewer decimals.
-    return any(abs(v - n) <= Decimal("0.005") * max(Decimal(1), abs(n)) / 100 for n in nums)
+    # Same value at the precision it is displayed with ("$4,900" = 4900.00, "62.82" = 62.821) — nothing looser.
+    q = Decimal(1).scaleb(-_places(fig["raw"]))
+    return any(n.quantize(q) == v.quantize(q) for n in pool)
 
 
 def unsourced(text: str, tool_outputs: list) -> list[str]:
-    nums, arts = sourced_values(tool_outputs)
-    return [f["raw"] for f in extract(text) if not is_sourced(f, nums, arts)]
+    pools = sourced_values(tool_outputs)
+    return [f["raw"] for f in extract(text) if not is_sourced(f, pools)]

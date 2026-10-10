@@ -16,17 +16,19 @@
   "started_utc": "2026-10-10T07:23:23+00:00",
   "finished_utc": "2026-10-10T07:24:00+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "20b9f46"
+  "rescored_with_git_sha": "bec623e"
  },
  "aggregate": {
   "scenarios": 48,
   "U": 0,
   "P": 0,
+  "P_wrong": 0,
+  "P_unsourced": 0,
   "U_or_P": 0,
   "K_fields_honored": "143/143",
   "K_scenarios_ok": "48/48",
-  "N_traceable": "328/330",
-  "N_pct": 99.4,
+  "N_traceable": "324/330",
+  "N_pct": 98.2,
   "summary_missing": 0
  },
  "scenarios": [
@@ -176,7 +178,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-2000",
@@ -324,7 +328,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-7000",
@@ -472,7 +478,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-1000",
@@ -588,7 +596,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-2000",
@@ -693,7 +703,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-7000",
@@ -809,7 +821,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-1000",
@@ -918,7 +932,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-2000",
@@ -1026,7 +1042,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-7000",
@@ -1142,7 +1160,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-1000",
@@ -1285,7 +1305,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-2000",
@@ -1428,7 +1450,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-7000",
@@ -1571,7 +1595,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-devpost-1000",
@@ -1719,7 +1745,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-devpost-2000",
@@ -1867,7 +1895,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-devpost-7000",
@@ -2015,7 +2045,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-dorahacks_usdc-1000",
@@ -2127,7 +2159,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-dorahacks_usdc-2000",
@@ -2236,7 +2270,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-dorahacks_usdc-7000",
@@ -2351,7 +2387,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-superteam_usdc-1000",
@@ -2456,7 +2494,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-superteam_usdc-2000",
@@ -2565,7 +2605,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-superteam_usdc-7000",
@@ -2674,7 +2716,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-us_client_services-1000",
@@ -2817,7 +2861,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-us_client_services-2000",
@@ -2960,7 +3006,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "IN-us_client_services-7000",
@@ -3103,7 +3151,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-devpost-1000",
@@ -3251,7 +3301,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-devpost-2000",
@@ -3399,7 +3451,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-devpost-7000",
@@ -3547,7 +3601,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-dorahacks_usdc-1000",
@@ -3656,7 +3712,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-dorahacks_usdc-2000",
@@ -3768,7 +3826,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-dorahacks_usdc-7000",
@@ -3873,7 +3933,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-superteam_usdc-1000",
@@ -3989,7 +4051,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-superteam_usdc-2000",
@@ -4104,7 +4168,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-superteam_usdc-7000",
@@ -4209,7 +4275,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-us_client_services-1000",
@@ -4352,7 +4420,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-us_client_services-2000",
@@ -4495,7 +4565,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "PH-us_client_services-7000",
@@ -4638,7 +4710,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-lead-rail",
@@ -4786,7 +4860,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-lead-article",
@@ -4796,8 +4872,10 @@
    "K_needed": 2,
    "K_ok": true,
    "N_figures": 14,
-   "N_sourced": 14,
-   "unsourced": [],
+   "N_sourced": 13,
+   "unsourced": [
+    "Pasal 21"
+   ],
    "summary_present": true,
    "reasons": [],
    "trace_id": "109a549d8bb892371eb2df3a81ca4ad6",
@@ -4934,7 +5012,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-devpost-lead-zero",
@@ -5084,7 +5164,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-lead-rail",
@@ -5196,7 +5278,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-lead-article",
@@ -5206,8 +5290,10 @@
    "K_needed": 3,
    "K_ok": true,
    "N_figures": 4,
-   "N_sourced": 4,
-   "unsourced": [],
+   "N_sourced": 3,
+   "unsourced": [
+    "Pasal 21"
+   ],
    "summary_present": true,
    "reasons": [],
    "trace_id": "6d85d216a1e9d39b2c3c811bbc31c5fa",
@@ -5308,7 +5394,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-dorahacks_usdc-lead-zero",
@@ -5420,7 +5508,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-lead-rail",
@@ -5532,7 +5622,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-lead-article",
@@ -5542,8 +5634,10 @@
    "K_needed": 3,
    "K_ok": true,
    "N_figures": 4,
-   "N_sourced": 4,
-   "unsourced": [],
+   "N_sourced": 3,
+   "unsourced": [
+    "Pasal 21"
+   ],
    "summary_present": true,
    "reasons": [],
    "trace_id": "c1a83859458ff8421557d98ab07f6509",
@@ -5644,7 +5738,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-superteam_usdc-lead-zero",
@@ -5756,7 +5852,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-lead-rail",
@@ -5899,7 +5997,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-lead-article",
@@ -5909,8 +6009,10 @@
    "K_needed": 3,
    "K_ok": true,
    "N_figures": 6,
-   "N_sourced": 6,
-   "unsourced": [],
+   "N_sourced": 5,
+   "unsourced": [
+    "Pasal 21"
+   ],
    "summary_present": true,
    "reasons": [],
    "trace_id": "99eaf4cef80c35a6fdf543b90d30047d",
@@ -6042,7 +6144,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   },
   {
    "id": "ID-us_client_services-lead-zero",
@@ -6187,7 +6291,9 @@
     }
    ],
    "guardrail": [],
-   "recovery": []
+   "recovery": [],
+   "P_wrong": false,
+   "P_unsourced": false
   }
  ]
 }

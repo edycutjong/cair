@@ -20,7 +20,7 @@ WITHHOLDING: 10%
 LANDED (USD): $6,300
 LANDED (LOCAL): IDR 112,000,000"""
 
-TOOLS = [{"gross": "7000.00", "withheld": "2100.00", "upper_bound": "4900.00"}, {"withholding_default": "30%"}]
+TOOLS = [{"gross": "7000.00", "withheld": "2100.00", "upper_bound_usd": "4900.00"}, {"withholding_default": "30%"}]
 
 
 def test_good_answer_scores_clean():

@@ -40,7 +40,7 @@ def test_bad_input_is_rejected(client):
 
 def test_rate_limit(client):
     body = {"payer": "devpost", "amount": "100", "country": "ID", "rails": ["payoneer"]}
-    codes = [client.post("/api/plan", json=body).status_code for _ in range(13)]
+    codes = [client.post("/api/plan", json=body).status_code for _ in range(21)]
     assert codes[-1] == 429
 
 
@@ -61,3 +61,22 @@ def test_verify_has_no_raw_amounts(client, monkeypatch):
 
 def test_healthz(client):
     assert client.get("/healthz").json()["ok"] is True
+
+
+def test_forged_cookies_and_bad_bodies(client):  # round-1 M1/M3
+    client.cookies.set("cair_origin", "builder")  # unsigned: ignored
+    r = client.post("/api/plan", json={"payer": "devpost", "amount": "50", "country": "ID", "rails": ["payoneer"]})
+    assert db.get_plan(r.json()["plan_id"])["origin"] == "external"
+    client.cookies.set("cair_origin", "weird")
+    assert client.post("/api/plan", json={"payer": "devpost", "amount": "50", "country": "ID",
+                                          "rails": ["payoneer"]}).status_code == 200
+    for bad in ({"payer": "devpost", "amount": "NaN", "country": "ID", "rails": ["payoneer"]},
+                {"payer": "devpost", "amount": "50", "country": "ID", "rails": 5}, [1, 2]):
+        assert client.post("/api/plan", json=bad).status_code == 400
+    pid = r.json()["plan_id"]
+    assert client.post(f"/api/plan/{pid}/confirm", json=[1]).status_code == 400
+    assert client.post("/api/receipt", json=[1]).status_code == 404
+    assert client.post("/api/receipt", json={"plan_id": pid, "landed_amount": "10", "currency": "USD",
+                                             "landed_on": "9999-99-99"}).status_code == 400
+    assert client.post("/api/receipt", json={"plan_id": pid, "landed_amount": "10", "currency": "USD",
+                                             "landed_on": "2031-01-01"}).status_code == 400

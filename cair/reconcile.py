@@ -55,7 +55,11 @@ def compare(fee_calc: dict, landed: Decimal) -> dict:
         return {"mode": "full", "quoted": str(quoted), "landed": str(landed),
                 "error_pct": str(err.quantize(Decimal("0.0001"))) if err is not None else None,
                 "verdict": "within 1%" if err is not None and abs(err) <= 1 else "off by more than 1%"}
-    upper = Decimal(fee_calc.get("upper_bound_usd") or fee_calc["gross"])
+    raw_upper = fee_calc.get("upper_bound_usd") or fee_calc.get("gross")
+    if not raw_upper or raw_upper == UNCLEAR:
+        return {"mode": "not compared", "verdict": "the quote has no sourced amount to compare with", "landed": str(landed),
+                "error_pct": None}
+    upper = Decimal(raw_upper)
     unexplained = upper - landed
     return {"mode": "partial", "quoted_upper": str(upper), "landed": str(landed), "error_pct": None,
             "unexplained_usd": str(unexplained),

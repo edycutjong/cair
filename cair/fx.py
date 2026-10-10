@@ -6,14 +6,16 @@ last ECB rate it actually fetched, shown with its own as_of date and a "stale" s
 from __future__ import annotations
 
 import json
+import os
 import threading
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import httpx
 
 from . import config
 
 ECB_CURRENCIES = {"IDR", "INR", "PHP"}  # ECB publishes these; not VND or NGN
+MAX_STALE_DAYS = 7  # an older snapshot is not a usable rate: UNCLEAR instead
 _lock = threading.Lock()
 SNAPSHOT = config.DB_PATH.parent / "fx_snapshot.json"
 
@@ -43,6 +45,11 @@ def cached(quote: str) -> dict | None:
     hit = snap.get(quote)
     if not hit:
         return None
+    try:
+        if (date.today() - date.fromisoformat(hit["as_of"])).days > MAX_STALE_DAYS:
+            return None
+    except (KeyError, ValueError):
+        return None
     return {**hit, "stale": True, "source": hit["source"] + " (last fetched snapshot)"}
 
 
@@ -54,4 +61,6 @@ def _save(entry: dict) -> None:
         except (OSError, ValueError):
             snap = {}
         snap[entry["quote"]] = entry
-        SNAPSHOT.write_text(json.dumps(snap, indent=1))
+        tmp = SNAPSHOT.with_suffix(".tmp")
+        tmp.write_text(json.dumps(snap, indent=1))
+        os.replace(tmp, SNAPSHOT)  # readers never see a half-written file

@@ -46,10 +46,15 @@ def fee_calc(gross_usd: str, unit: str, w8ben_applies: str, withholding_default:
         out["withheld"] = UNCLEAR
 
     fee = _num(receiving_fee_usd)
-    if after is not None and fee is not None:
+    if after is not None and fee is not None and after - fee >= 0:
         landed = after - fee
         out["landed_usd"] = q(landed, unit)
         bound = None
+    elif after is not None and fee is not None:  # fees larger than what is left: nothing lands
+        landed, bound = None, Decimal(0)
+        out["landed_usd"] = UNCLEAR
+        out["upper_bound_usd"] = "0.00"
+        out["upper_bound_note"] = "fees exceed the amount left after withholding"
     else:
         landed = None
         out["landed_usd"] = UNCLEAR
