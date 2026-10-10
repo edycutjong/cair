@@ -20,3 +20,7 @@ updates:
     groups:
       actions:
         patterns: ["*"]
+    ignore:
+      # Same policy as pip: a major action bump is a deliberate change, not unattended maintenance.
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

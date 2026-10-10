@@ -20,7 +20,7 @@ jobs:
         id: ver
         run: |
           set -euo pipefail
-          LAST=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          LAST=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || echo "")  # semver tags only: the repo also carries frozen-set-v1
           if [ -z "$LAST" ]; then
             RANGE=""; CUR="0.0.0"
           else
