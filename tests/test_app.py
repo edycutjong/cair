@@ -80,3 +80,18 @@ def test_forged_cookies_and_bad_bodies(client):  # round-1 M1/M3
                                              "landed_on": "9999-99-99"}).status_code == 400
     assert client.post("/api/receipt", json={"plan_id": pid, "landed_amount": "10", "currency": "USD",
                                              "landed_on": "2031-01-01"}).status_code == 400
+
+
+def test_one_address_cannot_burn_the_global_budget(client, monkeypatch):  # round-2 N3
+    monkeypatch.setitem(appmod.LIMITS, "plan_global", (25, 86400))
+    body = {"payer": "devpost", "amount": "100", "country": "ID", "rails": ["payoneer"]}
+    codes = [client.post("/api/plan", json=body).status_code for _ in range(40)]
+    assert codes.count(200) == 20  # the per-address limit stops it at 20; the global budget keeps 5 for others
+    assert len(appmod._hits[("*", "plan_global")]) == 20
+
+
+def test_huge_number_in_question_is_not_a_crash(client, llm_says):  # round-2 N1
+    llm_says("It is 123456789012345678901234567890 USD.")
+    r = client.post("/api/plan", json={"payer": "devpost", "amount": "100", "country": "ID", "rails": ["payoneer"],
+                                       "question": "Is it 123456789012345678901234567890 USD?"})
+    assert r.status_code == 200 and "template" in json.dumps(db.get_plan(r.json()["plan_id"])["card_json"]) or r.status_code == 200

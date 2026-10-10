@@ -13,22 +13,27 @@ from decimal import Decimal
 
 import neatlogs
 
-from . import figures
-from .scoring import REC, mentions, sentences
+from . import claims, figures, rules
 
 
-REFUSAL = re.compile(
-    r"refus\w*|\bcannot\b|can't|can no longer|no longer|\bnot (?:be )?(?:use|used|usable|able|available|recommended|"
-    r"possible|deliver\w*|an option|work\w*|supported|accepted)|don't|do not|\bavoid|unavailable|undeliverable|won't|"
-    r"will not|\btidak (?:bisa|dapat|lagi|disarankan|direkomendasikan|tersedia|mendukung|dikreditkan|diterima|boleh)|"
-    r"\bjangan\b|ditolak|menolak\w*|tak bisa|bukan pilihan|berisiko|\blose\b|\bhilang", re.I)
 FOLLOW_UP = re.compile(r"\b(it|that one|this one|that|itu|ini|tersebut|anyway|saja)\b", re.I)
 BOUND = re.compile(r"at most|up to|maximum|\bbefore\b|sebelum|paling banyak|maksimal|hingga|batas atas|upper bound|"
                    r"UNCLEAR|tidak jelas|belum (?:termasuk|dipotong)|excluding|not including|\bminus\b|not stated", re.I)
-RECEIVE = re.compile(r"\b(receiv\w*|land\w*|arriv\w*|get|gets|end up|in your (?:account|bank|wallet)|menerima|diterima|"
-                     r"terima|masuk|sampai|mendapat\w*|dapat)\b", re.I)
+RECEIVE = re.compile(r"\b(receiv\w*|land\w*|arriv\w*|get|gets|got|deposit\w*|credit(?:ed|s)?|take home|keep|keeps|"
+                     r"reach\w*|net|end(?:s)? up|you have|in your (?:account|bank|wallet|balance)|menerima|diterima|"
+                     r"terima|masuk|sampai|mendapat\w*|dapat|bersih)\b", re.I)
+GROSS_OR_TAX = re.compile(r"\bgross\b|bruto|kotor|withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak", re.I)
 TAXWORD = re.compile(r"withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak|tarif|treaty rate", re.I)
-LINK = re.compile(r"https?://\S+|\bwww\.\S+|\b[\w.+-]+@[\w-]+\.[\w.]+|\b0x[0-9a-fA-F]{6,}|\b[1-9A-HJ-NP-Za-km-z]{32,44}\b")
+MARGIN = re.compile(r"margin|conversion|konversi", re.I)
+RATE_CTX = re.compile(r"\brate\b|\bthe plan\b|rencana", re.I)  # "the plan says 30%"
+ARTICLE_CTX = re.compile(r"\barticles?\b|\bpasal\b", re.I)
+ARTICLE_CLAIM = re.compile(r"\bclaim\w*|treaty benefit|reduc\w*|lower\w*|exempt\w*|appl(?:y|ies)|berlaku|klaim|"
+                           r"menurunkan|mengurangi", re.I)
+ARTICLE_DESCRIBED = re.compile(r"nearest|terdekat|\bnone\b|no article|tidak ada|no other income|tidak memiliki|"
+                               r"does not cover|doesn't cover|tidak mencakup|UNCLEAR|tidak jelas|no source", re.I)
+LINK = re.compile(r"(?:https?|hxxps?)://\S+|\bwww\.\S+|\b[\w.+-]+@[\w-]+\.[\w.]+|(?<![\w@])@\w{3,}|\b0x[0-9a-fA-F]{6,}|"
+                  r"\bbc1[0-9a-z]{20,}\b|\b[1-9A-HJ-NP-Za-km-z]{32,44}\b|"
+                  r"\b[\w-]+(?:\.[\w-]+)*\.(?:com|io|dev|xyz|example|org|net|co|id|me|app|link|site|gg|to)\b(?:/\S*)?")
 MAX_CHARS = 1600
 LINE10_OK = re.compile(r"\bUNCLEAR\b|\bblank\b|kosong|no source|tidak ada sumber", re.I)  # describing, not claiming
 
@@ -43,60 +48,89 @@ def _strings(x) -> list[str]:
 
 def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict:
     pools = figures.sourced_values(tool_outputs)
-    figs = figures.extract(text)
-    # Figures the user typed are flagged separately: a refusal that repeats them is still blocked (allowing it would
-    # let "it is not 30%, it is 0%" through), but the retry is told to decline without repeating them. rca-02.
-    asked = {(f["kind"], f["value"]) for f in figures.extract(question)}
-    unsourced = [f["raw"] for f in figs if not figures.is_sourced(f, pools)]
-    echoed = [f["raw"] for f in figs if not figures.is_sourced(f, pools) and (f["kind"], f["value"]) in asked]
-    claims: list[str] = []
-    classes: set[str] = {"unsourced_figure"} if unsourced else set()
+    asked = {(f["kind"], str(f["value"])) for f in figures.extract(question)}
+    claims_: list[str] = []
+    classes: set[str] = set()
+    unsourced: list[str] = []
+    echoed: list[str] = []
+    n_figs = 0
     refused = [r["rail"] for r in card["rails"] if r["verdict"] == "REFUSED"]
+    unclear_rails = [r["rail"] for r in card["rails"] if r["verdict"] == "UNCLEAR"]
     line10 = card["w8ben"]["line10"]
     wh_rate = card["withholding"]["rate"]
     ld = card.get("landed") or {}
-    bounds = {figures._dec(ld[k]) for k in ("upper_bound_usd", "upper_bound_local") if ld.get(k)}
+    landed_unclear = ld.get("landed_usd") == "UNCLEAR"
     known_text = " ".join(_strings(tool_outputs))
-    prev_refused = False
+    prev_named = False
 
     def claim(cls: str, msg: str) -> None:
         classes.add(cls)
-        claims.append(msg)
+        claims_.append(msg)
 
-    for sent in sentences(text):
-        # A refused rail may only be named to say it is refused; "use it anyway" right after counts too.
-        named = [r for r in refused if mentions(sent, r)]
-        for rail in named:
-            if not REFUSAL.search(sent):
-                claim("refused_rail", f"names refused {rail} without saying it is refused: {sent[:140]}")
-        others = [r["rail"] for r in card["rails"] if r["rail"] not in refused and mentions(sent, r["rail"])]
-        if (not named and not others and prev_refused and REC.search(sent) and FOLLOW_UP.search(sent)
-                and not REFUSAL.search(sent)):
+    for sent in claims.sentences(text):
+        # --- figures: typed provenance, read in the sentence's context -------------------------------------------
+        for f in figures.extract(sent):
+            n_figs += 1
+            ok = figures.is_sourced(f, pools)
+            if ok and f["kind"] == "pct" and not (TAXWORD.search(sent) or MARGIN.search(sent) or RATE_CTX.search(sent)):
+                ok = False  # a sourced rate is a withholding or margin rate; "Payoneer charges 30%" is not sourced
+            if (not ok and f["kind"] == "number" and ARTICLE_CTX.search(sent)
+                    and Decimal(f["value"]) == Decimal(f["value"]).to_integral_value()
+                    and int(f["value"]) in pools.arts):
+                ok = True  # "the nearest articles (15, 16 and 17)"
+            if not ok:
+                unsourced.append(f["raw"])
+                classes.add("unsourced_figure")
+                if (f["kind"], str(f["value"])) in asked:
+                    echoed.append(f["raw"])
+        # --- rails -------------------------------------------------------------------------------------------------
+        named_refused = [r for r in refused if claims.mentions(sent, r)]
+        for rail in named_refused:
+            if claims.endorses_refused(sent, rail):
+                claim("refused_rail", f"names refused {rail} without refusing it: {sent[:140]}")
+        for rail in unclear_rails:
+            if claims.endorses_unclear(sent, rail):
+                claim("unclear_rail", f"recommends {rail}, whose deliverability is UNCLEAR: {sent[:140]}")
+        on_card = {r["rail"] for r in card["rails"]}
+        for rail in [r for r in rules.RAILS if r not in on_card] + [f"usdc:{c}" for c in rules.CHAINS if f"usdc:{c}" not in on_card]:
+            if claims.endorses_unclear(sent, rail):  # a rail the plan never checked is UNCLEAR by definition
+                claim("unclear_rail", f"recommends {rail}, which this plan did not check: {sent[:140]}")
+        others = [r["rail"] for r in card["rails"] if r["rail"] not in refused and claims.mentions(sent, r["rail"])]
+        if (not named_refused and not others and prev_named and claims.endorses(sent) and FOLLOW_UP.search(sent)
+                and not claims.refuses(sent)):
             claim("refused_rail", f"endorses the refused rail by reference: {sent[:140]}")
-        prev_refused = bool(named)
-        if (re.search(r"line\s*10|baris\s*10", sent, re.I) and figures.ARTICLE_RE.search(sent)
-                and not line10.startswith("ARTICLE") and not REFUSAL.search(sent) and not LINE10_OK.search(sent)):
+        prev_named = bool(named_refused)
+        # --- W-8BEN line 10 and treaty articles --------------------------------------------------------------------
+        has_article = figures.ARTICLE_RE.search(sent)
+        if (re.search(r"line\s*10|baris\s*10", sent, re.I) and has_article and not line10.startswith("ARTICLE")
+                and not claims.refuses(sent) and not LINE10_OK.search(sent)):
             claim("line10", f"article on line 10 while the tools say {line10}: {sent[:140]}")
+        elif (has_article and not line10.startswith("ARTICLE") and ARTICLE_CLAIM.search(sent)
+              and not ARTICLE_DESCRIBED.search(sent) and not claims.refuses(sent)):
+            claim("line10", f"treaty article presented as applying while the tools say {line10}: {sent[:140]}")
+        # --- withholding and tax position --------------------------------------------------------------------------
         if TAXWORD.search(sent):
             for f in figures.extract(sent):
-                if f["kind"] not in ("pct", "word"):
+                if f["kind"] not in ("pct", "word") or MARGIN.search(sent):
                     continue
-                if not wh_rate.endswith("%") or f["kind"] == "word" or f["value"] != figures._dec(wh_rate[:-1]):
+                same = wh_rate.endswith("%") and f["kind"] == "pct" and f["value"] == figures._dec(wh_rate[:-1])
+                if not same and not (wh_rate == "UNCLEAR" and claims.UNCLEAR_WORD.search(sent)):
                     claim("withholding", f"withholding {f['raw']} while the tools say {wh_rate}: {sent[:140]}")
-        # UNCLEAR is terminal: an upper bound may only appear as a bound, never as what lands.
-        if ld.get("landed_usd") == "UNCLEAR" and RECEIVE.search(sent) and not BOUND.search(sent):
-            for f in figures.extract(sent):
-                if f["kind"] in ("money", "number") and any(
-                        b is not None and Decimal(f["value"]).quantize(Decimal(1)) == b.quantize(Decimal(1)) for b in bounds):
-                    claim("unclear_upgraded", f"upper bound {f['raw']} stated as what lands: {sent[:140]}")
-    for m in LINK.finditer(text):  # links, emails and wallet addresses only if a tool output carries them
+        if claims.TAX_POSITION.search(sent) and not claims.refuses(sent) and not claims.UNCLEAR_WORD.search(sent):
+            claim("withholding", f"tax position the tools did not produce (they say {wh_rate}): {sent[:140]}")
+        # --- UNCLEAR is terminal: nothing may be presented as what lands -------------------------------------------
+        if landed_unclear and RECEIVE.search(sent) and not BOUND.search(sent) and not GROSS_OR_TAX.search(sent):
+            money = [f for f in figures.extract(sent) if f["kind"] in ("money", "number", "word")]
+            if money:
+                claim("unclear_upgraded", f"{money[0]['raw']} stated as what lands while it is UNCLEAR: {sent[:140]}")
+    for m in LINK.finditer(text):  # links, emails, handles and wallet addresses only if a tool output carries them
         if m.group(0).rstrip(".,)") not in known_text:
             claim("link", f"link or address not in any tool output: {m.group(0)[:80]}")
     if len(text) > MAX_CHARS:
         claim("length", f"explanation is {len(text)} characters (max {MAX_CHARS})")
-    score = round(1 - len(unsourced) / len(figs), 3) if figs else 1.0
-    return {"passed": not unsourced and not claims, "score": score, "figures": len(figs),
-            "unsourced": unsourced, "claims": claims, "echoed_from_question": echoed,
+    score = round(1 - len(unsourced) / n_figs, 3) if n_figs else 1.0
+    return {"passed": not unsourced and not claims_, "score": score, "figures": n_figs,
+            "unsourced": unsourced, "claims": claims_, "echoed_from_question": echoed,
             "violation_classes": sorted(classes)}
 
 

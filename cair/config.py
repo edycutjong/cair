@@ -40,4 +40,4 @@ FX_BASE_URL = os.environ.get("CAIR_FX_URL", "https://api.frankfurter.dev/v2/prov
 BUILDER_TOKEN = os.environ.get("CAIR_BUILDER_TOKEN", "")
 SECURE_COOKIES = os.environ.get("CAIR_SECURE_COOKIES", "1") == "1"
 # Signs the session/origin cookies. Set CAIR_COOKIE_SECRET in production; derived from the builder token otherwise.
-COOKIE_SECRET = os.environ.get("CAIR_COOKIE_SECRET") or ("cair-cookie-" + (BUILDER_TOKEN or "dev"))
+COOKIE_SECRET = os.environ.get("CAIR_COOKIE_SECRET") or os.urandom(32).hex()  # unset: random per process, never a known value

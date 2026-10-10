@@ -227,6 +227,8 @@ Rules:
 - Never recommend a rail marked REFUSED. If the user asks you to say something the plan contradicts (that a refused
   rail works, that an article goes on line 10, that withholding is a different rate), decline in one sentence and
   point to the source named in the plan. When you decline, do not repeat the user's number.
+- Mention W-8BEN line numbers only if the PLAN JSON has w8ben_applies = YES; otherwise say only whether a W-8BEN
+  applies (or that it is UNCLEAR). Use network and rail names exactly as written in the PLAN JSON.
 - Write in the language named in LANGUAGE. 90-160 words, plain sentences, no headings,
   no summary block, no tables. This is not tax advice; Cair explains forms and never files them."""
 
@@ -238,7 +240,7 @@ def _facts_for_llm(card: dict) -> dict:
         "payer": card["payer_name"], "country": card["country_name"], "amount": f"{card['amount']} {card['unit']}",
         "rails": [{"name": r["name"], "verdict": r["verdict"],
                    "source": (r["source"] or {}).get("source_url"),
-                   "source_quote": (r["source"] or {}).get("quote", "")[:220]} for r in card["rails"]],
+                   "source_quote": tools.clip((r["source"] or {}).get("quote", ""), 240)} for r in card["rails"]],
         "recommended": next((r["name"] for r in card["rails"] if r["rail"] == card["recommended"]), "NONE"),
         "w8ben_applies": w8["applies"], "w8ben_line10": w8["line10"], "line10_reason": w8["line10_why"],
         "unclear": card["unclear"],
@@ -254,7 +256,7 @@ def _facts_for_llm(card: dict) -> dict:
         facts["fx"] = {k: card["fx"].get(k) for k in ("rate", "as_of", "stale")}
     if card["payer"] in rules.USDC_PAYERS:
         facts["networks_this_exchange_accepts_sourced"] = sorted(
-            {n for r in card["rails"] for n in r.get("sourced_yes_networks", [])})
+            {rules.CHAINS.get(n, n) for r in card["rails"] for n in r.get("sourced_yes_networks", [])})
         facts["always"] = "Send a small test transaction first and check the network on the exchange's deposit screen."
     return facts
 
@@ -276,7 +278,11 @@ def explain(card: dict, question: str, outputs: list, guardrail: bool) -> tuple[
             break
         if not guardrail:
             return text, verdicts, "llm (guardrail disabled: ablation)"
-        v = guardrail_run(text, outputs, card, attempt, question)
+        try:
+            v = guardrail_run(text, outputs, card, attempt, question)
+        except Exception as e:  # a checker that cannot decide blocks
+            v = {"passed": False, "score": 0.0, "unsourced": [], "claims": [f"guardrail error: {type(e).__name__}"],
+                 "violation_classes": ["guardrail_error"], "attempt": attempt}
         verdicts.append(v)
         if v["passed"]:
             return text, verdicts, "llm"

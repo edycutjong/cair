@@ -16,6 +16,13 @@ UNCLEAR = rules.UNCLEAR
 FORCE_FAIL: contextvars.ContextVar[str | None] = contextvars.ContextVar("cair_force_fail", default=None)
 
 
+def clip(text: str, n: int) -> str:
+    """Shorten at a word boundary, marking the cut."""
+    if len(text) <= n:
+        return text
+    return text[:n].rsplit(" ", 1)[0].rstrip(" ,;:([") + " …"
+
+
 class ToolFailure(RuntimeError):
     pass
 
@@ -30,7 +37,7 @@ def _src(fact: rules.Fact | None, sheet: rules.Sheet) -> dict | None:
         return None
     d = fact.as_dict()
     if fact.source_id in sheet.quotes:
-        d["quote"] = sheet.quotes[fact.source_id]["quote"][:400]
+        d["quote"] = clip(sheet.quotes[fact.source_id]["quote"], 400)
         d["page_date"] = sheet.quotes[fact.source_id].get("page_date", "")
     return d
 

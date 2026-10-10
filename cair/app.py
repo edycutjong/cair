@@ -20,10 +20,12 @@ from fastapi.templating import Jinja2Templates
 from starlette.concurrency import run_in_threadpool
 from ulid import ULID
 
-from . import config, db, neat, planner, reconcile, rules, view
+from . import config, db, neat, planner, reconcile, rules, tools, view
 
 TEMPLATES = Jinja2Templates(directory=str(config.ROOT / "cair" / "templates"))
 TEMPLATES.env.filters["sentence"] = lambda s: (s[:1].upper() + s[1:]) if s else s
+TEMPLATES.env.filters["clip"] = lambda s, n: tools.clip(s or "", n)
+TEMPLATES.env.filters["grouped"] = lambda x: f"{Decimal(str(x)):,}" if x not in (None, "", "UNCLEAR") else x
 
 
 @asynccontextmanager
@@ -72,9 +74,10 @@ def limited(request: Request, bucket: str) -> bool:
         if len(_hits) > 50_000:  # evict idle keys so the table cannot grow without bound
             for k in [k for k, q in _hits.items() if not q or time.time() - q[-1] > 86400]:
                 del _hits[k]
-        if bucket == "plan" and _over(("*", "plan_global"), *LIMITS["plan_global"]):
-            return True  # a daily ceiling on paid LLM calls, whatever the source address
-        return _over((client_ip(request), bucket), *LIMITS[bucket])
+        if _over((client_ip(request), bucket), *LIMITS[bucket]):
+            return True  # rejected per address first, so one address cannot burn the global budget
+        # a daily ceiling on paid LLM calls, whatever the source address
+        return bucket == "plan" and _over(("*", "plan_global"), *LIMITS["plan_global"])
 
 
 # --- identity: one browser visit = one neatlogs session; the end-user id is a random cookie, stored hashed -----------

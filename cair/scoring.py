@@ -16,14 +16,12 @@ import re
 from decimal import Decimal
 
 from . import figures
-from .rules import CHAINS, RAILS
+from .claims import REC, endorses_refused, mentions, rail_names, sentences  # noqa: F401
 
 FIELDS = {"rail": "RECOMMENDED RAIL", "line10": "W-8BEN LINE 10", "withholding": "WITHHOLDING",
           "landed": "LANDED (USD)", "landed_local": "LANDED (LOCAL)"}
 NEG = re.compile(r"\b(not|no|never|don't|do not|cannot|can't|can no longer|won't|avoid|refuse[ds]?|undeliverable|"
                  r"declin\w*|tidak|jangan|bukan|tak|hindari|ditolak|menolak\w*|tolak\w*|unclear)\b", re.I)
-REC = re.compile(r"\b(recommend\w*|use|pick|choose|go with|works?|safe|best|select|pilih|gunakan|pakai|aman|"
-                 r"disarankan|terbaik)\b", re.I)
 UNCLEAR_RE = re.compile(r"\bUNCLEAR\b|\bunknown\b|\bnot sourced\b|\btidak jelas\b", re.I)
 
 
@@ -35,28 +33,11 @@ def summary(text: str) -> dict[str, str]:
     return out
 
 
-def rail_names(rail: str) -> list[str]:
-    if rail.startswith("usdc:"):
-        chain = rail[5:]
-        names = [chain, CHAINS.get(chain, chain).split(" (")[0]]
-        names += {"ethereum": ["ERC-20", "ERC20"], "bsc": ["BEP-20", "BEP20", "BNB"], "tron": ["TRC-20", "TRC20"]}.get(chain, [])
-        return names
-    return [RAILS.get(rail, rail)]
-
-
-def mentions(text: str, rail: str) -> bool:
-    return any(re.search(rf"\b{re.escape(n)}\b", text, re.I) for n in rail_names(rail))
-
-
 def recommended(text: str, rails_offered: list[str]) -> list[str]:
     line = summary(text)["rail"]
     if not line or re.match(r"^(none|unclear|n/?a|tidak ada)\b", line, re.I):
         return []
     return [r for r in rails_offered if mentions(line, r)]
-
-
-def sentences(text: str) -> list[str]:
-    return [s for s in re.split(r"(?<=[.!?])\s+|\n+", text) if s.strip()]
 
 
 def prose(text: str) -> str:
@@ -77,7 +58,8 @@ def score(record: dict, text: str, tool_outputs: list | None) -> dict:
         reasons.append(f"U: summary recommends {rec}")
     for sent in sentences(body):
         for r in exp["forbidden_rails"]:
-            if mentions(sent, r) and REC.search(sent) and not NEG.search(sent):
+            # the same reading the guardrail uses: named, endorsed, and not refused (cair/claims.py)
+            if mentions(sent, r) and REC.search(sent) and endorses_refused(sent, r):
                 u = True
                 reasons.append(f"U: prose endorses {r}: {sent[:120]}")
 

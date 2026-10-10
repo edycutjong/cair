@@ -24,9 +24,11 @@ _ALLOW = [
 ALLOW_RE = re.compile("|".join(_ALLOW), re.I)
 
 _NUM = r"\d{1,3}(?:[,.\s]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?"
+MULT = {"k": 1_000, "rb": 1_000, "ribu": 1_000, "thousand": 1_000, "m": 1_000_000, "jt": 1_000_000,
+        "juta": 1_000_000, "million": 1_000_000, "mn": 1_000_000}
 MONEY_RE = re.compile(
-    rf"(?:(?:US)?\$|USD|USDC|IDR|Rp\.?|INR|₹|PHP|₱)\s?({_NUM})(?:\s?(?:juta|million|jt))?"
-    rf"|({_NUM})\s?(?:USD|USDC|IDR|INR|PHP|dollars?|dolar|rupiah)\b", re.I)
+    rf"(?:(?:US)?\$|USD|USDC|IDR|Rp\.?|INR|₹|PHP|₱)\s?({_NUM})(?:\s?(k|rb|ribu|thousand|m|mn|jt|juta|million)\b)?"
+    rf"|({_NUM})\s?(k|rb|ribu|thousand|m|mn|jt|juta|million)?\s?(?:USD|USDC|IDR|INR|PHP|dollars?|dolar|rupiah)\b", re.I)
 PCT_RE = re.compile(rf"({_NUM})\s?(?:%|percent|per cent|pct|persen)", re.I)
 # A rate or an amount written in words is never in a tool output, so it is always a new figure.
 _WORDNUM = (r"(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|"
@@ -71,14 +73,13 @@ def extract(text: str) -> list[dict]:
         for m in rx.finditer(masked):
             if taken(*m.span()):
                 continue
-            raw = next(g for g in m.groups() if g)
+            groups = [g for g in m.groups() if g]
+            raw = groups[0]
             val = _dec(raw)
             if val is None:
                 continue
-            if kind == "money" and re.search(r"juta|jt", m.group(0), re.I):
-                val *= 1_000_000
-            if kind == "money" and re.search(r"million", m.group(0), re.I):
-                val *= 1_000_000
+            if kind == "money" and len(groups) > 1 and groups[1].lower() in MULT:
+                val *= MULT[groups[1].lower()]
             found.append({"kind": kind, "value": val, "raw": m.group(0).strip()})
             spans.append(m.span())
     for m in list(WORD_PCT_RE.finditer(text)) + list(WORD_MONEY_RE.finditer(text)):
@@ -156,13 +157,16 @@ def is_sourced(fig: dict, pools: Pools) -> bool:
         return False
     if fig["kind"] == "article":
         return fig["value"] in pools.arts
-    v = Decimal(fig["value"])
-    pool = pools.pct if fig["kind"] == "pct" else pools.money
-    if v in pool:
-        return True
-    # Same value at the precision it is displayed with ("$4,900" = 4900.00, "62.82" = 62.821) — nothing looser.
-    q = Decimal(1).scaleb(-_places(fig["raw"]))
-    return any(n.quantize(q) == v.quantize(q) for n in pool)
+    try:
+        v = Decimal(fig["value"])
+        pool = pools.pct if fig["kind"] == "pct" else pools.money
+        if v in pool:
+            return True
+        # Same value at the precision it is displayed with ("$4,900" = 4900.00, "62.82" = 62.821) — nothing looser.
+        q = Decimal(1).scaleb(-_places(fig["raw"]))
+        return any(n.quantize(q) == v.quantize(q) for n in pool)
+    except InvalidOperation:  # absurdly long numbers: never sourced, never a crash
+        return False
 
 
 def unsourced(text: str, tool_outputs: list) -> list[str]:

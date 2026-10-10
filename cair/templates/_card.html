@@ -18,7 +18,7 @@
       <li class="rail rail-{{ r.verdict|lower }}{% if r.recommended %} is-rec{% endif %}">
         <span class="rail-name">{{ r.name }}</span>
         <span class="verdict">{% if r.verdict == 'DELIVERS' %}DELIVERS{% elif r.verdict == 'REFUSED' %}<span class="stamp stamp-before">REFUSED</span>{% else %}<span class="stamp stamp-unclear">UNCLEAR</span>{% endif %}{% if r.fn %}<sup><a href="#fn-{{c.plan_id}}-{{r.fn}}">{{ r.fn }}</a></sup>{% endif %}</span>
-        {% if r.source and r.source.quote and r.verdict != 'DELIVERS' %}<q class="quote">{{ r.source.quote[:220] }}</q>{% endif %}
+        {% if r.source and r.source.quote and r.verdict != 'DELIVERS' %}<q class="quote">{{ r.source.quote|clip(240) }}</q>{% endif %}
         {% if r.note %}<span class="fine quote">{{ r.note }}.</span>{% elif not r.source %}<span class="nosrc">no primary source checked</span>{% endif %}
         {% if r.recommended and 'rail' in card.confirmable %}
           <button class="confirm{% if 'rail' in card.confirmed %} is-done{% endif %}" data-line="rail" aria-pressed="{{ 'true' if 'rail' in card.confirmed else 'false' }}">{% if 'rail' in card.confirmed %}Confirmed{% else %}Confirm{% endif %}</button>
@@ -79,7 +79,7 @@
       {% endif %}
     </div>
     {% if card.fx and card.fx.rate and card.fx.rate != 'UNCLEAR' %}
-    <p class="fx mono">1 USD = {{ card.fx.rate }} {{ card.fx.quote }} · ECB reference rate, as of {{ card.fx.as_of }}{% if card.fx.stale %} · <b class="state-unclear">STALE</b>{% endif %}{% if card.landed.fx_fn %}<sup><a href="#fn-{{c.plan_id}}-{{card.landed.fx_fn}}">{{ card.landed.fx_fn }}</a></sup>{% endif %}</p>
+    <p class="fx mono">1 USD = {{ card.fx.rate|grouped }} {{ card.fx.quote }} · ECB reference rate, as of {{ card.fx.as_of }}{% if card.fx.stale %} · <b class="state-unclear">STALE</b>{% endif %}{% if card.landed.fx_fn %}<sup><a href="#fn-{{c.plan_id}}-{{card.landed.fx_fn}}">{{ card.landed.fx_fn }}</a></sup>{% endif %}</p>
     {% endif %}
   </section>
 
@@ -102,7 +102,7 @@
 
   <ol class="notes mono">
     {% for n in card.notes %}
-    <li id="fn-{{c.plan_id}}-{{loop.index}}"><span class="tool">{{ n.tool }}</span>{% if n.id %} · {{ n.id }}{% endif %}{% if n.url %} · <a href="{{ n.url }}" rel="noopener" target="_blank">{{ n.short }}</a>{% endif %}{% if n.page_date %} · page dated {{ n.page_date }}{% endif %}{% if n.accessed %} · read {{ n.accessed }}{% endif %}{% if n.extra %} · {{ n.extra }}{% endif %}</li>
+    <li id="fn-{{c.plan_id}}-{{loop.index}}"><span class="tool">{{ n.tool }}</span>{% if n.id %} · {{ n.id }}{% endif %}{% if n.url %} · <a href="{{ n.url }}" rel="noopener" target="_blank">{{ n.short }}</a>{% endif %}{% if n.page_date %} · {{ n.page_date if 'dated' in n.page_date or 'Updated' in n.page_date else 'page dated ' ~ n.page_date }}{% endif %}{% if n.accessed %} · read {{ n.accessed }}{% endif %}{% if n.extra %} · {{ n.extra }}{% endif %}</li>
     {% endfor %}
   </ol>
 

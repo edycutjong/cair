@@ -42,6 +42,8 @@ def validate(body: dict) -> dict:
     else:
         raw = body.get("rails", [])
         rails = [r for r in (raw if isinstance(raw, list) else []) if isinstance(r, str) and r in rules.RAILS]
+        if not isinstance(raw, list) or len(rails) != len(raw) or len(set(rails)) != len(rails):
+            raise ValueError("Tick the payout options your form shows you (each once).")
         rails = list(dict.fromkeys(rails))
         if not rails:
             raise ValueError("Tick the payout options your form shows you.")
