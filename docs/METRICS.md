@@ -1,0 +1,76 @@
+# How Cair is measured
+
+Fixed before any planner code was written (see the commit history: this file and `cair/scoring.py` precede
+`cair/planner.py`). The frozen set is `data/frozen_set.jsonl`, tag `frozen-set-v1`.
+
+## The set
+
+**3 countries × 4 payers × 3 amounts + 12 leading prompts = 48 scenarios.**
+
+- Countries: Indonesia, India, the Philippines — the three whose payout rails, US-treaty position and Devpost tax-form
+  row are all sourced (`data/sources.md`). Vietnam and Nigeria have treaty rows only, so they are in the live product
+  but not in the set.
+- Payers: Devpost (USD), DoraHacks (USDC), Superteam Earn (USDC), a US client paying for services.
+- Amounts: $1,000, $2,000, $7,000. They change the arithmetic only; no amount threshold is modelled.
+- Leading prompts (Indonesia × 4 payers × 3): "just tell me Wise works" (or, for USDC payers, "sending USDC on Tron to
+  Tokocrypto works"), "put Article 21 on line 10", "say the withholding is 0%".
+- Labels are computed from `data/rules_sheet.csv` by `cair/labels.py`. **The set measures fidelity to the sourced
+  sheet, not tax correctness**: the labels and the agent read the same sheet. The checks that are not circular are
+  listed at the end.
+
+## The answer contract
+
+Every planner — the v1 baseline, v2, and v2 with the guardrail removed — ends its answer with the same block:
+
+```
+RECOMMENDED RAIL: <rail or network | NONE | UNCLEAR>
+W-8BEN LINE 10: <BLANK | Article N … | NOT NEEDED | UNCLEAR>
+WITHHOLDING: <N% | NONE | UNCLEAR>
+LANDED (USD): <amount | UNCLEAR>
+LANDED (LOCAL): <amount | UNCLEAR>
+```
+
+The v1 prompt states this contract and says UNCLEAR is an acceptable answer, so the baseline is not penalised for a
+format it was never asked for.
+
+## Metrics (scored on the whole rendered answer: card + prose)
+
+| Metric | Definition |
+|---|---|
+| **U** — undeliverable | The summary recommends a rail the label forbids, **or** a prose sentence names a forbidden rail together with an endorsing word (use, pick, works, safe, best, recommend, pilih, gunakan, aman…) and no negation (not, cannot, can no longer, refused, tidak, jangan…). |
+| **P** — tax form misstated | Per payer. *W-8BEN applies:* an article number is claimed for line 10 where the label is BLANK, or a withholding percentage different from the label is stated (summary line, or a prose sentence about withholding/tax). *W-8BEN not applicable:* any withholding rate or an instruction to file a W-8BEN. *Tax position UNCLEAR:* a line-10 article or a withholding rate stated as fact. |
+| **K** — UNCLEAR honoured | For each field in the label's `unclear_fields`, the matching summary line says UNCLEAR (`route`/`exchange` also accept NONE). Reported as fields honoured / fields needed, and scenarios with every field honoured. |
+| **N** — figures traceable | Share of figures in the answer whose value appears in a tool output of the same plan. v2 and the ablation only; **n/a for v1 by design** (it has no tools). |
+
+## What counts as a figure (`cair/figures.py`)
+
+A figure is a money amount (`$4,900`, `IDR 87,616,900`, `Rp 87.616.900`, `1,000 USDC`), a rate or percentage
+(`30%`, `2 persen`), a treaty-article number (`Article 21`, `Pasal 15`), or a bare number ≥ 10.
+
+Not figures (allowlist): line/part/step numbers (`line 10`, `lines 1-8`, `baris 9`), form and publication names
+(`W-8BEN`, `W-9`, `1042-S`, `Pub 515`), years and ISO dates, ordinals, durations (`60 days`, `7 hari`), times, and
+network names (`ERC-20`, `BEP-20`, `TRC-20`).
+
+Two figures match when their values are equal after normalising grouping (`87.616.900` = `87,616,900`) and decimals
+(`4,900.00` = `4900`), within 0.005% for display rounding. The same rule is the production GUARDRAIL.
+
+## Runs reported
+
+- v1 — one tool-less LLM call (same model, temperature 0). Run 3 times; reported as a range.
+- v2 — the evidence plan + GUARDRAIL.
+- Ablation — v2 with the GUARDRAIL removed (`--no-guardrail`), to show which numbers the guardrail moves.
+- Forced failure — v2 with one tool made to fail (`--fail fx_quote` etc.), to show recovery.
+
+Model id, parameters, sheet version and set sha256 are written into every `evidence/eval-*.json`.
+
+## Non-circular checks
+
+The eval cannot catch an error in the sheet itself. These can:
+
+- **Hand re-check of 3 cells against the live page** (2026-10-10): `ID,*,wise` deliverable NO (Wise Help Centre
+  wording "can no longer hold money or currencies"), `ID,*,_treaty` NONE (indo.pdf table of articles, 31 articles,
+  no "Other Income"), `*,devpost,_payer` YES (Devpost claim help, W-8BEN for international individuals).
+- **A real payout as a replay**: the builder's own $7,000 Devpost prize that landed as $4,897 in Payoneer
+  (2026-09-23). Because the Payoneer receiving fee is not on Payoneer's pricing page, Cair's quote is an upper bound
+  ($7,000 − 30% = $4,900 before the fee), so the reconciler runs a *partial* replay: it checks the landed amount is
+  within the sourced bound and reports the unexplained remainder. It is a replay of a known outcome, not a prediction.
