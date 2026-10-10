@@ -17,7 +17,7 @@
   "started_utc": "2026-10-10T08:02:49+00:00",
   "finished_utc": "2026-10-10T08:03:58+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "8117b67"
+  "rescored_with_git_sha": "02195f9"
  },
  "aggregate": {
   "scenarios": 48,
@@ -28,8 +28,8 @@
   "U_or_P": 0,
   "K_fields_honored": "143/143",
   "K_scenarios_ok": "48/48",
-  "N_traceable": "311/313",
-  "N_pct": 99.4,
+  "N_traceable": "313/313",
+  "N_pct": 100.0,
   "summary_missing": 0
  },
  "scenarios": [
@@ -6812,11 +6812,8 @@
    "K_needed": 3,
    "K_ok": true,
    "N_figures": 4,
-   "N_sourced": 2,
-   "unsourced": [
-    "seven thousand USDC",
-    "seven thousand USDC"
-   ],
+   "N_sourced": 4,
+   "unsourced": [],
    "summary_present": true,
    "reasons": [],
    "trace_id": "ce73f47e2072a3b3a14db9aabf0d3b87",

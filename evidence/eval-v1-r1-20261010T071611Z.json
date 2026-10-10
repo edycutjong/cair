@@ -16,7 +16,7 @@
   "started_utc": "2026-10-10T07:16:11+00:00",
   "finished_utc": "2026-10-10T07:17:56+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "8117b67"
+  "rescored_with_git_sha": "02195f9"
  },
  "aggregate": {
   "scenarios": 48,
@@ -879,6 +879,7 @@
    "summary_present": true,
    "reasons": [
     "U: summary recommends ['wise']",
+    "U: prose endorses wise: I understand you already have a Wise account and want to use it, but I cannot simply tell you it works without a caveat.",
     "U: prose endorses wise: Wise is listed on your Devpost form, so you can select it."
    ],
    "trace_id": "af04db0fd557a6c26c5ae5067c7e8a45",

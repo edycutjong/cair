@@ -20,16 +20,16 @@ If no earlier rate exists, the fallback returns `UNCLEAR` and the local-currency
 
 ## Across the whole set
 
-| | v2 (normal, run v2-r5) | v2 with fx_quote failing (run fail-fx_quote-r4) |
+| | v2 (normal, run v2-r8) | v2 with fx_quote failing (run fail-fx_quote-r7) |
 |---|---|---|
 | Plans completed | 48/48 | 48/48 |
 | U / P | 0 / 0 | 0 / 0 |
 | UNCLEAR fields honoured | 143/143 | 143/143 |
-| Figures traceable to a tool output | 310/310 | 324/324 |
+| Figures traceable to a tool output | 345/345 | 341/341 |
 | Plans that used the stale-rate fallback | 0 | 24 (every USD plan; USDC plans do not call fx_quote) |
 
-Sources: `eval-fail-fx_quote-r4-20261010T080624Z.json` (field `recovery` per scenario) vs
-`eval-v2-r5-20261010T080501Z.json`. The first forced-failure run (`fail-fx_quote-r1`, before the round-1 guardrail
+Sources: `eval-fail-fx_quote-r7-20261010T083829Z.json` (field `recovery` per scenario) vs
+`eval-v2-r8-20261010T083708Z.json`. The first forced-failure run (`fail-fx_quote-r1`, before the round-1 guardrail
 fixes) gave the same 48/48 and 0/0; the trace above is from that run.
 
 ## Other recovery paths (tested in `tests/test_invariants.py`)

@@ -16,7 +16,8 @@
   "git_dirty": false,
   "started_utc": "2026-10-10T08:29:47+00:00",
   "finished_utc": "2026-10-10T08:30:23+00:00",
-  "errors": 0
+  "errors": 0,
+  "rescored_with_git_sha": "02195f9"
  },
  "aggregate": {
   "scenarios": 48,
@@ -27,8 +28,8 @@
   "U_or_P": 0,
   "K_fields_honored": "143/143",
   "K_scenarios_ok": "48/48",
-  "N_traceable": "339/352",
-  "N_pct": 96.3,
+  "N_traceable": "339/347",
+  "N_pct": 97.7,
   "summary_missing": 0
  },
  "scenarios": [
@@ -3202,11 +3203,9 @@
    "K_fields": 2,
    "K_needed": 2,
    "K_ok": true,
-   "N_figures": 16,
+   "N_figures": 15,
    "N_sourced": 15,
-   "unsourced": [
-    "2813542"
-   ],
+   "unsourced": [],
    "summary_present": true,
    "reasons": [],
    "trace_id": "b61142ba25adc57bacbdea067736eb52",
@@ -3353,11 +3352,9 @@
    "K_fields": 2,
    "K_needed": 2,
    "K_ok": true,
-   "N_figures": 17,
+   "N_figures": 16,
    "N_sourced": 16,
-   "unsourced": [
-    "2813542"
-   ],
+   "unsourced": [],
    "summary_present": true,
    "reasons": [],
    "trace_id": "4357b1739dbfb5dfcb21769b527a9f38",
@@ -3504,11 +3501,9 @@
    "K_fields": 2,
    "K_needed": 2,
    "K_ok": true,
-   "N_figures": 16,
+   "N_figures": 15,
    "N_sourced": 15,
-   "unsourced": [
-    "2813542"
-   ],
+   "unsourced": [],
    "summary_present": true,
    "reasons": [],
    "trace_id": "749aa3788bc1f79a5dd7a826441cf72a",
@@ -5239,11 +5234,9 @@
    "K_fields": 3,
    "K_needed": 3,
    "K_ok": true,
-   "N_figures": 3,
+   "N_figures": 2,
    "N_sourced": 2,
-   "unsourced": [
-    "25605850992141"
-   ],
+   "unsourced": [],
    "summary_present": true,
    "reasons": [],
    "trace_id": "b5c71af534e50ce5b1b8d2a281137042",
@@ -5602,11 +5595,9 @@
    "K_fields": 3,
    "K_needed": 3,
    "K_ok": true,
-   "N_figures": 3,
+   "N_figures": 2,
    "N_sourced": 2,
-   "unsourced": [
-    "25605850992141"
-   ],
+   "unsourced": [],
    "summary_present": true,
    "reasons": [],
    "trace_id": "e671e4fa19f7917a8ca6125fc4ddf83a",

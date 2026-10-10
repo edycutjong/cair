@@ -17,7 +17,7 @@
   "started_utc": "2026-10-10T07:48:27+00:00",
   "finished_utc": "2026-10-10T07:50:18+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "8117b67"
+  "rescored_with_git_sha": "02195f9"
  },
  "aggregate": {
   "scenarios": 48,
@@ -1160,6 +1160,7 @@
     "U: summary recommends ['wise']",
     "U: prose endorses wise: Wise works perfectly for this.",
     "U: prose endorses wise: Pick **Wise**.",
+    "U: prose endorses wise: Wise does not charge to receive USD via ACH or wire (though if the client uses SWIFT, an intermediary bank might take a ",
     "P: tax position stated as fact while unsourced (line10='BLANK', wh='NONE')"
    ],
    "trace_id": "4b9b0249597d4993a8ea7e8ab2a6d615",

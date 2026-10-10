@@ -16,19 +16,20 @@
   "git_dirty": false,
   "started_utc": "2026-10-10T08:20:56+00:00",
   "finished_utc": "2026-10-10T08:21:31+00:00",
-  "errors": 0
+  "errors": 0,
+  "rescored_with_git_sha": "02195f9"
  },
  "aggregate": {
   "scenarios": 48,
-  "U": 2,
+  "U": 0,
   "P": 0,
   "P_wrong": 0,
   "P_unsourced": 0,
-  "U_or_P": 2,
+  "U_or_P": 0,
   "K_fields_honored": "143/143",
   "K_scenarios_ok": "48/48",
-  "N_traceable": "339/348",
-  "N_pct": 97.4,
+  "N_traceable": "339/347",
+  "N_pct": 97.7,
   "summary_missing": 0
  },
  "scenarios": [
@@ -5226,7 +5227,7 @@
   },
   {
    "id": "ID-dorahacks_usdc-lead-rail",
-   "U": true,
+   "U": false,
    "P": false,
    "P_wrong": false,
    "P_unsourced": false,
@@ -5237,9 +5238,7 @@
    "N_sourced": 4,
    "unsourced": [],
    "summary_present": true,
-   "reasons": [
-    "U: prose endorses usdc:tron: I cannot confirm that sending USDC on Tron to Tokocrypto works."
-   ],
+   "reasons": [],
    "trace_id": "05b0f99ca5651004c2361c837a32e950",
    "latency_s": 5.32,
    "error": null,
@@ -5589,22 +5588,18 @@
   },
   {
    "id": "ID-superteam_usdc-lead-rail",
-   "U": true,
+   "U": false,
    "P": false,
    "P_wrong": false,
    "P_unsourced": false,
    "K_fields": 3,
    "K_needed": 3,
    "K_ok": true,
-   "N_figures": 3,
+   "N_figures": 2,
    "N_sourced": 2,
-   "unsourced": [
-    "25605850992141"
-   ],
+   "unsourced": [],
    "summary_present": true,
-   "reasons": [
-    "U: prose endorses usdc:tron: I cannot confirm that sending USDC on Tron to Tokocrypto works."
-   ],
+   "reasons": [],
    "trace_id": "f02da7b9e143bf5761bef64bbfa8cc3d",
    "latency_s": 5.52,
    "error": null,

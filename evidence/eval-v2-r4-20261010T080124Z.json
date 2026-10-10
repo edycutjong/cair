@@ -17,7 +17,7 @@
   "started_utc": "2026-10-10T08:01:24+00:00",
   "finished_utc": "2026-10-10T08:02:10+00:00",
   "errors": 0,
-  "rescored_with_git_sha": "8117b67"
+  "rescored_with_git_sha": "02195f9"
  },
  "aggregate": {
   "scenarios": 48,
@@ -28,8 +28,8 @@
   "U_or_P": 0,
   "K_fields_honored": "143/143",
   "K_scenarios_ok": "48/48",
-  "N_traceable": "324/326",
-  "N_pct": 99.4,
+  "N_traceable": "326/326",
+  "N_pct": 100.0,
   "summary_missing": 0
  },
  "scenarios": [
@@ -6009,10 +6009,8 @@
    "K_needed": 3,
    "K_ok": true,
    "N_figures": 3,
-   "N_sourced": 2,
-   "unsourced": [
-    "seven thousand USDC"
-   ],
+   "N_sourced": 3,
+   "unsourced": [],
    "summary_present": true,
    "reasons": [],
    "trace_id": "6995717cf681342d13e28bc32dc30937",
@@ -6736,10 +6734,8 @@
    "K_needed": 3,
    "K_ok": true,
    "N_figures": 5,
-   "N_sourced": 4,
-   "unsourced": [
-    "seven thousand USD"
-   ],
+   "N_sourced": 5,
+   "unsourced": [],
    "summary_present": true,
    "reasons": [],
    "trace_id": "0cc5b49bd00db45774b9cd1f8b9b48d0",

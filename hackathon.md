@@ -56,6 +56,13 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   standing recall check (30/30 scripted violations blocked, 0/14 honest texts blocked). Re-running the frozen set on
   the stricter rules exposed over-blocking (29/48 explanations replaced by the template), found from the guardrail
   fields in the evidence file and fixed (`evidence/rca-01.md`, second half).
-- **2026-10-10** — final runs: v2 U 0 / P 0 / UNCLEAR 143/143 / figures 310/310 (`eval-v2-r5`); a new baseline,
+- **2026-10-10** — runs after round 1: v2 U 0 / P 0 / UNCLEAR 143/143 / figures 310/310 (`eval-v2-r5`); a new baseline,
   one LLM call with the whole rules sheet in its prompt (`eval-v1s-r1`), still had U 2, P 11, UNCLEAR 110/143.
   v1 repeated 3 times: U 18 every run. Tests: 74.
+- **2026-10-10 evening** — second review pass (loop QA round 2): more guardrail bypasses (negated "not refused",
+  recommending an unchecked rail, tax claims without numbers, amounts phrased as "credited"/"net"), a crash on
+  absurdly long numbers and a rate-limit ordering bug were fixed; then three re-runs (r6–r8) found and removed
+  over-blocking of honest refusals. Final: v2 U 0 / P 0 / UNCLEAR 143/143 / figures 345/345 with no template
+  fallbacks (`eval-v2-r8`); forced FX failure 48/48, 341/341 (`eval-fail-fx_quote-r7`); guardrail recall 53/53
+  with 0/29 honest texts blocked. Bench: p50 5.27 s, p95 10.81 s, $0.0034 per plan
+  (`evidence/bench-20261010T083109Z.json`). Tests: 76.
