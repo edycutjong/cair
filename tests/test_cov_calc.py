@@ -153,3 +153,34 @@ def test_local_amount_rounds_to_currency_minor_unit():
 def test_gross_is_quantized_in_the_requested_unit():
     assert fee_calc("100.005", "USD", "NO", None, "0", "0", "1", "USD")["gross"] == "100.00"
     assert fee_calc("100.015", "USD", "NO", None, "0", "0", "1", "USD")["gross"] == "100.02"
+
+
+# --- the base-is-None guard on the local bound ----------------------------------------------------------------------
+@pytest.mark.parametrize("w8,wh", [("YES", "30%"), ("NO", None), ("UNCLEAR", None)])
+@pytest.mark.parametrize("fee", ["2.00", "500", None])
+@pytest.mark.parametrize("margin", ["1.5%", None])
+def test_with_a_usd_rate_some_local_figure_is_always_reported(w8, wh, fee, margin):
+    # The invariant the guard relies on: through the public inputs, landed and bound are never both missing,
+    # so a known rate on a USD unit always yields either landed_local or upper_bound_local.
+    out = calc(w8=w8, wh=wh, fee=fee, margin=margin)
+    if out["landed_local"] == UNCLEAR:
+        assert Decimal(out["upper_bound_local"]) >= 0
+        assert "ECB reference rate" in out["upper_bound_local_note"]
+    else:
+        assert "upper_bound_local" not in out
+
+
+def test_guard_skips_local_bound_instead_of_crashing_when_no_usd_base_exists(monkeypatch):
+    # Force the state the public inputs cannot reach (no landed amount AND no bound) by making the gross parse
+    # to "unknown"; the local leg must then report UNCLEAR and omit the bound, not multiply None by the rate.
+    import cair.calc as calc_mod
+
+    real_decimal, real_q = calc_mod.Decimal, calc_mod.q
+    monkeypatch.setattr(calc_mod, "Decimal", lambda v: None if v == "GROSS_UNKNOWN" else real_decimal(v))
+    monkeypatch.setattr(calc_mod, "q", lambda x, ccy: UNCLEAR if x is None else real_q(x, ccy))
+
+    out = calc_mod.fee_calc("GROSS_UNKNOWN", "USD", "UNCLEAR", None, None, "1.5%", "16000", "IDR")
+    assert out["gross"] == UNCLEAR
+    assert out["landed_usd"] == UNCLEAR and out["upper_bound_usd"] == UNCLEAR
+    assert out["landed_local"] == UNCLEAR
+    assert "upper_bound_local" not in out and "upper_bound_local_note" not in out
