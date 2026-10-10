@@ -1,0 +1,2 @@
+# .venv/bin/python scripts/mutation_route_rule.py  (2026-10-10T13:47Z, commit 9695044)
+mutation 'route = first offered option': 2448 scenarios, 2232 failing, 2256 violations

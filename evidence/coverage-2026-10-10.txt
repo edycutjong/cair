@@ -1,0 +1,6 @@
+# .venv/bin/python -m pytest -q --cov --cov-report=term  (2026-10-10T13:47Z, commit 9695044; branch coverage per pyproject.toml)
+Name                Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------------------
+---------------------------------------------------------------
+TOTAL                1579    133    500     75    89%
+94 passed in 29.21s
