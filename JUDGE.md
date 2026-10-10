@@ -9,7 +9,7 @@ every figure. Every plan is a neatlogs trace.** *The payout route a chatbot can'
 No account, no key, no clone.
 
 1. Open the [live app](https://app.cair.edycu.dev). Choose **Devpost · 7000 · Indonesia**, tick **Payoneer** and
-   **Wise**, press *Plan my payout* (about 5 seconds).
+   **Wise**, press *Plan my payout* (about 5–10 seconds).
 2. Read the card: **Wise REFUSED** with Wise's own sentence, **Payoneer** recommended, W-8BEN **line 10 blank**,
    30% withholding = $2,100.00, and *at most* $4,900.00 stamped **UNCLEAR** because Payoneer does not publish its
    receiving fee.
@@ -41,8 +41,9 @@ scenario in them carries its neatlogs trace id. Definitions: [`docs/METRICS.md`]
 
 ## Reproduce it (the real path)
 
-Every number above is produced with the real model, the real ECB rate and the real neatlogs project — there is no
-offline or mock mode for the product. [`DEMO.md` §3](https://github.com/edycutjong/cair/blob/main/DEMO.md) has the
+The eval, ablation, forced-failure and latency numbers above are produced with the real model, the real ECB rate and
+the real neatlogs project — there is no offline or mock mode for the product. (The held-out guardrail test feeds fixed
+sentences to the guardrail with the model call stubbed.) [`DEMO.md` §3](https://github.com/edycutjong/cair/blob/main/DEMO.md) has the
 commands (`scripts/eval.py --planner v2`, `--fail fx_quote`, `scripts/bench.py`). Separate and clearly **not** the
 product: `pytest` runs the deterministic core without network or keys, and the CI pipeline runs only that.
 

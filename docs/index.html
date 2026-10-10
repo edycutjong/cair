@@ -69,7 +69,7 @@
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; overflow-x: clip; scroll-behavior: smooth; scroll-padding-top: 84px;
-  scrollbar-color: var(--rule) var(--bg); }
+  scrollbar-color: color-mix(in srgb, var(--muted) 45%, var(--bg)) var(--bg); }
 body {
   margin: 0; color: var(--ink); background-color: var(--bg); caret-color: var(--after);
   font: 400 18px/1.6 var(--font-body); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
@@ -83,6 +83,7 @@ figure { margin: 0; }
 a { color: var(--after); text-underline-offset: 3px; text-decoration-thickness: 1px; transition: color .18s var(--ease); }
 a:hover { color: var(--ink); }
 :focus-visible { outline: 2px solid var(--after); outline-offset: 3px; border-radius: 2px; }
+.ledger :focus-visible { outline-color: var(--on-ink-after); }
 .nw { white-space: nowrap; }
 .vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .skip { position: absolute; left: 12px; top: -80px; z-index: 50; background: var(--ink); color: var(--paper); padding: 10px 14px; border-radius: 3px; }
@@ -139,17 +140,19 @@ code, .mono { font-family: var(--font-data); font-size: .84em; letter-spacing: -
 
 /* ---------- hero ---------- */
 .hero { position: relative; overflow: hidden; }
-.hero-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr);
-  grid-template-areas: "top top" "copy slip"; column-gap: clamp(32px, 5vw, 72px); align-items: start;
-  padding-top: clamp(36px, 6vw, 80px); padding-bottom: clamp(48px, 6vw, 84px); }
+.hero-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.16fr) minmax(0, .84fr);
+  grid-template-areas: "top slip" "copy slip" "key slip"; grid-template-rows: auto auto 1fr; column-gap: clamp(32px, 4.6vw, 68px);
+  align-items: start; padding-top: clamp(28px, 4.2vw, 56px); padding-bottom: clamp(48px, 6vw, 84px); }
+.hero-key { grid-area: key; }
 .hero-top { grid-area: top; }
 .hero-copy { grid-area: copy; padding-top: 6px; }
 .hero-slip { grid-area: slip; }
 .hero .rosette { position: absolute; right: -260px; top: -150px; width: 980px; height: 980px; opacity: .8; pointer-events: none; }
-.headline { font: 400 clamp(46px, 7.1vw, 104px)/.98 var(--font-display); letter-spacing: -.018em; margin: 22px 0 34px;
+.headline { font: 400 clamp(46px, 4.9vw, 68px)/.98 var(--font-display); letter-spacing: -.018em; margin: 18px 0 26px;
   max-width: 13.2em; text-wrap: balance; }
 .headline .w { display: inline-block; }
-.headline em { font-style: normal; color: var(--before); }
+.headline em { font-style: normal; color: var(--before); white-space: nowrap; }
+.headline .cm { color: var(--ink); }
 .fn { font: 500 .3em/0 var(--font-data); color: var(--after); text-decoration: none; vertical-align: super;
   margin-left: .06em; letter-spacing: 0; padding: 0 .1em; border-radius: 2px; transition: background-color .2s var(--ease); }
 .fn:hover { background: var(--wash-after); color: var(--after); }
@@ -172,7 +175,7 @@ code, .mono { font-family: var(--font-data); font-size: .84em; letter-spacing: -
 .slip { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; box-shadow: var(--shadow); }
 .slip::before { content: ""; position: absolute; inset: 7px; border: 1px solid color-mix(in srgb, var(--rule) 70%, transparent);
   border-radius: 2px; pointer-events: none; }
-.hero-slip { padding: clamp(22px, 2.4vw, 32px); transform: rotate(.5deg); margin-top: 4px; }
+.hero-slip { padding: clamp(22px, 2.4vw, 32px); transform: rotate(.5deg); margin-top: 10px; }
 .motion .hero-slip { animation: slip-in .9s var(--ease) .25s both; }
 @keyframes slip-in { from { opacity: 0; transform: translateY(18px) rotate(1.6deg); } }
 .slip-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; border-bottom: 2px solid var(--ink); padding-bottom: 12px; flex-wrap: wrap; }
@@ -183,10 +186,10 @@ code, .mono { font-family: var(--font-data); font-size: .84em; letter-spacing: -
 .strike { text-decoration: none; color: var(--before); padding: 0 1px;
   background: linear-gradient(var(--before), var(--before)) left 58% / 100% 2px no-repeat;
   -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.motion .armed .strike { background-size: 0% 2px; }
-.motion .armed .strike.play { animation: strike .6s var(--ease) both; animation-delay: var(--d, 0s); background-size: 100% 2px; }
+.motion .strike.armed { background-size: 0% 2px; }
+.motion .strike.armed.play { animation: strike .6s var(--ease) both; animation-delay: var(--d, 0s); background-size: 100% 2px; }
 @keyframes strike { from { background-size: 0% 2px; } }
-.nosrc { font: 700 10.5px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--before); white-space: nowrap;
+.nosrc { font: 700 12px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--before); white-space: nowrap;
   border: 1px solid color-mix(in srgb, var(--before) 45%, transparent); border-radius: 2px; padding: 3px 5px 2px; margin-right: 6px; vertical-align: 1px; }
 .gloss { margin: 5px 0 0; font-size: 13.5px; color: var(--muted); }
 .perf { position: relative; height: 0; border-top: 2px dashed color-mix(in srgb, var(--ink) 26%, transparent); margin: 6px -8px; }
@@ -203,8 +206,9 @@ code, .mono { font-family: var(--font-data); font-size: .84em; letter-spacing: -
 .row q { flex-basis: 100%; font-style: italic; color: var(--muted); font-size: 14.5px; line-height: 1.5; quotes: "\201C" "\201D"; }
 .row .lbl { font: 700 12px/1.3 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .row .why { flex-basis: 100%; font-size: 14px; color: var(--muted); }
-.src { font: 500 11px/1 var(--font-data); color: var(--after); text-decoration: none; vertical-align: super; margin-left: 5px;
+.src { font: 500 12px/1 var(--font-data); color: var(--after); text-decoration: none; vertical-align: super; margin-left: 5px;
   padding: 2px 3px; border-radius: 2px; letter-spacing: 0; position: relative; text-transform: none; white-space: nowrap; }
+.src::before { content: ""; position: absolute; inset: -7px -3px; }
 .src:hover, .src:focus-visible { background: var(--wash-after); color: var(--after); }
 .src[data-tip]:hover::after, .src[data-tip]:focus-visible::after {
   content: attr(data-tip); position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 5; width: max-content; max-width: 280px;
@@ -226,8 +230,8 @@ code, .mono { font-family: var(--font-data); font-size: .84em; letter-spacing: -
 .stamp + .src { margin-left: 12px; }
 .stamp.unclear { color: var(--unclear); transform: rotate(-3deg); }
 .stamp.landed { color: var(--after); transform: rotate(-4deg); }
-.motion .armed .stamp { opacity: 0; }
-.motion .armed .stamp.play { opacity: 1; animation: thump .5s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: var(--d, 0s); }
+.motion .stamp.armed { opacity: 0; }
+.motion .stamp.armed.play { opacity: 1; animation: thump .5s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: var(--d, 0s); }
 @keyframes thump { 0% { opacity: 0; transform: rotate(-9deg) scale(1.7); } 70% { opacity: 1; } }
 
 /* ---------- section scaffolding ---------- */
@@ -251,7 +255,7 @@ section { position: relative; }
 .box { padding: clamp(20px, 2.4vw, 30px) clamp(20px, 2.6vw, 32px) clamp(22px, 2.6vw, 30px); border-right: 1px solid rgba(185, 203, 191, .18);
   display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .box:last-child { border-right: 0; }
-.box-no { font: 700 11px/1 var(--font-body); letter-spacing: .18em; text-transform: uppercase; color: var(--on-ink-muted); }
+.box-no { font: 700 12px/1 var(--font-body); letter-spacing: .18em; text-transform: uppercase; color: var(--on-ink-muted); }
 .fig { font: 400 clamp(46px, 4.6vw, 64px)/.95 var(--font-display); letter-spacing: -.01em; white-space: nowrap; }
 .fig .of { font-size: .42em; color: var(--on-ink-muted); letter-spacing: 0; margin-left: .12em; }
 .box p { margin: 0; font-size: 15.5px; line-height: 1.45; }
@@ -279,7 +283,7 @@ section { position: relative; }
 .spans { list-style: none; margin: 0; padding: 12px 20px 8px; font: 400 12.75px/1.5 var(--font-data); }
 .spans li { display: grid; grid-template-columns: 88px minmax(0, 1fr) 76px; gap: 0 10px; padding: 6px 0; border-bottom: 1px dotted var(--rule); }
 .spans li:last-child { border-bottom: 0; }
-.spans .kind { color: var(--muted); font-size: 11.5px; letter-spacing: .04em; padding-top: 1px; }
+.spans .kind { color: var(--muted); font-size: 12px; letter-spacing: .04em; padding-top: 1px; }
 .spans .nm { color: var(--ink); font-weight: 500; overflow-wrap: anywhere; }
 .spans .ms { text-align: right; color: var(--muted); white-space: nowrap; }
 .spans .out { grid-column: 2 / -1; color: var(--muted); font-size: 12px; overflow-wrap: break-word; }
@@ -318,7 +322,7 @@ section { position: relative; }
 .bar.v1 { --c: var(--before); } .bar.v1s { --c: var(--muted); } .bar.cair { --c: var(--after); }
 .bar .val { font: 500 14px/1 var(--font-data); text-align: right; white-space: nowrap; }
 .bar.cair .val { color: var(--after); }
-.motion .metrics:not(.seen) .track i { transform: scaleX(0); }
+.motion .metrics.armed:not(.seen) .track i { transform: scaleX(0); }
 .motion .metrics.seen .track i { transition: transform .9s var(--ease); transition-delay: calc(var(--n, 0) * 90ms); }
 .aside-slip { margin-top: clamp(16px, 2vw, 24px); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px 26px; align-items: center;
   padding: clamp(18px, 2.2vw, 26px) clamp(20px, 2.4vw, 30px); }
@@ -344,7 +348,7 @@ section { position: relative; }
 .motion .returned.armed .steps-list li::before { transition: background-color .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease); }
 .returned .steps-list li.on::before, .returned:not(.armed) .steps-list li::before { background: var(--c); border-color: var(--c); color: var(--paper); }
 .card-line { margin: 16px 0 0; padding: 12px 14px; background: color-mix(in srgb, var(--unclear) 7%, var(--paper));
-  border-left: 3px solid var(--unclear); font: 400 13px/1.55 var(--font-data); color: var(--ink); overflow-wrap: anywhere; }
+  border: 1px solid color-mix(in srgb, var(--unclear) 40%, transparent); border-radius: 3px; font: 400 13px/1.55 var(--font-data); color: var(--ink); overflow-wrap: anywhere; }
 .tally { display: grid; gap: 14px; }
 .tally .t { padding: 18px 22px; }
 .tally .t .fig2 { font: 400 clamp(36px, 3.4vw, 46px)/1 var(--font-display); }
@@ -368,6 +372,7 @@ section { position: relative; }
 .c-flow { grid-column: span 4; } .c-code { grid-column: span 2; } .c-guard { grid-column: span 2; }
 .c-rules { grid-column: span 4; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 20px; align-items: start; }
 .c-rules .shot { border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; }
+.c-rules > div:first-child, .c-receipt > div:first-child { display: flex; flex-direction: column; gap: 12px; }
 .c-receipt { grid-column: span 6; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 36px; align-items: center; }
 .flow { list-style: none; margin: 6px 0 4px; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 6px; }
 .flow li { display: inline-flex; align-items: center; gap: 6px; }
@@ -380,7 +385,7 @@ section { position: relative; }
 .receipt-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--rule); border-radius: 3px; background: var(--bg); }
 .receipt-figs div { padding: 14px 16px; border-right: 1px solid var(--rule); }
 .receipt-figs div:last-child { border-right: 0; }
-.receipt-figs .label { font-size: 11px; }
+.receipt-figs .label { font-size: 12px; }
 .receipt-figs .rf { font: 400 clamp(22px, 2vw, 28px)/1.1 var(--font-display); margin-top: 8px; white-space: nowrap; }
 .receipt-figs .rf.blue { color: var(--after); }
 .receipt-note { font-size: 14px; color: var(--muted); margin: 10px 0 0; }
@@ -399,7 +404,7 @@ section { position: relative; }
 .inst .shot { border: 1px solid var(--rule); border-radius: 4px; overflow: hidden; margin-top: 4px; }
 .inst .links { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--rule);
   font: 400 13px/1.6 var(--font-data); }
-.pending { display: inline-flex; align-items: center; gap: 8px; font: 700 11.5px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase;
+.pending { display: inline-flex; align-items: center; gap: 8px; font: 700 12px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase;
   color: var(--unclear); border: 1.5px dashed var(--unclear); border-radius: 3px; padding: 6px 9px; }
 
 /* ---------- honest by design ---------- */
@@ -418,7 +423,7 @@ section { position: relative; }
   padding: 18px 20px; font: 600 18px/1.4 var(--font-body); border-radius: 4px; transition: background-color .2s var(--ease); }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary:hover { background: color-mix(in srgb, var(--bg) 55%, var(--paper)); }
-.faq summary .qn { font: 700 11.5px/1 var(--font-body); letter-spacing: .14em; color: var(--muted); }
+.faq summary .qn { font: 700 12.5px/1 var(--font-body); letter-spacing: .14em; color: var(--muted); }
 .faq summary .pm { width: 18px; height: 18px; position: relative; justify-self: end; }
 .faq summary .pm::before, .faq summary .pm::after { content: ""; position: absolute; left: 2px; right: 2px; top: 8px; height: 2px; background: var(--ink);
   transition: transform .25s var(--ease); }
@@ -450,8 +455,8 @@ section { position: relative; }
 .foot nav a:hover { background-size: 100% 1.5px; color: var(--after); }
 .foot .fine { font: 400 12.5px/1.6 var(--font-data); }
 
-.flow .step .or { font-family: var(--font-body); font-size: 11px; color: var(--muted); margin: 0 3px; }
-.st-label { font: 700 11.5px/1.3 var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--before); }
+.flow .step .or { font-family: var(--font-body); font-size: 12px; color: var(--muted); margin: 0 3px; }
+.st-label { font: 700 12.5px/1.3 var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--before); }
 .receipt-figs .vtext { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
 .frame-link { display: block; color: inherit; text-decoration: none; }
 .frame-link:hover img { filter: brightness(1.02); }
@@ -465,9 +470,9 @@ section { position: relative; }
 .key dt { margin: 0; }
 .key div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; align-items: baseline; }
 .key dd { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.45; }
-.kchip { display: inline-block; font: 700 10.5px/1 var(--font-body); letter-spacing: .13em; text-transform: uppercase; padding: 4px 6px 3px;
+.kchip { display: inline-block; font: 700 12px/1 var(--font-body); letter-spacing: .13em; text-transform: uppercase; padding: 4px 6px 3px;
   border: 1.5px solid currentColor; border-radius: 2px; white-space: nowrap; }
-.kchip.k-src { font: 500 11px/1 var(--font-data); letter-spacing: 0; text-transform: none; color: var(--after); border-color: color-mix(in srgb, var(--after) 35%, transparent); }
+.kchip.k-src { font: 500 12px/1 var(--font-data); letter-spacing: 0; text-transform: none; color: var(--after); border-color: color-mix(in srgb, var(--after) 35%, transparent); }
 .kchip.k-ref { color: var(--before); } .kchip.k-unc { color: var(--unclear); }
 .kchip.k-no { color: var(--before); border-width: 1px; border-color: color-mix(in srgb, var(--before) 45%, transparent); }
 .rules-rows { display: grid; gap: 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); overflow: hidden; }
@@ -478,20 +483,22 @@ section { position: relative; }
 .rules-rows .rr-key span { color: var(--muted); }
 .rr-key b { font-weight: 500; } .rr-key .ok { color: var(--after); } .rr-key .no { color: var(--before); } .rr-key .un { color: var(--unclear); }
 .rules-rows .rr-q { font-style: italic; font-size: 14px; line-height: 1.45; margin-top: 5px; }
-.rules-rows .rr-src { font: 400 11.5px/1.4 var(--font-data); color: var(--muted); margin-top: 5px; }
+.rules-rows .rr-src { font: 400 12.5px/1.4 var(--font-data); color: var(--muted); margin-top: 5px; }
 .rr-all { display: flex; justify-content: flex-end; gap: 6px; padding: 10px 14px; font-size: 14.5px; font-weight: 600; text-decoration: none; }
 .rr-all:hover { background: var(--wash-after); }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1100px) {
-  .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "copy" "slip"; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "copy" "slip" "key"; grid-template-rows: none; }
+  .headline { font-size: clamp(46px, 8.4vw, 88px); }
   .hero-slip { max-width: 620px; margin-top: 40px; }
+  .hero-key { margin-top: 36px; max-width: 620px; }
   .hero .rosette { right: -360px; top: 180px; }
   .boxes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .box:nth-child(2) { border-right: 0; }
   .box:nth-child(-n+2) { border-bottom: 1px solid rgba(185, 203, 191, .18); }
   .pair, .recovery-grid, .instruments { grid-template-columns: minmax(0, 1fr); }
-  .readback { position: static; }
+  .readback { position: relative; top: auto; }
   .inst-neat { grid-row: auto; }
   .c-flow, .c-rules, .c-receipt { grid-column: span 6; }
   .c-code, .c-guard { grid-column: span 3; }
@@ -518,7 +525,8 @@ section { position: relative; }
   .box:last-child { border-bottom: 0; }
   .bento { grid-template-columns: minmax(0, 1fr); }
   .c-flow, .c-code, .c-guard, .c-rules, .c-receipt { grid-column: auto; }
-  .bar { grid-template-columns: 96px minmax(0, 1fr) 70px; gap: 8px; }
+  .bar { grid-template-columns: 84px minmax(0, 1fr) max-content; gap: 8px; }
+  .bar .val { font-size: 13px; }
   .bar .who { font-size: 12.5px; }
   .receipt-figs { grid-template-columns: minmax(0, 1fr); }
   .receipt-figs div { border-right: 0; border-bottom: 1px solid var(--rule); }
@@ -530,8 +538,12 @@ section { position: relative; }
   .aside-slip { grid-template-columns: minmax(0, 1fr); }
   .key div { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .ctas .btn { flex: 1 1 100%; justify-content: center; }
+  .hero-copy .ctas .btn { flex: 1 1 140px; font-size: 15px; padding-inline: 12px; gap: 8px; }
+  .hero-copy .ctas .btn-blue { flex-basis: 100%; }
 }
 @keyframes slip-in-flat { from { opacity: 0; transform: translateY(16px); } }
+@media (hover: none) { .src[data-tip]:not(:focus-visible):hover::after { content: none; } }
+@media (forced-colors: active) { .strike { text-decoration: line-through; background: none; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
@@ -542,6 +554,9 @@ section { position: relative; }
   .ledger { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .faq details .ans { display: block; }
   .sec { padding-top: 32px; break-inside: avoid; }
+  .strike { background-size: 100% 2px !important; } .stamp, .spans li { opacity: 1 !important; transform: none !important; }
+  .stamp.unclear { transform: rotate(-3deg) !important; } .stamp.refused { transform: rotate(-5deg) !important; }
+  .track i { transform: none !important; }
 }
 </style>
 </head>
@@ -575,12 +590,11 @@ section { position: relative; }
   <div class="wrap hero-grid">
     <div class="hero-top">
       <p class="label kicker">Remittance advice · neatHack 2026 · an agent that works</p>
-      <h1 class="headline" id="h1"><span class="w" style="--i:0">The</span> <span class="w" style="--i:1">payout</span> <span class="w" style="--i:2">agent</span> <span class="w" style="--i:3">that</span> <em><span class="w" style="--i:4">says</span> <span class="w" style="--i:5">no</span></em><span class="w" style="--i:5">,</span> <span class="w" style="--i:6">and</span> <span class="w" style="--i:7">footnotes</span> <span class="w" style="--i:8">every</span> <span class="w" style="--i:9">yes.<a class="fn" href="#n1" aria-label="Footnote 1">1</a></span></h1>
+      <h1 class="headline" id="h1"><span class="w" style="--i:0">The</span> <span class="w" style="--i:1">payout</span> <span class="w" style="--i:2">agent</span> <span class="w" style="--i:3">that</span> <em><span class="w" style="--i:4">says</span> <span class="w" style="--i:5">no<span class="cm">,</span></span></em> <span class="w" style="--i:6">and</span> <span class="w" style="--i:7">footnotes</span> <span class="w" style="--i:8">every</span> <span class="w" style="--i:9">yes.<a class="fn" href="#n1" aria-label="Footnote 1">1</a></span></h1>
     </div>
     <div class="hero-copy">
       <p class="sub">Devpost's claim form offers a winner in Jakarta <b>Wise</b>, whose own help page says Indonesian addresses
-        “can no longer hold money”. Cair refuses routes like that, fills <span class="nw">W-8BEN</span> line 10 only when a treaty article applies,
-        and footnotes what lands. A tool-less model call picked a dead route in <b>18 of 48</b> frozen cases. Cair: <b>0 of 48</b>.</p>
+        “can no longer hold money”. Cair refuses routes like that and footnotes every figure it gives. A tool-less model call picked a dead route in <b>18 of 48</b> frozen cases. Cair: <b>0 of 48</b>.</p>
       <div class="ctas">
         <a class="btn btn-ink" href="https://github.com/edycutjong/cair" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>View on GitHub</a>
         <a class="btn btn-line" href="pitch/"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="3.5" width="15" height="10" rx="1"/><path d="M10 13.5v3M6.5 16.5h7"/></svg>Pitch deck</a>
@@ -592,17 +606,8 @@ section { position: relative; }
         <li>94 tests · MIT</li>
       </ul>
       <p class="hero-note" id="n1"><span class="n">1</span>Across Cair's 48 frozen plans, 359 of 359 figures trace to a tool output
-        (run <code>v2-r10</code>, <code>qwen3.8-max</code>, temperature 0). The model writes words; code computes every number.
+        (run <code class="nw">v2-r10</code>, <code class="nw">qwen3.8-max</code>, temperature 0). The model writes words; code computes every number.
         <a href="https://github.com/edycutjong/cair/blob/main/evidence/eval-v2-r10-20261010T085601Z.json">Evidence</a></p>
-      <div class="key">
-        <p class="label" id="key-h">Key to the slip</p>
-        <dl aria-labelledby="key-h">
-        <div><dt><span class="kchip k-src">WISE-ID</span></dt><dd>a source reference: the tool and the primary page behind the line. Hover or tap it.</dd></div>
-        <div><dt><span class="kchip k-ref">Refused</span></dt><dd>the provider's own page rules the route out, so it can never be the pick.</dd></div>
-        <div><dt><span class="kchip k-unc">Unclear</span></dt><dd>no primary source states it, so Cair gives a bound instead of a guess.</dd></div>
-        <div><dt><span class="kchip k-no">No source</span></dt><dd>a figure or claim with no tool behind it: the guardrail strikes it.</dd></div>
-        </dl>
-      </div>
     </div>
 
     <figure class="slip hero-slip" aria-label="A payout plan: the chatbot's answer struck through, then Cair's sourced plan">
@@ -610,7 +615,7 @@ section { position: relative; }
         <div>
           <p class="label">Payout plan · specimen</p>
           <p class="slip-title">Devpost → Indonesia</p>
-          <p class="slip-meta">$7,000 prize · one call: trace 929a3781… (eval v1-r1) · Cair: trace 58636870… (live plan)</p>
+          <p class="slip-meta">$7,000 prize · <span class="nw">one call: trace 929a3781…</span> <span class="nw">(eval v1-r1)</span> · <span class="nw">Cair: trace 58636870…</span> <span class="nw">(live plan)</span></p>
         </div>
       </div>
 
@@ -627,29 +632,38 @@ section { position: relative; }
         <p class="label">What Cair returns</p>
         <div class="row">
           <span class="k">Payoneer</span>
-          <span class="v">Delivers<a class="src" href="https://www.payoneer.com/id/" rel="noopener" data-tip="rail_eligibility · PAYO-ID · payoneer.com/id · read 2026-10-10">PAYO-ID</a></span>
+          <span class="v">Delivers<a class="src" href="https://www.payoneer.com/id/" rel="noopener" data-tip="rail_eligibility · PAYO-ID · payoneer.com/id · read 2026-10-10" aria-label="PAYO-ID: rail_eligibility · payoneer.com/id · read 2026-10-10">PAYO-ID</a></span>
         </div>
         <div class="row refused">
           <span class="k"><s>Wise</s></span>
-          <span><span class="stamp refused" style="--d:.2s">Refused</span><a class="src" href="https://wise.com/help/articles/7GuCMPA7SYaX3NFgM3uxgp/changes-to-the-multi-currency-account-for-customers-in-indonesia" rel="noopener" data-tip="rail_eligibility · WISE-ID · wise.com/help · read 2026-10-10">WISE-ID</a></span>
+          <span><span class="stamp refused" style="--d:.2s">Refused</span><a class="src" href="https://wise.com/help/articles/7GuCMPA7SYaX3NFgM3uxgp/changes-to-the-multi-currency-account-for-customers-in-indonesia" rel="noopener" data-tip="rail_eligibility · WISE-ID · wise.com/help · read 2026-10-10" aria-label="WISE-ID: rail_eligibility · wise.com/help · read 2026-10-10">WISE-ID</a></span>
           <q>…personal Wise account holders with an address in Indonesia can no longer hold money or currencies in their account.</q>
         </div>
         <div class="row">
           <span class="lbl"><span class="nw">W-8BEN</span> · line 10</span>
-          <span class="v">Leave blank<a class="src" href="https://www.irs.gov/pub/irs-trty/indo.pdf" rel="noopener" data-tip="treaty_lookup · TRTY-ID · the US–Indonesia treaty text · read 2026-10-10">TRTY-ID</a></span>
+          <span class="v">Leave blank<a class="src" href="https://www.irs.gov/pub/irs-trty/indo.pdf" rel="noopener" data-tip="treaty_lookup · TRTY-ID · the US–Indonesia treaty text · read 2026-10-10" aria-label="TRTY-ID: treaty_lookup · the US–Indonesia treaty text · read 2026-10-10">TRTY-ID</a></span>
           <span class="why">The US–Indonesia treaty has no Other Income article.</span>
         </div>
         <div class="lands">
           <p class="label">In your Payoneer — at most</p>
           <div class="amount-line">
-            <span class="amount" id="hero-amount">$4,900.00</span><a class="src" href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json" data-tip="fee_calc · Decimal arithmetic on sourced cells; no figure comes from the model">fee_calc</a>
+            <span class="amount" id="hero-amount">$4,900.00</span><a class="src" href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json" data-tip="fee_calc · Decimal arithmetic on sourced cells; no figure comes from the model" aria-label="fee_calc: Decimal arithmetic on sourced cells; no figure comes from the model">fee_calc</a>
             <span class="stamp unclear" style="--d:.75s">Unclear</span>
           </div>
-          <p class="small">$7,000.00 minus 30% US withholding ($2,100.00<a class="src" href="https://www.irs.gov/publications/p515" rel="noopener" data-tip="treaty_lookup · IRS-P515-30 · IRS Publication 515 · read 2026-10-10">IRS-P515-30</a>), before a receiving fee Payoneer does not publish.</p>
+          <p class="small">$7,000.00 minus 30% US withholding ($2,100.00<a class="src" href="https://www.irs.gov/publications/p515" rel="noopener" data-tip="treaty_lookup · IRS-P515-30 · IRS Publication 515 · read 2026-10-10" aria-label="IRS-P515-30: treaty_lookup · IRS Publication 515 · read 2026-10-10">IRS-P515-30</a>), before a receiving fee Payoneer does not publish.</p>
         </div>
         <p class="guard"><span>provenance_guardrail · <b>PASSED</b></span><span>10 spans · 7,063 ms</span></p>
       </div>
     </figure>
+  <div class="key hero-key">
+      <p class="label" id="key-h">Key to the slip</p>
+      <dl aria-labelledby="key-h">
+      <div><dt><span class="kchip k-src">WISE-ID</span></dt><dd>a source reference: the tool and the primary page behind the line. Hover for the detail; click or tap to open the page.</dd></div>
+      <div><dt><span class="kchip k-ref">Refused</span></dt><dd>the provider's own page rules the route out, so it can never be the pick.</dd></div>
+      <div><dt><span class="kchip k-unc">Unclear</span></dt><dd>no primary source states it, so Cair gives a bound instead of a guess.</dd></div>
+      <div><dt><span class="kchip k-no">No source</span></dt><dd>a figure or claim with no tool behind it: the guardrail strikes it.</dd></div>
+      </dl>
+    </div>
   </div>
 </section>
 
@@ -719,21 +733,22 @@ section { position: relative; }
         </div>
         <ol class="spans" aria-label="Spans of this plan's trace">
           <li><span class="kind">WORKFLOW</span><span class="nm">payout-plan</span><span class="ms">7,063 ms</span></li>
-          <li><span class="kind d1">AGENT</span><span class="nm">planner</span><span class="ms">7,061 ms</span></li>
+          <li><span class="kind d1">AGENT</span><span class="nm">planner</span><span class="ms">7,061 ms</span><span class="out">recommended payoneer · line 10 BLANK: no Other Income article · TRTY-ID</span></li>
           <li><span class="kind d2">TOOL</span><span class="nm">platform_rails</span><span class="ms">0.2 ms</span><span class="out">devpost offers payoneer, paypal, wise · <span class="nw">W-8BEN</span> applies · DP114</span></li>
-          <li><span class="kind d2">TOOL</span><span class="nm">rail_eligibility ×2</span><span class="ms">0.3 ms</span><span class="out">payoneer <span class="ok">YES</span> PAYO-ID · wise <span class="no">NO</span> WISE-ID</span></li>
-          <li><span class="kind d2">RETRIEVER</span><span class="nm">treaty_lookup</span><span class="ms">2.8 ms</span><span class="out">treaty text searched → line 10 blank, no Other Income article · TRTY-ID</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">rail_eligibility</span><span class="ms">0.2 ms</span><span class="out">payoneer <span class="ok">YES</span> · PAYO-ID</span></li>
+          <li><span class="kind d2">TOOL</span><span class="nm">rail_eligibility</span><span class="ms">0.1 ms</span><span class="out">wise <span class="no">NO</span> · WISE-ID</span></li>
+          <li><span class="kind d2">RETRIEVER</span><span class="nm">treaty_lookup</span><span class="ms">2.8 ms</span><span class="out">query “prize award contest other income independent personal services” · the span stores no output</span></li>
           <li><span class="kind d2">TOOL</span><span class="nm">fx_quote</span><span class="ms">314.0 ms</span><span class="out">1 USD = 17881 IDR · ECB reference rate · as of <span class="nw">2026-10-09</span></span></li>
           <li><span class="kind d2">TOOL</span><span class="nm">fee_calc</span><span class="ms">0.3 ms</span><span class="out">withheld 2100.00 · at most 4900.00 · at most IDR 87616900</span></li>
           <li><span class="kind d2">LLM</span><span class="nm">qwen3.8-max</span><span class="ms">5,791 ms</span><span class="out">words the card from the tool outputs</span></li>
           <li><span class="kind d2">GUARDRAIL</span><span class="nm">provenance_guardrail</span><span class="ms">11.6 ms</span><span class="out"><span class="ok">PASSED</span> · 7 figures, all in tool outputs<span class="cursor" aria-hidden="true"></span></span></li>
         </ol>
-        <div class="rb-foot"><span>10 spans · status success · exported <span class="nw">2026-10-10 11:21 UTC</span></span><a href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json"><code>evidence/traces/live-plan-ee3w412a.json</code></a></div>
+        <div class="rb-foot"><span>10 spans · status success · trace created <span class="nw">2026-10-10 10:27 UTC</span></span><a href="https://github.com/edycutjong/cair/blob/main/evidence/traces/live-plan-ee3w412a.json"><code>evidence/traces/live-plan-ee3w412a.json</code></a></div>
       </div>
     </div>
     <div class="try">
       <a class="btn btn-blue" href="https://app.cair.edycu.dev" rel="noopener">Run it yourself <span class="arr" aria-hidden="true">→</span></a>
-      <span class="steps">Choose <b>Devpost · 7000 · Indonesia</b>, tick <b>Payoneer</b> and <b>Wise</b>, press <b>Plan my payout</b>. In the bench, the median plan took 5.5 s.</span>
+      <span class="steps">Choose <b>Devpost · 7000 · Indonesia</b>, tick <b>Payoneer</b> and <b>Wise</b>, press <b>Plan my payout</b>. In the bench (48 plans on the builder's laptop), the median plan took 5.5 s.</span>
     </div>
   </div>
 </section>
@@ -744,7 +759,7 @@ section { position: relative; }
       <p class="label kicker">Statement of account · one call against the agent</p>
       <h2 class="h2" id="me">Same model. Same 48 questions. Different answers.</h2>
       <p class="lede">The 48 scenarios — 3 countries × 4 payers × 3 amounts, plus 12 leading prompts — were labelled from the sourced
-        rules sheet before any agent code existed (tag <code>frozen-set-v1</code>). <b>v1</b> is one tool-less call. <b>v1s</b> is one
+        rules sheet before any planner code existed (tag <code class="nw">frozen-set-v1</code>). <b>v1</b> is one tool-less call. <b>v1s</b> is one
         call with the whole rules sheet pasted in, so every sourced fact is in its prompt.</p>
     </div>
     <div class="metrics" id="metrics">
@@ -789,7 +804,9 @@ section { position: relative; }
       <span class="fig-ink">9</span>
       <p>figures the tools never produced reach the page when the guardrail is removed — the user's “zero percent” and
         “Article 21” repeated back, in 8 of 48 plans. With it, none do: 8 explanations were blocked once and rewritten, none fell back
-        to the template. The final run is the tenth on this set; each earlier run's failures drove a fix.
+        to the template. The final run is the tenth on this set; earlier runs blocked or fell back, and rca-01.md traces two of
+        those to bugs that were fixed.
+        <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-v2-r10-20261010T085601Z.json">eval-v2-r10</a> ·
         <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/eval-ablation-r10-20261010T085647Z.json">eval-ablation-r10</a> ·
         <a class="ev" href="https://github.com/edycutjong/cair/blob/main/evidence/rca-01.md">rca-01.md</a></p>
     </div>
@@ -857,8 +874,8 @@ section { position: relative; }
           <li><span class="step k-guard">guardrail</span></li>
         </ol>
         <p>What the payer offers and whether a <span class="nw">W-8BEN</span> applies → can each option receive in your country → the treaty position
-          → the ECB rate (or, for USDC, the networks the exchange accepts) → Decimal arithmetic. Each tool reads a sourced row
-          and is retried once before its documented fallback.</p>
+          → the ECB rate (or, for USDC, the networks the exchange accepts) → Decimal arithmetic. Each tool reads sourced rows
+          (fee_calc computes on them) and is retried once before its documented fallback.</p>
         <span class="chip">@neatlogs.span · TOOL · RETRIEVER · GUARDRAIL</span>
       </article>
       <article class="slip card c-code">
@@ -953,7 +970,7 @@ section { position: relative; }
       <article class="slip inst">
         <div class="inst-head"><h3>cfo.ai</h3><span class="pending">Model pending</span></div>
         <p>The business plan starts from our own numbers: <b>$0.0033</b> of LLM per plan (bench tokens at list price), <b>p50 5.50 s ·
-          p95 10.31 s</b> (bench), hosting <b>$15.26 / month</b> (t3.small list price). At an assumed $4 a month, 4 Pro subscribers break even.</p>
+          p95 10.31 s</b> (bench, builder's laptop), hosting <b>$15.26 / month</b> (t3.small list price). At an assumed $4 a month, 4 Pro subscribers break even.</p>
         <p class="small">The cfo.ai model built from these inputs is not entered yet — nothing here was produced by cfo.ai.</p>
         <div class="links"><a href="https://github.com/edycutjong/cair/blob/main/docs/BUSINESS-PLAN.md">BUSINESS-PLAN.md</a><a href="https://github.com/edycutjong/cair/blob/main/evidence/bench-20261010T085809Z.json">bench (p50 / p95)</a></div>
       </article>
@@ -1000,8 +1017,9 @@ section { position: relative; }
       <details>
         <summary><span class="qn">Q. 2</span><span>What is mocked?</span><span class="pm" aria-hidden="true"></span></summary>
         <div class="ans"><p>Nothing on the product path: the live app calls the real model, the real ECB reference rate (via Frankfurter) and the
-          real neatlogs project, and every measured result on this page comes from such runs. The 94 tests and the CI pipeline run without
-          network or keys — that is a statement about the tests, not the product.</p></div>
+          real neatlogs project. The eval, ablation, latency and forced-failure numbers on this page come from such runs (the failure is
+          injected on purpose). Two things are scripted: the guardrail's held-out test feeds it fixed sentences with the model call
+          stubbed, and the 94 tests and the CI pipeline run without network or keys.</p></div>
       </details>
       <details>
         <summary><span class="qn">Q. 3</span><span>What happens when a tool fails?</span><span class="pm" aria-hidden="true"></span></summary>
@@ -1064,7 +1082,7 @@ section { position: relative; }
       <a class="brand" href="#top"><img src="assets/icon.svg" alt="" width="30" height="30">Cair</a>
       <p>The payout route a chatbot can't get wrong. Built during neatHack, 10–12 October 2026, by Edy Team.</p>
       <p>Cair explains payout forms; it never files them. Not tax advice.</p>
-      <p class="fine">v0.1.2 · MIT · traced with neatlogs · words by Qwen Cloud</p>
+      <p class="fine">v0.1.4 · MIT · traced with neatlogs · words by Qwen Cloud</p>
     </div>
     <nav aria-label="Footer">
       <a href="https://github.com/edycutjong/cair" rel="noopener">GitHub</a>
@@ -1120,9 +1138,8 @@ section { position: relative; }
   function stuck() { mh.classList.toggle('is-stuck', window.scrollY > 8); }
   stuck(); window.addEventListener('scroll', stuck, { passive: true });
 
-  if (!motion) return;
+  if (!motion || !('IntersectionObserver' in window)) return;
 
-  if (!('IntersectionObserver' in window)) return;
   /* Fires once the element is `threshold` visible. Never use 1: a rotated or subpixel-placed element can sit at
      0.9999 forever. If it scrolls back out before reaching the threshold, `done` puts it in its final state. */
   function onSeen(el, fn, threshold, done) {
@@ -1137,40 +1154,57 @@ section { position: relative; }
     io.observe(el);
   }
 
-  /* Hero slip: each verdict lands when it is actually on screen — the strike through the chatbot's lines,
-     the REFUSED stamp, then withholding coming off the gross ($7,000.00 counts down to the at-most figure). */
+  /* Every moment starts in its final state (the real numbers). It is armed — put back in its "before" state to play —
+     only if it is on screen at load, or still below the fold when the reader first scrolls, wheels, touches or presses a
+     key. A capture, print or crawl that never scrolls therefore sees the real figures, never a pre-animation zero. */
+  var staged = [], waiting = [], EV = ['scroll', 'wheel', 'touchstart', 'keydown', 'pointerdown'];
+  function stage(el, arm, play, done, threshold) {
+    var m = { el: el, arm: arm, play: play, done: done, t: threshold, armed: false, over: false };
+    staged.push(m);
+    var r = el.getBoundingClientRect();
+    if (r.top < innerHeight && r.bottom > 0) start(m); else waiting.push(m);
+  }
+  function start(m) {
+    m.armed = true; m.arm();
+    onSeen(m.el, function () { m.over = true; m.play(); }, m.t, function () { m.over = true; m.done(); });
+  }
+  function reader() {
+    EV.forEach(function (ev) { removeEventListener(ev, reader, true); });
+    waiting.forEach(function (m) { if (m.el.getBoundingClientRect().top >= innerHeight) start(m); });
+    waiting = [];
+  }
+  EV.forEach(function (ev) { addEventListener(ev, reader, { capture: true, passive: true }); });
+  addEventListener('beforeprint', function () {
+    staged.forEach(function (m) { if (m.armed && !m.over) { m.over = true; m.done(); } });
+  });
+
+  /* Hero slip: the strike through the chatbot's lines, the stamps, then withholding coming off the gross
+     ($7,000.00 counts down to the at-most figure) — each lands when it is actually on screen. */
   var slip = document.querySelector('.hero-slip');
   if (slip) {
-    slip.classList.add('armed');
     [].slice.call(slip.querySelectorAll('.strike, .stamp')).forEach(function (el) {
-      function play() { el.classList.add('play'); }
-      onSeen(el, play, 0.6, play);
+      stage(el, function () { el.classList.add('armed'); }, function () { el.classList.add('play'); },
+        function () { el.classList.remove('armed'); }, 0.6);
     });
     var amt = document.getElementById('hero-amount');
     function money(v) { return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-    if (amt) {
-      amt.textContent = money(7000);
-      onSeen(amt, function () {
-        var t0 = null, from = 7000, to = 4900, dur = 650;
-        setTimeout(function () {
-          requestAnimationFrame(function step(ts) {
-            if (!t0) t0 = ts;
-            var p = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - p, 3);
-            amt.textContent = money(Math.round((from + (to - from) * e) * 100) / 100);
-            if (p < 1) requestAnimationFrame(step); else amt.textContent = money(to);
-          });
-        }, 120);
-      }, 0.6, function () { amt.textContent = money(4900); });
-    }
+    if (amt) stage(amt, function () { amt.textContent = money(7000); }, function () {
+      var t0 = null, from = 7000, to = 4900, dur = 650;
+      setTimeout(function () {
+        requestAnimationFrame(function step(ts) {
+          if (!t0) t0 = ts;
+          var p = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+          amt.textContent = money(Math.round((from + (to - from) * e) * 100) / 100);
+          if (p < 1) requestAnimationFrame(step); else amt.textContent = money(to);
+        });
+      }, 120);
+    }, function () { amt.textContent = money(4900); }, 0.6);
   }
 
   /* Statement boxes: count to the measured value (box 1 counts DOWN from the one-call baseline). */
-  var counts = [].slice.call(document.querySelectorAll('.count'));
-  counts.forEach(function (c) {
+  [].slice.call(document.querySelectorAll('.count')).forEach(function (c) {
     var a = +c.dataset.from, b = +c.dataset.to;
-    c.textContent = a;
-    if (a > b) c.classList.add('baseline');
-    onSeen(c, function () {
+    stage(c, function () { c.textContent = a; if (a > b) c.classList.add('baseline'); }, function () {
       var t0 = null, dur = 1100;
       requestAnimationFrame(function step(ts) {
         if (!t0) t0 = ts;
@@ -1178,31 +1212,30 @@ section { position: relative; }
         c.textContent = Math.round(a + (b - a) * e);
         if (p < 1) requestAnimationFrame(step); else { c.textContent = b; c.classList.remove('baseline'); }
       });
-    }, 0.6);
+    }, function () { c.textContent = b; c.classList.remove('baseline'); }, 0.6);
   });
 
   /* Read-back: the spans arrive one at a time, like the trace being fetched. */
   var rb = document.getElementById('readback');
   if (rb) {
     var lis = [].slice.call(rb.querySelectorAll('.spans li'));
-    rb.classList.add('typing');
-    onSeen(rb, function () {
+    stage(rb, function () { rb.classList.add('typing'); }, function () {
       lis.forEach(function (li, i) { setTimeout(function () { li.classList.add('on'); }, 140 + i * 170); });
-    }, 0.3);
+    }, function () { rb.classList.remove('typing'); }, 0.3);
   }
 
   /* Bars grow when the statement scrolls into view. */
   var mt = document.getElementById('metrics');
-  if (mt) onSeen(mt, function () { mt.classList.add('seen'); }, 0.2);
+  if (mt) stage(mt, function () { mt.classList.add('armed'); }, function () { mt.classList.add('seen'); },
+    function () { mt.classList.add('seen'); }, 0.2);
 
   /* Returned item: the failure and the recovery light up in order. */
   var rt = document.getElementById('returned');
   if (rt) {
     var steps = [].slice.call(rt.querySelectorAll('.steps-list li'));
-    rt.classList.add('armed');
-    onSeen(rt, function () {
+    stage(rt, function () { rt.classList.add('armed'); }, function () {
       steps.forEach(function (li, i) { setTimeout(function () { li.classList.add('on'); }, 150 + i * 360); });
-    }, 0.35);
+    }, function () { rt.classList.remove('armed'); }, 0.35);
   }
 })();
 </script>

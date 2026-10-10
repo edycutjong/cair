@@ -131,9 +131,9 @@ prices — break-even at 4 Pro subscribers under those assumptions.
 ### One LLM call vs. the agent, measured
 
 48 frozen scenarios (3 countries × 4 payers × 3 amounts + 12 leading prompts), same model (`qwen3.8-max`,
-temperature 0), labels computed from the sourced rules sheet before any agent code existed (tag `frozen-set-v1`).
+temperature 0), labels computed from the sourced rules sheet before any planner code existed (tag `frozen-set-v1`).
 Two baselines: **v1** is one tool-less call; **v1s** is one call with the *whole* rules sheet and its sources pasted
-into the prompt — the strongest thing a single chatbot call can do.
+into the prompt, so every sourced fact is in front of the model.
 
 | | v1: one call (3 runs) | v1s: one call + the sheet | **v2: Cair** (final run) | v2 without the guardrail |
 |---|---|---|---|---|
@@ -150,8 +150,8 @@ evidence file) and stated a tax position the sources leave open 11 times. In v2 
 line 10 and every amount are decided by code from sourced rows; the model only words the card. The ablation is what
 the guardrail adds: without it, 9 figures the tools never produced (the user's "zero percent" and "Article 21"
 repeated back, in 8 of the 48 plans) reach the page; with it, none do — 8 of 48 explanations were blocked once and rewritten, none had to
-fall back to the template. The final v2 run is the tenth on this set: each earlier run's failures drove a fix (all
-runs are in `evidence/`, re-scored with the final scorer; see `evidence/rca-01.md`).
+fall back to the template. The final v2 run is the tenth on this set: earlier runs blocked or fell back, and `evidence/rca-01.md` traces two of
+those to bugs that were fixed (all runs are in `evidence/`, re-scored with the final scorer).
 
 The guardrail is also tested on its own, against sentences it was **not** tuned on: a fresh held-out set was written without access to the existing test lists (66 violations, 66 honest sentences, 29 of them in Indonesian). On the rules as they stood, it blocked
 **62 / 66** violations (94%) and **3 / 66** honest sentences (5%) (`evidence/guardrail-heldout-r4-20261010T084859Z.json`).
@@ -205,8 +205,9 @@ make e2e            # Playwright: boots the app with no keys, drives it in a bro
 ```
 
 The tests below run with no keys and no network. That is a statement about the **tests**, not the product: the product
-runs on the real model, the real ECB rate and the real neatlogs project, and every number in this README comes from
-such a run ([DEMO.md](DEMO.md) §3).
+runs on the real model, the real ECB rate and the real neatlogs project, and the eval, ablation, forced-failure and
+latency numbers in this README come from such runs ([DEMO.md](DEMO.md) §3); the held-out guardrail test feeds fixed
+sentences to the guardrail with the model call stubbed.
 
 | Layer | What runs | Result |
 |---|---|---|
@@ -226,7 +227,7 @@ Angular-style commit messages only after that pipeline passes. A judge-facing su
 
 - Judges: [/judge](https://app.cair.edycu.dev/judge) · live app: [app.cair.edycu.dev](https://app.cair.edycu.dev) · traces read back: [/verify](https://app.cair.edycu.dev/verify) · rules sheet: [/rules](https://app.cair.edycu.dev/rules)
 - Website: [cair.edycu.dev](https://cair.edycu.dev) · pitch deck: [cair.edycu.dev/pitch](https://cair.edycu.dev/pitch/) (11 slides; arrow keys, P for speaker notes)
-- Reproduce every number: [DEMO.md](DEMO.md) · business plan: [docs/BUSINESS-PLAN.md](docs/BUSINESS-PLAN.md)
+- Reproduce the numbers: [DEMO.md](DEMO.md) · business plan: [docs/BUSINESS-PLAN.md](docs/BUSINESS-PLAN.md)
 
 ## 📄 License
 

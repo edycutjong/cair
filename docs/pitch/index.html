@@ -19,14 +19,18 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Cair — Choose Wise struck through and stamped REFUSED; Payoneer, at most $4,900, fee UNCLEAR">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cair — pitch deck">
+<meta name="twitter:description" content="An agent that refuses payout routes that can't deliver and footnotes every amount, rate and treaty article.">
+<meta name="twitter:image" content="https://cair.edycu.dev/assets/og-1200.png?v=1">
+<meta name="twitter:image:alt" content="Cair — Choose Wise struck through and stamped REFUSED; Payoneer, at most $4,900, fee UNCLEAR">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
 <link rel="preload" href="../assets/fonts/gloock-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/public-sans.woff2" as="font" type="font/woff2" crossorigin>
 <!--
   Cair pitch deck — 11 slides on a fixed 1920×1080 stage, scaled to fit any screen (never stacked).
-  Keys:  → / Space / PageDown next · ← / PageUp previous · Home / End · Esc slide overview · P presenter notes · C contrast debug
-  Touch: swipe left / right, or the arrows at the bottom.
-  Print: Cmd/Ctrl+P → Save as PDF → landscape; one slide per page (16 × 9 in).
+  Keys:  → / Space / PageDown next · ← / PageUp previous · Home / End · Esc slide overview · P presenter notes
+  Touch: swipe left / right, or the arrows at the top right.
+  Print: Cmd/Ctrl+P → Save as PDF; one 1920 × 1080 slide per page.
   Images (all real captures of the live app, 10 Oct 2026, in ../assets/shots/):
     plan-card.webp   — the plan card for Devpost · $7,000 · Indonesia (slide 4)
     plan-pair.webp   — the form and the plan side by side (slide 6)
@@ -87,7 +91,8 @@ h2 { font-size: 88px; line-height: 1.02; margin-top: 22px; max-width: 1400px; }
 .red { color: var(--before); } .blue { color: var(--after); } .ochre { color: var(--unclear); }
 .center { margin-block: auto; }
 .foot { position: absolute; left: 120px; right: 120px; bottom: 44px; display: flex; justify-content: space-between; align-items: center;
-  font: 400 17px/1 var(--font-data); color: var(--muted); }
+  font: 400 20px/1 var(--font-data); color: var(--muted); }
+.foot .hint { margin-right: 34px; }
 .dark .foot { color: var(--on-ink-muted); }
 .foot .pg { font-family: var(--font-data); }
 .slip { position: relative; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; box-shadow: var(--shadow); }
@@ -97,12 +102,10 @@ h2 { font-size: 88px; line-height: 1.02; margin-top: 22px; max-width: 1400px; }
 .stamp.refused { color: var(--before); } .stamp.unclear { color: var(--unclear); transform: rotate(-3deg); }
 .strike { text-decoration: none; color: var(--before); background: linear-gradient(var(--before), var(--before)) left 58% / 100% 4px no-repeat;
   -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.nosrc { display: inline-block; font: 700 17px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--before);
+.nosrc { display: inline-block; font: 700 20px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--before);
   border: 1.5px solid color-mix(in srgb, var(--before) 50%, transparent); border-radius: 3px; padding: 6px 9px 5px; }
 .speaker-notes { display: none; }
-.contrast-check { }
-/* Press C to toggle contrast debug mode */
-body.debug-contrast .slide.active :is(h1, h2, h3, p, li, span, b, dd, dt, figcaption) { outline: 1px dashed rgba(163, 50, 28, .55); }
+@media (forced-colors: active) { .strike { text-decoration: line-through; background: none; } }
 
 /* ---------- 1 cover ---------- */
 .s-cover .rosette { position: absolute; right: -230px; top: -170px; width: 1100px; height: 1100px; pointer-events: none; }
@@ -122,7 +125,7 @@ body.debug-contrast .slide.active :is(h1, h2, h3, p, li, span, b, dd, dt, figcap
 .readback .cmd::before { content: "$ "; color: var(--muted); }
 .readback ol { list-style: none; margin: 0; padding: 0; font: 400 20px/1.45 var(--font-data); }
 .readback li { display: grid; grid-template-columns: 150px 1fr; gap: 14px; padding: 11px 0; border-top: 1px dotted var(--rule); }
-.readback .k { color: var(--muted); font-size: 16px; padding-top: 3px; letter-spacing: .04em; }
+.readback .k { color: var(--muted); font-size: 18px; padding-top: 3px; letter-spacing: .04em; }
 .readback li.typing { opacity: 0; }
 .slide.active .readback li.typing { animation: type .4s var(--ease) both; animation-delay: calc(.5s + var(--n) * .35s); }
 @keyframes type { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -150,11 +153,11 @@ body.debug-contrast .slide.active :is(h1, h2, h3, p, li, span, b, dd, dt, figcap
 .chat .q { font: 400 44px/1.25 var(--font-display); margin: 20px 0 0; }
 .chat .gl { margin: 16px 0 0; font-size: 24px; color: var(--muted); }
 .chat .sep { border-top: 2px dashed color-mix(in srgb, var(--ink) 26%, transparent); margin: 34px -10px 30px; }
-.chat .verdict { font: 400 64px/1.05 var(--font-display); margin: 16px 0 0; }
+.chat .verdict { font: 400 56px/1.05 var(--font-display); margin: 14px 0 0; }
+.chat .srcl { margin: 6px 0 4px; font: 400 20px/1.4 var(--font-data); color: var(--muted); }
 .chat .verdict .stamp { font-size: 24px; vertical-align: 14px; margin-left: 14px; }
 .card-shot { justify-self: center; width: 660px; transform: rotate(-.8deg); overflow: hidden; }
 .card-shot img { display: block; width: 100%; border-radius: 6px; }
-.card-cap { position: absolute; right: 16px; bottom: -46px; font: 400 18px/1 var(--font-data); color: var(--muted); }
 
 /* ---------- 5 architecture ---------- */
 .arch { display: grid; grid-template-columns: 1fr 1.2fr 1fr 1fr 1fr; gap: 0; position: relative; }
@@ -191,7 +194,7 @@ body.debug-contrast .slide.active :is(h1, h2, h3, p, li, span, b, dd, dt, figcap
 .legend li .callout { position: static; transform: none; }
 .verify-mini { margin-top: 34px; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); }
 .verify-mini img { display: block; width: 100%; }
-.verify-cap { font: 400 17px/1.4 var(--font-data); color: var(--muted); margin: 12px 0 0; }
+.verify-cap { font: 400 20px/1.4 var(--font-data); color: var(--muted); margin: 12px 0 0; }
 
 /* ---------- 7 measured ---------- */
 .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
@@ -229,8 +232,10 @@ body.debug-contrast .slide.active :is(h1, h2, h3, p, li, span, b, dd, dt, figcap
 
 /* ---------- 9 instruments ---------- */
 .inst { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 38px; }
-.inst > div { padding: 52px 50px 44px; display: flex; flex-direction: column; gap: 24px; min-height: 600px; }
-.inst h3 { font: 400 80px/1 var(--font-display); margin: 0; }
+.inst > div { padding: 52px 50px 46px; display: flex; flex-direction: column; gap: 22px; }
+.inst h3 { font: 400 60px/1 var(--font-display); margin: 0; }
+.inst .proof { margin-top: auto; padding-top: 20px; border-top: 1px dashed var(--rule); font: 500 25px/1.5 var(--font-data); color: var(--ink); }
+.nw { white-space: nowrap; }
 .inst .role { font: 700 20px/1.2 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .inst p { margin: 0; font-size: 35px; line-height: 1.36; }
 .inst .ev { margin-top: auto; padding-top: 18px; border-top: 1px dashed var(--rule); font: 400 21px/1.4 var(--font-data); color: var(--muted); }
@@ -241,7 +246,9 @@ body.debug-contrast .slide.active :is(h1, h2, h3, p, li, span, b, dd, dt, figcap
 .ledger { background: var(--ink); color: var(--on-ink); border-radius: 6px 0 0 6px; padding: 46px 52px; display: grid; gap: 34px; align-content: start; }
 .ledger .row b { display: block; font: 400 104px/1 var(--font-display); }
 .ledger .row span { display: block; margin-top: 12px; font-size: 28px; color: var(--on-ink-muted); }
-.limits { border-radius: 0 6px 6px 0; padding: 46px 52px; display: flex; flex-direction: column; gap: 28px; }
+.limits { border-radius: 0 6px 6px 0; padding: 46px 52px; display: flex; flex-direction: column; justify-content: space-between; gap: 34px; }
+.limits .row b { display: block; font: 400 104px/1 var(--font-display); }
+.limits .row span { display: block; margin-top: 12px; font-size: 28px; color: var(--muted); }
 .limits ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 26px; }
 .limits li { font-size: 38px; line-height: 1.3; padding-left: 38px; position: relative; }
 .limits li::before { content: ""; position: absolute; left: 0; top: 18px; width: 16px; height: 2px; background: var(--unclear); }
@@ -260,12 +267,11 @@ body.debug-contrast .slide.active :is(h1, h2, h3, p, li, span, b, dd, dt, figcap
 
 /* ---------- chrome: counter, nav, notes, overview ---------- */
 .chrome { position: fixed; z-index: 20; right: 14px; top: 12px; display: flex; align-items: center; gap: 10px; font: 500 14px/1 var(--font-data); color: var(--on-ink-muted); }
-.chrome button { appearance: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(185, 203, 191, .45); background: rgba(19, 36, 27, .55);
+.chrome button { appearance: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(185, 203, 191, .45); background: rgba(19, 36, 27, .64);
   color: var(--paper); font: 400 18px/1 var(--font-body); cursor: pointer; transition: background-color .2s var(--ease), transform .12s var(--ease); }
 .chrome button:hover { background: var(--after); }
 .chrome button:active { transform: scale(.94); }
-.chrome button:focus-visible { outline: 2px solid var(--on-ink-after); outline-offset: 2px; }
-.counter { min-width: 72px; text-align: center; background: rgba(19, 36, 27, .55); padding: 12px 10px; border-radius: 999px; }
+.chrome button:focus-visible { outline: 2px solid var(--paper); outline-offset: 0; box-shadow: 0 0 0 4px var(--ink); }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .notes-panel { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; height: 20vh; background: rgba(19, 36, 27, .96); color: var(--paper);
   padding: 18px 28px; font: 400 clamp(15px, 1.6vw, 22px)/1.5 var(--font-body); overflow: auto; display: none; border-top: 2px solid var(--on-ink-after); }
@@ -295,15 +301,16 @@ body.ov .overview { display: block; }
 }
 
 /* ---------- print: one slide per page ---------- */
-@page { size: 16in 9in landscape; margin: 0; }
+@page { size: 1920px 1080px; margin: 0; }
 @media print {
   html, body { height: auto; overflow: visible; background: var(--bg); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .viewport { position: static; overflow: visible; }
   .stage { position: static; transform: none !important; width: auto; height: auto; }
-  .slide { position: relative; visibility: visible; opacity: 1; width: 16in; height: 9in; padding: .8in 1in .9in; transition: none;
-    break-after: page; page-break-after: always; break-inside: avoid; page-break-inside: avoid; zoom: .48;
+  .slide { position: relative; visibility: visible; opacity: 1; width: 1920px; height: 1080px; padding: 92px 120px 120px; transition: none;
+    break-after: page; page-break-after: always; break-inside: avoid; page-break-inside: avoid;
     -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .chrome, .hint, .notes-panel, .overview, .speaker-notes { display: none !important; }
+  .slide:last-child { break-after: auto; page-break-after: auto; }
+  .chrome, .hint, .notes-panel, .overview, .speaker-notes, #counter { display: none !important; }
   .readback li.typing { opacity: 1 !important; animation: none !important; }
 }
 </style>
@@ -328,7 +335,7 @@ body.ov .overview { display: block; }
       <h1>The payout agent that <em>says no</em>, and footnotes every yes.<sup>1</sup></h1>
       <div class="badges">
         <span class="badge">Built for neatHack 2026</span>
-        <span class="badge ver">v0.1.2</span>
+        <span class="badge ver">v0.1.4</span>
       </div>
     </div>
     <div class="slip readback">
@@ -336,13 +343,13 @@ body.ov .overview { display: block; }
       <p class="cmd">get_trace_context 58636870…</p>
       <ol>
         <li class="typing" style="--n:0"><span class="k">TOOL</span><span>rail_eligibility · wise <b class="red">NO</b></span></li>
-        <li class="typing" style="--n:1"><span class="k">RETRIEVER</span><span>treaty_lookup · no Other Income article</span></li>
-        <li class="typing" style="--n:2"><span class="k">TOOL</span><span>fee_calc · at most 4900.00</span></li>
+        <li class="typing" style="--n:1"><span class="k">TOOL</span><span>fee_calc · at most 4900.00</span></li>
+        <li class="typing" style="--n:2"><span class="k">AGENT</span><span>planner · line 10 BLANK</span></li>
         <li class="typing" style="--n:3"><span class="k">GUARDRAIL</span><span><b class="blue">PASSED</b> · 7 sourced<span class="cursor" aria-hidden="true"></span></span></li>
       </ol>
     </div>
   </div>
-  <div class="foot"><span><span class="fnref">1</span> 359 of 359 figures in 48 frozen plans trace to a tool output · eval-v2-r10</span><span class="pg">01 / 11</span></div>
+  <div class="foot"><span><span class="fnref">1</span> 359 of 359 figures in 48 frozen plans trace to a tool output · eval-v2-r10</span><span class="pg"><span class="hint">← → · Esc overview · P notes</span>01 / 11</span></div>
   <aside class="speaker-notes">I won seven thousand dollars at a hackathon, and the payout form offered me a route that cannot deliver to my
     address. Cair is the agent I needed: it refuses that route, and every number it does give me has a source behind it.</aside>
 </section>
@@ -353,7 +360,7 @@ body.ov .overview { display: block; }
   <blockquote>“…personal Wise account holders with an address in Indonesia <span class="hl">can no longer hold money</span> or currencies in their account.”</blockquote>
   <p class="attr">WISE-ID · wise.com/help · read 2026-10-10</p>
   <p class="then">Devpost's claim form still offers Wise.</p>
-  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">02 / 11</span></div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.4</span><span class="pg">02 / 11</span></div>
   <aside class="speaker-notes">This is Wise's own help page. A prize winner in Indonesia who picks Wise on the claim form is choosing a route that
     cannot hold the money. Nobody on the form tells them.</aside>
 </section>
@@ -366,7 +373,7 @@ body.ov .overview { display: block; }
     <div class="slip item"><p class="what">Line 10 invites a guess.</p><p>The treaty has no Other Income article.</p><p class="src">TRTY-ID</p></div>
     <div class="slip item"><p class="what">Nobody quotes the fee.</p><p>Payoneer: “Varies by marketplace.”</p><p class="src">PAYO-PRICING</p></div>
   </div>
-  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">03 / 11</span></div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.4</span><span class="pg">03 / 11</span></div>
   <aside class="speaker-notes">Three places the money is lost: an option that can't deliver, a tax line that invites a false statement, and a
     fee nobody publishes as a number. Cair answers all three from primary sources, and says UNCLEAR when there is none.</aside>
 </section>
@@ -380,18 +387,20 @@ body.ov .overview { display: block; }
       <p class="gl"><span class="nosrc">No source</span> “Best payout option: Wise”</p>
       <div class="sep" aria-hidden="true"></div>
       <p class="label">Cair returned</p>
+      <p class="verdict blue">Payoneer delivers</p>
+      <p class="srcl">PAYO-ID · payoneer.com/id · read 2026-10-10</p>
       <p class="verdict">Wise <span class="stamp refused">Refused</span></p>
       <p class="verdict blue">Line 10: blank</p>
       <p class="verdict">≤ $4,900.00 <span class="stamp unclear">Unclear</span></p>
     </div>
     <figure class="slip card-shot" style="margin:0">
       <img src="../assets/shots/plan-card-660.webp" srcset="../assets/shots/plan-card-660.webp 1x, ../assets/shots/plan-card.webp 2x" width="660" height="861" alt="Cair — the live plan card: Payoneer delivers, Wise refused with Wise's sentence, line 10 blank, at most $4,900.00 stamped UNCLEAR, every line footnoted">
-      <figcaption class="card-cap">the live card, 10 Oct 2026</figcaption>
     </figure>
   </div>
-  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">04 / 11</span></div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.4</span><span class="pg">04 / 11</span></div>
   <aside class="speaker-notes">Left: the actual answer from one model call with no tools — it picked Wise, and nothing stands behind it.
-    Right: Cair's card for the same question. Wise is refused in Wise's own words, line 10 stays blank, and the amount is an
+    Right: Cair's live card for the same scenario — Devpost, seven thousand dollars, Indonesia; the one call was asked
+    in Indonesian with PayPal also on the form, the live plan with Payoneer and Wise. Payoneer delivers, Wise is refused in Wise's own words, line 10 stays blank, and the amount is an
     upper bound because Payoneer doesn't publish its fee. Every line carries a footnote to the span that produced it.</aside>
 </section>
 
@@ -402,13 +411,13 @@ body.ov .overview { display: block; }
     <div class="slip node"><span class="n-t">Your form</span><span class="n-d">payer · amount · country · options</span></div>
     <div class="slip node"><div class="chain"><span>platform_rails</span><span>rail_eligibility</span><span>treaty_lookup</span><span>fx_quote</span><span>fee_calc</span></div></div>
     <div class="slip node"><span class="n-t">Code decides</span><span class="n-d">route · line 10 · amounts</span></div>
-    <div class="slip node"><span class="n-t">Qwen words it</span><span class="n-d"><span class="mono">qwen3.8-max</span>, temp 0</span></div>
+    <div class="slip node"><span class="n-t">Qwen words it</span><span class="n-d"><span class="mono">qwen3.8-max</span></span></div>
     <div class="slip node g"><span class="n-t">Guardrail checks</span><span class="n-d">no unsourced figure</span></div>
   </div>
   <div class="spine"><b>neatlogs</b><div class="kinds"><span>WORKFLOW</span><span>AGENT</span><span>TOOL</span><span>RETRIEVER</span><span>LLM</span><span>GUARDRAIL</span><span class="e">EVALUATOR</span></div></div></div>
-  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">05 / 11</span></div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.4</span><span class="pg">05 / 11</span></div>
   <aside class="speaker-notes">A fixed evidence plan runs before any prose: what the payer offers, whether each option can receive in your
-    country, the treaty position, the ECB rate, then Decimal arithmetic. Code picks the route and line 10. Qwen only writes the
+    country, the treaty position, the ECB rate, then Decimal arithmetic. Code picks the route and line 10. Qwen (qwen3.8-max, temperature 0) only writes the
     explanation, and a provenance guardrail blocks any figure that isn't in a tool output. Every step is a neatlogs span; a
     later receipt becomes an EVALUATOR span in the same session.</aside>
 </section>
@@ -438,7 +447,7 @@ body.ov .overview { display: block; }
       <p class="verify-cap">/verify · traces read back over MCP</p>
     </div>
   </div>
-  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">06 / 11</span></div>
+  <div class="foot"><span>Cair · neatHack 2026 · v0.1.4</span><span class="pg">06 / 11</span></div>
   <aside class="speaker-notes">This is the live app on the hero question: Devpost, seven thousand dollars, Indonesia. Each verdict cites its
     source; press Confirm and a confirm span lands in the same neatlogs session. The /verify page reads the last plans back
     from neatlogs over MCP, so a judge can check the traces without an account.</aside>
@@ -446,26 +455,24 @@ body.ov .overview { display: block; }
 
 <!-- 7 · Measured -->
 <section class="slide s-measured" aria-label="Slide 7 of 11: one call against the agent">
-  <h2>Same model, 48 questions.</h2>
+  <h2>One call: 18 dead routes. Cair: 0.</h2>
   <div class="center"><div class="metrics">
     <div class="slip metric">
       <h3>Recommends a dead route</h3>
-      <p class="dir">fewer is better</p>
       <div class="bar v1"><span class="who">one call</span><span class="track"><i style="--v:.375;--n:0"></i></span><span class="val">18 / 48</span></div>
       <div class="bar v1s"><span class="who">+ sheet</span><span class="track"><i style="--v:.0417;--n:1"></i></span><span class="val">2 / 48</span></div>
       <div class="bar cair"><span class="who">Cair</span><span class="track"><i style="--v:0;--n:2"></i></span><span class="val">0 / 48</span></div>
     </div>
     <div class="slip metric">
       <h3>Says UNCLEAR when unsourced</h3>
-      <p class="dir">more is better</p>
       <div class="bar v1"><span class="who">one call</span><span class="track"><i style="--v:.0769;--n:0"></i><i class="range" style="--v:.0769;--v2:.1608;--n:0"></i></span><span class="val">11–23 / 143</span></div>
       <div class="bar v1s"><span class="who">+ sheet</span><span class="track"><i style="--v:.7692;--n:1"></i></span><span class="val">110 / 143</span></div>
       <div class="bar cair"><span class="who">Cair</span><span class="track"><i style="--v:1;--n:2"></i></span><span class="val">143 / 143</span></div>
     </div>
   </div>
   </div>
-  <div class="foot"><span>eval-v1-r1…r3 · eval-v1s-r1 · eval-v2-r10 · qwen3.8-max, temperature 0</span><span class="pg">07 / 11</span></div>
-  <aside class="speaker-notes">Forty-eight frozen scenarios, labelled from the sourced sheet before any agent code existed. One model call
+  <div class="foot"><span>same model (qwen3.8-max, temperature 0), 48 frozen questions · eval-v1-r1…r3 · eval-v1s-r1 · eval-v2-r10</span><span class="pg">07 / 11</span></div>
+  <aside class="speaker-notes">Forty-eight frozen scenarios, labelled from the sourced sheet before any planner code existed. One model call
     with no tools recommended a dead route eighteen times, in every run. Even with the whole rules sheet pasted into the prompt it
     still slipped twice. Cair: zero. And every one of Cair's 359 figures traces to a tool output.</aside>
 </section>
@@ -496,14 +503,14 @@ body.ov .overview { display: block; }
 <section class="slide s-inst" aria-label="Slide 9 of 11: neatlogs, Entire and cfo.ai">
   <h2>Three instruments.</h2>
   <div class="center inst">
-    <div class="slip"><h3>neatlogs</h3><p>One trace per plan. <span class="mono">search_traces</span> found two real bugs; <span class="mono">/verify</span> reads traces back.</p><p class="ev">rca-01.md · evidence/traces/</p></div>
-    <div class="slip"><h3>Entire</h3><p>Graph search ranked the fixed rule first. Checkpoints off: public repo.</p><p class="ev">evidence/entire/</p></div>
-    <div class="slip"><h3>cfo.ai</h3><p>Inputs on file.</p><span class="pending">Model pending</span><p class="ev">docs/BUSINESS-PLAN.md</p></div>
+    <div class="slip"><h3>neatlogs</h3><p>One trace per plan; <span class="mono">/verify</span> reads them back.</p><p class="proof"><span class="nw">search_traces →</span> <span class="nw">two real bugs, fixed</span></p></div>
+    <div class="slip"><h3>Entire</h3><p>Graph search ranked the fixed rule first.</p><p class="proof"><span class="nw">checkpoints off:</span> <span class="nw">public repo</span></p></div>
+    <div class="slip"><h3>cfo.ai</h3><span class="pending">Model pending</span><p class="proof"><span class="nw">$0.0033 a plan ·</span> <span class="nw">$15.26 a month</span></p></div>
   </div>
-  <div class="foot"><span>Cair · neatHack 2026 · v0.1.2</span><span class="pg">09 / 11</span></div>
+  <div class="foot"><span>rca-01.md · evidence/traces/ · evidence/entire/ · docs/BUSINESS-PLAN.md · costs at list price</span><span class="pg">09 / 11</span></div>
   <aside class="speaker-notes">neatlogs is where the failures were found: search_traces for blocked guardrails surfaced an amount parsed as a
     year and refusals repeating the user's zero percent — both fixed and re-run. Entire's local code graph was used while
-    building; its outputs are committed. The cfo.ai model is not entered yet; the inputs it needs are measured and on file.</aside>
+    building; its outputs are committed. The cfo.ai model is not entered yet; its inputs are on file: measured tokens and latency, list-price hosting, and labelled pricing assumptions.</aside>
 </section>
 
 <!-- 10 · Cost + limits -->
@@ -511,21 +518,21 @@ body.ov .overview { display: block; }
   <h2>Cheap to run. Honest about limits.</h2>
   <div class="grid center">
     <div class="ledger">
-      <div class="row"><b>$0.0033</b><span>of LLM per plan</span></div>
+      <div class="row"><b>$0.0033</b><span>LLM per plan, at list price</span></div>
       <div class="row"><b>5.50 s</b><span>median · p95 10.31 s</span></div>
       <div class="row"><b>$15.26</b><span>hosting a month, list price</span></div>
     </div>
     <div class="slip limits">
+      <div class="row"><b>n = 0</b><span>forward receipts from real users</span></div>
       <ul>
-        <li>Three countries fully sourced; others UNCLEAR.</li>
-        <li>Forward receipts from real users: n = 0.</li>
+        <li>Three countries fully sourced.</li>
         <li>Explains forms, never files.</li>
       </ul>
     </div>
   </div>
-  <div class="foot"><span>timings and cost: bench-20261010T085809Z (48 plans, one at a time) · BUSINESS-PLAN.md · README limits</span><span class="pg">10 / 11</span></div>
-  <aside class="speaker-notes">A plan costs about a third of a cent of model time and takes five and a half seconds at the median. The limits
-    are on the slide because a tool that refuses unsourced claims shouldn't hide its own: three fully sourced countries, no
+  <div class="foot"><span>bench-20261010T085809Z: 48 plans, one at a time, builder's laptop · LLM cost = bench tokens × list price · README limits</span><span class="pg">10 / 11</span></div>
+  <aside class="speaker-notes">At list price a plan costs about a third of a cent of model time; in the bench, on a laptop, the median plan took five and a half seconds. The limits
+    are on the slide because a tool that refuses unsourced claims shouldn't hide its own: three fully sourced countries (the rest say UNCLEAR), no
     forward receipts from real users yet, and it is not tax advice.</aside>
 </section>
 
@@ -548,7 +555,7 @@ body.ov .overview { display: block; }
       <p>app.cair.edycu.dev</p>
     </div>
   </div>
-  <div class="foot"><span>Cair · Edy Team · neatHack 2026 · v0.1.2</span><span class="pg">11 / 11</span></div>
+  <div class="foot"><span>Cair · Edy Team · neatHack 2026 · v0.1.4</span><span class="pg">11 / 11</span></div>
   <aside class="speaker-notes">Open it next to a real payout form: Devpost, seven thousand, Indonesia, tick Payoneer and Wise. You'll see
     Wise refused in Wise's own words and every number footnoted.</aside>
 </section>
@@ -644,7 +651,6 @@ body.ov .overview { display: block; }
     else if (k === 'End') go(total - 1);
     else if (k === 'Escape') toggleOverview();
     else if (k === 'p' || k === 'P') { document.body.classList.toggle('presenter'); wake(); }
-    else if (k === 'c' || k === 'C') document.body.classList.toggle('debug-contrast');
   });
 
   /* Touch: swipe. */
