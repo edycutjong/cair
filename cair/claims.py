@@ -68,7 +68,7 @@ def rail_names(rail: str) -> list[str]:
         names += {"ethereum": ["ERC-20", "ERC20"], "bsc": ["BEP-20", "BEP20", "BNB"],
                   "tron": ["TRC-20", "TRC20", "TRX"]}.get(chain, [])
         return names
-    return [RAILS.get(rail) or EXTRA_RAILS.get(rail, rail)]
+    return [RAILS.get(rail) or EXTRA_RAILS.get(rail, rail)] + (["TransferWise"] if rail == "wise" else [])  # Wise's old name
 
 
 # "wise" in lower case is the rail only in a payout context ("use wise", "pakai wise", "wise account"), never the idiom.

@@ -29,6 +29,12 @@ _AMT = r"\s+(?:of\s+)?(?:about\s+|around\s+|sekitar\s+)?(?:US\$|\$|USDC?|IDR|Rp\
 BOUND_STRONG = re.compile(rf"(?:at most|up to|maximum|paling banyak|maksimal|hingga){_AMT}|batas atas|upper bound|\bUNCLEAR\b|"
                           r"tidak jelas|not stated", re.I)  # "up to $4,900.00", not "up to two days"
 BOUND_LEAD = r"\b(?:before|sebelum|minus|excluding|not including|belum (?:termasuk|dipotong)|dikurangi)\b"
+# the bound itself, described as what is left after withholding ("$4,900.00 remains after the 30% withholding")
+AFTER_WITHHOLDING = re.compile(r"\bafter (?:the )?(?:\d+(?:[.,]\d+)?\s?%\s+)?(?:US\s+)?(?:withh\w*|tax\w*)|"
+                               r"setelah (?:dipotong|pemotongan|potongan|pajak)", re.I)
+BOUND_WORDS = re.compile(r"\bceiling\b|\bthe most\b|\bmost (?:you|that)\b|\bcap(?:ped)?\b|upper limit|not a promise|"
+                         r"not guaranteed|no guarantee|bukan janji|tidak dijamin|paling besar|plafon", re.I)  # "a ceiling, not a promise"
+LINE10 = re.compile(r"\bline\s*(?:10|ten)\b|\bbaris\s*(?:10|sepuluh)\b", re.I)
 KEEP = re.compile(r"\b(?:keep|keeps|kept|net|nett|lands?|landed|take[- ]home|left with|end(?:s)? up|you have|you'll have|"
                   r"bersih|tersisa|masuk|sampai|arriv\w*|reach\w*|credited|deposit\w*|balance|saldo)\b", re.I)
 GROSS_OR_TAX = re.compile(r"\bgross\b|bruto|kotor|withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak", re.I)
@@ -58,7 +64,8 @@ ZERO_TAX = re.compile(  # "nothing is withheld", "withholding does not apply", "
     r"\bnothing\s+(?:\w+\s+){0,2}(?:withheld|deducted|taxed|dipotong)\b|\b(?:withholds?|deducts?)\s+nothing\b|"
     r"\bwithh\w*\s+(?:\w+\s+){0,2}(?:does not|doesn't|do not|don't|will not|won't|is not|isn't|tidak)\s+"
     r"(?:apply|applies|berlaku)\b|\bowe\b(?:\s+\w+){0,3}\s+nothing\b|\btanpa\s+(?:potongan|pemotongan|pajak)\b|"
-    r"\b(?:withholding|tax|pajak|potongan)\s+(?:is|=|adalah)\s+(?:nothing|none|zero|nol)\b", re.I)
+    r"\b(?:withholding|tax|pajak|potongan)\s*(?:is|=|:|adalah)\s*(?:nothing|none|nil|zero|nol)\b|\btakes?\s+nothing\b|"
+    r"\b(?:withh\w*|tax\w*|pajak|potongan)\b[^.;]{0,30}\b(?:waived|dihapus|dibebaskan)\b", re.I)
 PLAN_CTX = re.compile(r"\bthe plan\b|rencana", re.I)
 FEE_WORD = re.compile(r"\bfees?\b|\bcharges?\b|biaya|komisi|margin|conversion|konversi", re.I)
 LINE10_OK = re.compile(r"\bUNCLEAR\b|\bblank\b|kosong|no source|tidak ada sumber|tidak jelas|belum ada sumber|"
@@ -105,6 +112,9 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
         return any(f["kind"] == "money" and figures.is_sourced(f, pools) for f in figures.extract(sent))
 
     gross_or_withheld = {figures._dec(v) for v in (ld.get("gross"), ld.get("withheld")) if v and v != "UNCLEAR"}
+    # the amounts a reader would take for "what lands": the bound in USD and local currency (the gross is its own thing)
+    bound_vals = {figures._dec(v) for v in (ld.get("after_withholding"), ld.get("upper_bound_usd"), ld.get("upper_bound_local"))
+                  if v and v != "UNCLEAR"} - gross_or_withheld
     confirmed_chains = {f"usdc:{n}" for r in card["rails"] for n in r.get("sourced_yes_networks", [])}
 
     def claim(cls: str, msg: str) -> None:
@@ -153,7 +163,7 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
         # --- W-8BEN line 10 and treaty articles --------------------------------------------------------------------
         has_article = figures.has_article(sent)
         line10_ok = LINE10_OK.search(sent) and not LINE10_NEGATED.search(sent)
-        if (re.search(r"line\s*10|baris\s*10", sent, re.I) and has_article and not line10.startswith("ARTICLE")
+        if (LINE10.search(sent) and has_article and not line10.startswith("ARTICLE")
                 and not (claims.refuses(sent) and not LINE10_NEGATED.search(sent)) and not line10_ok):
             claim("line10", f"article on line 10 while the tools say {line10}: {sent[:140]}")
         elif (has_article and not line10.startswith("ARTICLE") and ARTICLE_CLAIM.search(sent)
@@ -187,6 +197,13 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
                 f["kind"] != "word" and figures._dec(str(f["value"])) in gross_or_withheld for f in money)
             if money and not described:
                 claim("unclear_upgraded", f"{money[0]['raw']} stated as what lands while it is UNCLEAR: {sent[:140]}")
+                continue
+        # ...and whatever the verb ("You'll pocket $4,900.00"), the bound amount is only ever stated as a bound
+        if (landed_unclear and not bounded and not purpose and not claims.refuses(sent)
+                and not AFTER_WITHHOLDING.search(sent) and not BOUND_WORDS.search(sent)):
+            bare = [f for f in figures.extract(sent) if f["kind"] in ("money", "number") and figures._dec(str(f["value"])) in bound_vals]
+            if bare:
+                claim("unclear_upgraded", f"{bare[0]['raw']} is an upper bound stated without saying so: {sent[:140]}")
     for m in LINK.finditer(text):  # links, emails, handles and wallet addresses only if a tool output carries them
         if m.group(0).rstrip(".,)") not in known_text:
             claim("link", f"link or address not in any tool output: {m.group(0)[:80]}")

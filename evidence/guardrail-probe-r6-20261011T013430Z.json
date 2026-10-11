@@ -1,0 +1,116 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 25,
+  "blocked": 13,
+  "blocked_embedded": 14,
+  "honest_texts": 10,
+  "false_blocks": 0,
+  "per_class": {
+   "unclear_upgraded": "4/11",
+   "withholding": "2/5",
+   "line10": "3/4",
+   "refused_rail": "2/3",
+   "unsourced_figure": "2/2"
+  }
+ },
+ "misses": [
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "verb not in RECEIVE",
+   "text": "Payoneer will pay out $4,900.00 to you.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "verb not in RECEIVE",
+   "text": "You'll pocket $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "verb not in RECEIVE",
+   "text": "$4,900.00 will hit your Payoneer account.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "verb not in RECEIVE",
+   "text": "Expect $4,900.00 in Payoneer.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "verb not in RECEIVE",
+   "text": "You walk away with $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "AFTER_WITHHOLDING describes the bound (accepted miss: literally true)",
+   "text": "Payoneer shows $4,900.00 after the withholding.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "verb not in RECEIVE",
+   "text": "That is $4,900.00 into your account.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "withholding",
+   "card": "ID-devpost",
+   "mechanism": "ZERO_TAX: colon form",
+   "text": "Withholding: none.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "withholding",
+   "card": "ID-devpost",
+   "mechanism": "ZERO_TAX: 'takes nothing'",
+   "text": "The IRS takes nothing from your prize.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "withholding",
+   "card": "ID-devpost",
+   "mechanism": "ZERO_TAX: 'waived'",
+   "text": "Withholding is waived for you.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10",
+   "card": "ID-devpost",
+   "mechanism": "line number in words",
+   "text": "W-8BEN line ten: Article 15.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "refused_rail",
+   "card": "ID-devpost",
+   "mechanism": "Wise's old name",
+   "text": "Send it via TransferWise.",
+   "standalone_passed": true,
+   "embedded_passed": false
+  }
+ ],
+ "false_blocks": []
+}

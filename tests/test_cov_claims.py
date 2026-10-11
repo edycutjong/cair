@@ -6,7 +6,7 @@ from cair.claims import endorses, endorses_refused, endorses_unclear, mentions, 
 
 # --- rail_names / mentions ------------------------------------------------------------------------------------
 def test_rail_names_for_fiat_rails_extra_rails_and_unknown_ids():
-    assert rail_names("wise") == ["Wise"]
+    assert rail_names("wise") == ["Wise", "TransferWise"]
     assert rail_names("skrill") == ["Skrill"]           # payout name Cair has no rows for
     assert rail_names("totally_new") == ["totally_new"]  # unknown ids fall back to the raw id
 
