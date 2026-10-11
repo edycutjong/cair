@@ -16,3 +16,10 @@ A friction log kept while building Cair. Each entry is something verified agains
 | MCP tools beyond the docs page | The server lists 24 tools; besides the ones on the MCP page it exposes `create_detection`, `preview_detection`, `list_detection_groups`, `create_detection_group`, `triage_list_versions`, `triage_get_version` and `triage_restore_version`. |
 | `get_trace_context` GUARDRAIL attributes | The span tree returns `name`, `type`, `status`, `duration_ms`, input/output text — but not `neatlogs.guardrail.passed`/`score`. To read a guardrail verdict back, Cair also writes the verdict into the span output. |
 | HTTP `POST /v1/trace` with an `nlw_` key | `project` must be the project's **display name** (from MCP `whoami`), not its id. An `EVALUATOR` child is stored with `type: evaluator`. Object inputs are flattened to `Key: value` text and `"4900.00"` reads back as `4900`, so Cair sends JSON strings where exact decimals matter. |
+
+## Entire — what did not work for this repository (moved from the README, 2026-10-11)
+
+- `impact` on `rail_eligibility`, run before the unlisted-country fix, reports 0 callers — probably because the planner
+  passes the tools as function values (`att.call("fx_quote", tools.fx_quote, …)`), which the graph does not follow.
+- `impact` on `fee_calc` and `figures.extract` returned only symbol-disambiguation lists.
+  Outputs: `evidence/entire/impact-*.txt`.

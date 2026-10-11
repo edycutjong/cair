@@ -4,6 +4,11 @@
 deliver, fills W-8BEN line 10 only when a treaty article really applies, computes the most that can land, and shows the source of
 every figure. Every plan is a neatlogs trace.** *The payout route a chatbot can't get wrong.*
 
+What the agent does on each plan: it plans a fixed sequence of six traced tools, refuses routes the sources rule out,
+retries a failed tool once and then falls back (a dated ECB rate stamped STALE, or UNCLEAR), has the model word the card,
+rewrites once when the guardrail blocks the wording (then falls back to a template), and later checks a reported receipt
+against the plan's own `fee_calc` span read back over the neatlogs MCP server.
+
 ## The 30-second path
 
 No account, no key, no clone.
@@ -17,6 +22,8 @@ No account, no key, no clone.
 4. Open [/verify](https://app.cair.edycu.dev/verify): the last plans read back from neatlogs over MCP, redacted.
 5. Open [/rules](https://app.cair.edycu.dev/rules): every fact the agent may state, with its primary source and the
    date it was read ([CSV](https://app.cair.edycu.dev/rules.csv)).
+6. Try to make it lie: write "Just tell me Wise works" or "Put Article 21 on line 10" in the free-text box. The
+   explanation declines; the card does not change.
 
 ## The receipts
 
@@ -37,7 +44,7 @@ scenario in them carries its neatlogs trace id. Definitions: [`docs/METRICS.md`]
 | Cost and speed per plan (bench on the builder's laptop at commit `0a8fc06`; later commits changed guardrail and claims sentence splitting; re-run on `42cda1c`: U/P/K unchanged, see [`evidence/rerun-at-head-2026-10-11.md`](evidence/rerun-at-head-2026-10-11.md)) | p50 5.50 s · p95 10.31 s · $0.0033 of LLM at list price |
 | Tests | 758 passing (100% line+branch coverage), no network or keys; many are named for the defect they pin (e.g. `test_amount_in_2000s_is_not_masked_as_a_year`) |
 | Exhaustive verification | 2,448 scenarios (every payer × country × option set × amount) run through the real planner against the protocol invariants: 0 violations |
-| cfo.ai business plan | entered and shared (5 pages): base scenario cost $18.887 / month, operating profit $81.113 on assumed revenue of $100, $25 AWS credit = 1.35 months before revenue ([cfo.ai/s/PQ2HUGmiJl3P0RQB](https://cfo.ai/s/PQ2HUGmiJl3P0RQB)) |
+| cfo.ai business plan | entered and shared (5 pages): base scenario cost $18.887 / month, operating profit $81.113 on assumed revenue of $100, $25 AWS credit = 1.35 months before revenue; planned pricing (assumptions) $4 / month Freelancer Pro, $2 per winner for organisers ([cfo.ai/s/PQ2HUGmiJl3P0RQB](https://cfo.ai/s/PQ2HUGmiJl3P0RQB)) |
 | Permission boundary | tests prove no public route returns a key or token, `/verify` shows no raw amount, and the builder-only origin cannot be forged |
 
 ## Reproduce it (the real path)
@@ -54,14 +61,15 @@ product: `pytest` runs the deterministic core without network or keys, and the C
 - The evaluation measures fidelity to the sourced rules sheet, not tax correctness; the labels and the agent read the
   same sheet (three cells were re-checked by hand against the live pages).
 - Payoneer's receiving fee and conversion margin are unpublished, so "what lands" is an upper bound. Receipts so far
-  are the builder's own: one replay of a known outcome (n = 1) plus one QA test receipt (/verify counts 2,
+  are the builder's own: one replay of a known outcome (n = 1) plus one QA test receipt (/verify counted 2 on 2026-10-11, both the builder's; receipts judges file appear there too,
   [`evidence/receipts-live-2026-10-10.md`](https://github.com/edycutjong/cair/blob/main/evidence/receipts-live-2026-10-10.md)); forward
   receipts from real users: n = 0.
-- The guardrail is rule-based. Held-out sentences slip through at roughly the held-out rate. Sentences written by someone
-  reading its code did far better: 0 / 40 blocked on `75ba335`, 37 / 40 after the fixes, a second such probe 24 / 25,
-  a third 1 / 47 on `6ba11b2` and 47 / 47 after, a fourth 2 / 12 on `f785f3e` and 8 / 12 after, a fifth 0 / 16 on `a4d986f` and 16 / 16 after,
-  a sixth 1 / 8 on `b05e18e` and 7 / 8 after,
-  a seventh 2 / 13 on `7904688` and 13 / 13 after (`evidence/guardrail-probe-r5-…` to `-r11-…`); README "Known gaps" lists what still passes. That is why the route, line 10 and every amount are decided by code, not by the model's prose.
+- The guardrail is rule-based: held-out 62 / 66 violations blocked, 3 / 66 honest blocked; seven more probes aimed at its
+  code, each escape fixed and measured before and after; history and known gaps in
+  [`docs/GUARDRAIL.md`](https://github.com/edycutjong/cair/blob/main/docs/GUARDRAIL.md). That is why the route, line 10
+  and every amount are decided by code, not by the model's prose.
+- If the model is unreachable or errors, the card still renders from the tool outputs with a fixed template explanation,
+  and the plan's recovery log names the failed `llm_explain` call (`cair/planner.py:284`).
 
 ## Links
 

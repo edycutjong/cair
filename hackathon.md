@@ -21,19 +21,6 @@ confirm spans) · neatlogs MCP server (trace read-back) · Qwen Cloud through an
 - **2026-10-10** — setup validated with a sample run: one WORKFLOW trace with a TOOL span, a GUARDRAIL span and an LLM
   span reached neatlogs and was read back over the MCP server (`get_trace_context`, `search_traces` by plan id);
   one HTTP `/v1/trace` trace with an EVALUATOR child was read back the same way. Details in `docs/DX-REPORT.md`.
-
-## Demo
-Video (2:57, covers neatlogs, Entire and cfo.ai): https://youtu.be/UC7pSo3hUlk
-
-https://app.cair.edycu.dev — steps and reproduce commands in `DEMO.md`; judges' trace read-back at `/verify`.
-
-## Known limitations and next steps
-See README → Limitations. Next: more countries from primary sources; forward receipts from real users.
-
-## Submission
-Confirmed requirements (event page, 2026-10-10): public quote post of the official neatlogs submission post on X,
-Mon 12 Oct 7:00–11:55 PM IST; public repo with commits dated in the window; demo video ≤ 3 min covering neatlogs,
-Entire and cfo.ai. Outstanding: everything after the first commit.
 - **2026-10-10** — rules sheet (`data/rules_sheet.csv`, sources in `data/sources.md`), frozen set of 48 scenarios
   (tag `frozen-set-v1`) and the scorer (`docs/METRICS.md`) committed before any planner code.
 - **2026-10-10** — v1 baseline run: one tool-less call to the same model (`scripts/eval.py --planner v1`).
@@ -73,10 +60,14 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   (`evidence/rca-01.md`, rounds 3–4). Final runs at `0a8fc06`: v2 U 0 / P 0 / UNCLEAR 143/143 / figures 359/359, no
   template fallbacks (`eval-v2-r10`); forced FX failure 48/48, 350/350 (`eval-fail-fx_quote-r9`); bench p50 5.50 s,
   p95 10.31 s, $0.0033 per plan (`evidence/bench-20261010T085809Z.json`). Tests: 76 at that point (571 after the coverage pass).
+- **2026-10-10 evening** — cfo.ai: the business plan is entered and shared (https://cfo.ai/s/PQ2HUGmiJl3P0RQB); export in `docs/cfo/Runway.xlsx`, rendered in
+  `docs/BUSINESS-PLAN.md`. neatlogs dashboard traces are linked from the README and `evidence/`.
 - **2026-10-10 night** — hardening (enhance pass): ruff and mypy clean, unit tests and 23 browser tests in CI, CodeQL, gitleaks over
   full history and pip-audit green, community profile 100%; an exhaustive 2,448-scenario check of the real planner found 0
   violations (breaking the route rule gives 2,256). Testing found one real defect, fixed: receipt amounts were capped at 10M for
   every currency, so IDR 87,616,900 was refused. A coverage pass then took the suite to 571 tests at 100% line+branch coverage.
+- **2026-10-10 night** — landing page https://cair.edycu.dev and an 11-slide pitch deck https://cair.edycu.dev/pitch/ (GitHub Pages
+  from `/docs`); every number on them is read from `evidence/`.
 - **2026-10-11 morning** — an outside architecture review (a2a round 3) read the guardrail's code and wrote 40 sentences
   aimed at it: the guardrail blocked none (`evidence/guardrail-probe-r5-…`). An exemption word anywhere in a sentence switched
   a check off. Fixed: 37/40 blocked, 0/22 honest. Checking the fix with 25 new sentences got 12 through, so "UNCLEAR is
@@ -96,10 +87,19 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   whole sentence, so "Nothing is withheld, but Payoneer's receiving fee is UNCLEAR" passed (probe r11: 2/13 → 13/13). Checking it
   found a refused write of something else still excused an article instruction (3/4 missed → 0/4). The architecture review loop
   ends here: six rounds, no published number moved. 758 tests, 100% line+branch.
-- **2026-10-10 night** — landing page https://cair.edycu.dev and an 11-slide pitch deck https://cair.edycu.dev/pitch/ (GitHub Pages
-  from `/docs`); every number on them is read from `evidence/`.
-- **2026-10-10 evening** — cfo.ai: the business plan is entered and shared (https://cfo.ai/s/PQ2HUGmiJl3P0RQB); export in `docs/cfo/Runway.xlsx`, rendered in
-  `docs/BUSINESS-PLAN.md`. neatlogs dashboard traces are linked from the README and `evidence/`.
+
+## Demo
+Video (2:57, covers neatlogs, Entire and cfo.ai): https://youtu.be/UC7pSo3hUlk
+
+https://app.cair.edycu.dev — steps and reproduce commands in `DEMO.md`; judges' trace read-back at `/verify`.
+
+## Known limitations and next steps
+See README → Honest limits. Next: more countries from primary sources; forward receipts from real users.
+
+## Submission
+Confirmed requirements (event page, 2026-10-10): public quote post of the official neatlogs submission post on X,
+Mon 12 Oct 7:00–11:55 PM IST; public repo with commits dated in the window; demo video ≤ 3 min covering neatlogs,
+Entire and cfo.ai. The submission is that quote post, posted by the builder inside the window.
 
 ## Built in public (#neatHack)
 - [Launch post](https://x.com/edycutjong/status/2108905407381213633) — Sat 10 Oct ~20:00 WIB.
