@@ -48,7 +48,7 @@ PAID_BY = re.compile(r"\bfrom\b|\bdari\b|\bpaid\b|\bpays?\b|\bpaying\b|dibayar\w
 _NOT = (r"(?:can(?:not|'t)|could(?:n't| not)|won't|will not|would(?:n't| not)|should(?:n't| not)|must not|may not|"
         r"do(?:n't| not)|never|no need to|not able to|unable to|refuse to|declin(?:e|es|ed|ing)|jangan|"
         r"tidak (?:bisa|dapat|akan|boleh|perlu|mampu)|tak (?:bisa|dapat|boleh|perlu|akan)|menolak(?: untuk)?)")
-_GAP = r"(?:(?!forget|lupa|hesitate|ragu|fail|lalai|worry|khawatir)\w+\s+){0,3}?"  # "don't forget to write" writes
+_GAP = r"(?:(?!forget|lupa|hesitate|ragu|fail|lalai|worry|khawatir|wait|sabar|help)\w+\s+){0,3}?"  # "don't forget to write" writes; "can't wait to tell you" is not a refusal
 _SAY = (r"(?:say|confirm|promise|state|tell|guarantee|claim|cite|write|enter|fill|assume|katakan|mengatakan|nyatakan|"
         r"menyatakan|konfirmasi|mengonfirmasi|janjikan|menjanjikan|pastikan|memastikan|jamin|menjamin|tulis|tuliskan|"
         r"menulis|menuliskan|isi|isikan|mengisi|cantumkan|mencantumkan|masukkan|memasukkan|klaim|mengklaim|anggap|"
@@ -62,7 +62,11 @@ REFUSES_PASSIVE = re.compile(rf"\b{_NOT}\s+(?:be\s+(?:entered|written|listed|put
                              r"promised|guaranteed)|di(?:tulis|isi|cantumkan|masukkan|klaim|anggap|pakai|gunakan|janjikan|"
                              r"jamin)\w*)\b", re.I)  # "Article 15 should not be entered…", "Wise tidak boleh dipakai"
 NEGATED_BEFORE = re.compile(r"(?:\bnot|n't|\bnever|\btidak|\bbukan)\s+(?:\w+\s+){0,2}$", re.I)  # "does not | apply"
-CLAUSE = re.compile(r";|,?\s+\b(?:but|however|although|though|tapi|tetapi|namun|meskipun|walaupun)\b", re.I)
+# a new clause also starts at a comma or "and" followed by a new subject ("I can't say when, you will receive…"), never
+# inside a list ("Articles 15, 16 and 17")
+_SUBJECT = r"(?:you|you'll|you're|your|it|it's|nothing|no|there|this|that|the|line|baris|anda|kamu|dana|uang|saya|I|we|tidak ada)\b"
+CLAUSE = re.compile(rf";|,?\s+\b(?:but|however|although|though|tapi|tetapi|namun|meskipun|walaupun)\b|"
+                    rf",\s+(?:and\s+|dan\s+)?(?={_SUBJECT})|\s+(?:and|dan)\s+(?={_SUBJECT})", re.I)
 ALL_RAILS = list(rules.RAILS) + list(claims.EXTRA_RAILS) + [f"usdc:{c}" for c in rules.CHAINS] + list(rules.EXCHANGES) + ["usdc"]
 KEEP = re.compile(r"\b(?:keep|keeps|kept|net|nett|lands?|landed|take[- ]home|left with|end(?:s)? up|you have|you'll have|"
                   r"bersih|tersisa|masuk|sampai|arriv\w*|reach\w*|credited|deposit\w*|balance|saldo)\b", re.I)

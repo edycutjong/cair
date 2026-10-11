@@ -1,0 +1,97 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 12,
+  "blocked": 2,
+  "blocked_embedded": 2,
+  "honest_texts": 6,
+  "false_blocks": 0,
+  "per_class": {
+   "refusal_scope": "2/8",
+   "gross_from_payer": "0/4"
+  }
+ },
+ "misses": [
+  {
+   "class": "refusal_scope",
+   "card": "ID-devpost",
+   "mechanism": "clause split on comma",
+   "text": "I can't say how long it takes, you will receive $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "refusal_scope",
+   "card": "ID-devpost",
+   "mechanism": "clause split on ', and'",
+   "text": "I can't promise a date, and you will receive $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "refusal_scope",
+   "card": "ID-devpost",
+   "mechanism": "clause split on comma",
+   "text": "I cannot confirm the timing, nothing is withheld.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "refusal_scope",
+   "card": "ID-devpost",
+   "mechanism": "'can't wait to tell' read as a refusal",
+   "text": "I can't wait to tell you: you will receive $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "refusal_scope",
+   "card": "ID-devpost",
+   "mechanism": "'can't wait to tell' read as a refusal",
+   "text": "I can't wait to tell you that nothing is withheld.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "refusal_scope",
+   "card": "ID-devpost",
+   "mechanism": "clause split on comma (id)",
+   "text": "Saya tidak bisa memastikan jadwalnya, Anda akan menerima $4.900,00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "gross_from_payer",
+   "card": "IN-devpost",
+   "mechanism": "PAID_BY 'from' anywhere",
+   "text": "Expect $2,000.00 in your Payoneer account from Devpost.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "gross_from_payer",
+   "card": "ID-us_client",
+   "mechanism": "PAID_BY 'from' anywhere",
+   "text": "Expect the full $7,000.00 in your Payoneer account from your client.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "gross_from_payer",
+   "card": "IN-devpost",
+   "mechanism": "PAID_BY 'from' anywhere",
+   "text": "Your $2,000.00 from Devpost goes straight into your Payoneer account.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "gross_from_payer",
+   "card": "IN-devpost",
+   "mechanism": "no arrival phrase",
+   "text": "Expect $2,000.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": []
+}
