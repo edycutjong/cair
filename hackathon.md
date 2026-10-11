@@ -108,4 +108,5 @@ Entire and cfo.ai. The submission is that quote post, posted by the builder insi
 - [Demo video on YouTube](https://youtu.be/UC7pSo3hUlk) — Sun 11 Oct.
 - [758 tests at 100% line + branch; Entire's graph ranks the fixed rule first](https://x.com/edycutjong/status/2109380165960921479) — Mon 12 Oct 03:26 WIB.
 - [Same model, same 48 scenarios: one call 18/48 dead routes, Cair 0/48](https://x.com/edycutjong/status/2109380608556499399) — Mon 12 Oct 03:28 WIB.
+- [Post linking the dev.to write-up](https://x.com/edycutjong/status/2109381012426047885) — Mon 12 Oct 03:29 WIB.
 - [dev.to write-up: An agent that refuses](https://dev.to/edycutjong/an-agent-that-refuses-building-a-payout-agent-with-neatlogs-entire-and-cfoai-oo3) — Sun 11 Oct 17:15 WIB.
