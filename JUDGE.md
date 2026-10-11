@@ -35,7 +35,7 @@ scenario in them carries its neatlogs trace id. Definitions: [`docs/METRICS.md`]
 | Forced failure of the FX tool (`--fail fx_quote`) | all 48 plans completed after retry and fallback; 350 / 350 figures sourced |
 | Provenance guardrail on sentences it was not tuned on (measured before the misses were fixed; that set is now in-sample) | blocks 62 / 66 violations; blocks 3 / 66 honest sentences |
 | Cost and speed per plan (bench on the builder's laptop at commit `0a8fc06`; later commits changed guardrail and claims sentence splitting; re-run on `42cda1c`: U/P/K unchanged, see [`evidence/rerun-at-head-2026-10-11.md`](evidence/rerun-at-head-2026-10-11.md)) | p50 5.50 s · p95 10.31 s · $0.0033 of LLM at list price |
-| Tests | 733 passing (100% line+branch coverage), no network or keys; many are named for the defect they pin (e.g. `test_amount_in_2000s_is_not_masked_as_a_year`) |
+| Tests | 758 passing (100% line+branch coverage), no network or keys; many are named for the defect they pin (e.g. `test_amount_in_2000s_is_not_masked_as_a_year`) |
 | Exhaustive verification | 2,448 scenarios (every payer × country × option set × amount) run through the real planner against the protocol invariants: 0 violations |
 | cfo.ai business plan | entered and shared (5 pages): base scenario cost $18.887 / month, operating profit $81.113 on assumed revenue of $100, $25 AWS credit = 1.35 months before revenue ([cfo.ai/s/PQ2HUGmiJl3P0RQB](https://cfo.ai/s/PQ2HUGmiJl3P0RQB)) |
 | Permission boundary | tests prove no public route returns a key or token, `/verify` shows no raw amount, and the builder-only origin cannot be forged |
@@ -60,7 +60,8 @@ product: `pytest` runs the deterministic core without network or keys, and the C
 - The guardrail is rule-based. Held-out sentences slip through at roughly the held-out rate. Sentences written by someone
   reading its code did far better: 0 / 40 blocked on `75ba335`, 37 / 40 after the fixes, a second such probe 24 / 25,
   a third 1 / 47 on `6ba11b2` and 47 / 47 after, a fourth 2 / 12 on `f785f3e` and 8 / 12 after, a fifth 0 / 16 on `a4d986f` and 16 / 16 after,
-  a sixth 1 / 8 on `b05e18e` and 7 / 8 after (`evidence/guardrail-probe-r5-…` to `-r10-…`); README "Known gaps" lists what still passes. That is why the route, line 10 and every amount are decided by code, not by the model's prose.
+  a sixth 1 / 8 on `b05e18e` and 7 / 8 after,
+  a seventh 2 / 13 on `7904688` and 13 / 13 after (`evidence/guardrail-probe-r5-…` to `-r11-…`); README "Known gaps" lists what still passes. That is why the route, line 10 and every amount are decided by code, not by the model's prose.
 
 ## Links
 

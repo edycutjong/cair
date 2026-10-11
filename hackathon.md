@@ -92,6 +92,10 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   menerima $4.900,00" passed), and "up to 2 business days" counted as a bound. Fixed with the reviewer's patch (probe r9: 0/16 →
   16/16, and an ECB rate quote no longer reads as the PHP bound); checking it found that "while", "since", "karena" or a dash
   kept the bound word in the claim's clause (probe r10: 1/8 → 7/8). Published verdicts unchanged; 733 tests, 100% line+branch.
+- **2026-10-11 early afternoon** — a2a round 6: the tax and line-10 checks still read "UNCLEAR", "blank" and "no source" on the
+  whole sentence, so "Nothing is withheld, but Payoneer's receiving fee is UNCLEAR" passed (probe r11: 2/13 → 13/13). Checking it
+  found a refused write of something else still excused an article instruction (3/4 missed → 0/4). The architecture review loop
+  ends here: six rounds, no published number moved. 758 tests, 100% line+branch.
 - **2026-10-10 night** — landing page https://cair.edycu.dev and an 11-slide pitch deck https://cair.edycu.dev/pitch/ (GitHub Pages
   from `/docs`); every number on them is read from `evidence/`.
 - **2026-10-10 evening** — cfo.ai: the business plan is entered and shared (https://cfo.ai/s/PQ2HUGmiJl3P0RQB); export in `docs/cfo/Runway.xlsx`, rendered in

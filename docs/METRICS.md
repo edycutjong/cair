@@ -67,7 +67,7 @@ Two figures match when their values are equal after normalising grouping (`87.61
 - Forced failure — v2 with one tool made to fail (`--fail fx_quote`), to show recovery.
 - Guardrail recall — `scripts/guardrail_recall.py` (in-sample: 53 scripted violations, 29 honest texts) and two held-out
   sets written by separate reviewers, `scripts/guardrail_heldout_r3.py` and `scripts/guardrail_heldout_r4.py`, each
-  measured before the fixes they prompted (r3: 53/71 and 12/60; r4: 62/66 and 3/66) and kept verbatim. Six white-box
+  measured before the fixes they prompted (r3: 53/71 and 12/60; r4: 62/66 and 3/66) and kept verbatim. Seven white-box
   probes, written by reading the guardrail's code and NOT held-out estimates: `scripts/guardrail_probe_r5.py` (outside
   reviewer, 40 violations / 22 honest: 0/40 on `75ba335`, 37/40 and 0/22 after) and `scripts/guardrail_probe_r6.py`
   (written against the r5-fixed rules, 25 / 10: 13/25 on `d3c5867`, 24/25 and 0/10 after), `scripts/guardrail_probe_r7.py`
@@ -76,7 +76,9 @@ Two figures match when their values are equal after normalising grouping (`87.61
   (local, against the r7 rules, 12 / 6: 2/12 on `f785f3e`, 8/12 and 0/6 after; the 4 misses are a documented gap), `scripts/guardrail_probe_r9.py` (outside reviewer, against the r8
   rules, 16 / 18: 0/16 blocked and 4/18 honest blocked on `a4d986f`, 16/16 and 0/18 after; it also re-checks the r3/r4 held-out
   landed-amount violations behind three bound openers, 1/24 → 24/24) and `scripts/guardrail_probe_r10.py` (local, against the r9
-  rules, 8 / 4: 1/8 on `b05e18e`, 7/8 and 0/4 after; the parenthesis miss is a documented gap).
+  rules, 8 / 4: 1/8 on `b05e18e`, 7/8 and 0/4 after; the parenthesis miss is a documented gap) and `scripts/guardrail_probe_r11.py` (outside reviewer,
+  against the r10 rules, 13 / 9: 2/13 on `7904688`, 13/13 and 0/9 after; held-out withholding and article violations with
+  three describing tails, 15/45 → 45/45).
 
 Model id, parameters, sheet version, set sha256 and git sha (read at the start of the run, plus a dirty flag) are
 written into every `evidence/eval-*.json`. Every file has been re-scored with the current scorer (`--rescore`).
