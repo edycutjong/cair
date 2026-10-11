@@ -18,7 +18,7 @@
   [![Website](https://img.shields.io/badge/🌐_Site-cair.edycu.dev-1C4C9C?style=for-the-badge)](https://cair.edycu.dev)
   [![Pitch Deck](https://img.shields.io/badge/📊_Pitch-Deck-f59e0b?style=for-the-badge)](https://cair.edycu.dev/pitch/)
   [![Read the Traces](https://img.shields.io/badge/🔍_Verify-Traces-f59e0b?style=for-the-badge)](https://app.cair.edycu.dev/verify)
-  [![For Judges](https://img.shields.io/badge/📌_Judge-Page-0f766e?style=for-the-badge)](JUDGE.md)
+  [![For Judges](https://img.shields.io/badge/📌_Judge-Page-0f766e?style=for-the-badge)](https://app.cair.edycu.dev/judge)
   [![Rules Sheet](https://img.shields.io/badge/📋_Rules-Sheet-ef4444?style=for-the-badge)](https://app.cair.edycu.dev/rules)
   [![Built for neatHack](https://img.shields.io/badge/neatHack-Oct_10--12_2026-8b5cf6?style=for-the-badge)](https://luma.com/s5blr882)
 
@@ -246,11 +246,11 @@ sentences to the guardrail with the model call stubbed.
 The pipeline ([`ci.yml`](.github/workflows/ci.yml)) runs quality and dependency audit in parallel, then a boot-and-smoke
 build, then E2E and Lighthouse (advisory), with a gate-summary stage on `main`; a release is tagged from the
 Angular-style commit messages only after that pipeline passes. A judge-facing summary with the receipts:
-[JUDGE.md](JUDGE.md).
+[JUDGE.md](JUDGE.md), served at [/judge](https://app.cair.edycu.dev/judge).
 
 ## 📽️ Demo Materials
 
-- Judges: [JUDGE.md](JUDGE.md) · live app: [app.cair.edycu.dev](https://app.cair.edycu.dev) · traces read back: [/verify](https://app.cair.edycu.dev/verify) · rules sheet: [/rules](https://app.cair.edycu.dev/rules)
+- Judges: [/judge](https://app.cair.edycu.dev/judge) · live app: [app.cair.edycu.dev](https://app.cair.edycu.dev) · traces read back: [/verify](https://app.cair.edycu.dev/verify) · rules sheet: [/rules](https://app.cair.edycu.dev/rules)
 - Website: [cair.edycu.dev](https://cair.edycu.dev) · pitch deck: [cair.edycu.dev/pitch](https://cair.edycu.dev/pitch/) (11 slides; arrow keys, P for speaker notes)
 - Reproduce the numbers: [DEMO.md](DEMO.md) · business plan: [docs/BUSINESS-PLAN.md](docs/BUSINESS-PLAN.md) · cfo.ai model: [cfo.ai/s/PQ2HUGmiJl3P0RQB](https://cfo.ai/s/PQ2HUGmiJl3P0RQB)
 - Built in public (#neatHack): [launch post](https://x.com/edycutjong/status/2108905407381213633) · [the recovery story](https://x.com/edycutjong/status/2108938150072705311) · [dev.to write-up](https://dev.to/edycutjong/an-agent-that-refuses-building-a-payout-agent-with-neatlogs-entire-and-cfoai-oo3) · build log: [hackathon.md](hackathon.md)
