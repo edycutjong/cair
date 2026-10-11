@@ -83,6 +83,11 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   terminal" now keys on the bound amount, not on a verb list: 24/25. Also fixed: cents on the card did not add up
   (`1000.05` gave $300.02 + $700.04), and the receipt trace showed 0 ms on every span. Published eval verdicts unchanged;
   631 tests, 100% line+branch.
+- **2026-10-11 late morning** — a2a round 4: the same reviewer found that the tax, line-10 and amount checks were excused by a
+  detector of *rail* refusals ("rather than Wise", "Jangan khawatir"), and that the bound rule had nothing to check on 24 of 48
+  frozen scenarios, so the README's "whatever the verb" was false. Fixed with its patch (probe r7: 1/47 → 47/47); checking the fix
+  found a comma or "and" still carried a refusal into the next clause (probe r8: 2/12 → 8/12). The docs now say where the rule
+  applies and list what still passes. Published verdicts unchanged; 694 tests, 100% line+branch.
 - **2026-10-10 night** — landing page https://cair.edycu.dev and an 11-slide pitch deck https://cair.edycu.dev/pitch/ (GitHub Pages
   from `/docs`); every number on them is read from `evidence/`.
 - **2026-10-10 evening** — cfo.ai: the business plan is entered and shared (https://cfo.ai/s/PQ2HUGmiJl3P0RQB); export in `docs/cfo/Runway.xlsx`, rendered in
