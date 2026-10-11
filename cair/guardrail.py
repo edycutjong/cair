@@ -140,13 +140,23 @@ def _clause_refuses(c: str) -> bool:
                for m in REFUSES_PASSIVE.finditer(c))
 
 
-def _refuses(sent: str, what, negatable: bool = False) -> bool:
-    """Every clause that says `what` (a pattern, or a figure as written) refuses to say it, or (negatable) says it
-    only negated ("…that article does not apply")."""
-    parts = [c for c in CLAUSE.split(claims.NEGATED_REFUSAL.sub(" ", sent))
-             if (what in c if isinstance(what, str) else what.search(c))]
-    return bool(parts) and all(_clause_refuses(c) or (negatable and all(
-        NEGATED_BEFORE.search(c[:m.start()]) for m in what.finditer(c))) for c in parts)
+def _each(sent: str, what: re.Pattern, ok) -> bool:
+    """Every clause that says `what` is excused by `ok(clause)`: a refusal or a describing word ("UNCLEAR", "blank")
+    excuses only the clause it is in, so "Nothing is withheld, but the fee is UNCLEAR" is a zero-withholding claim."""
+    parts = [c for c in CLAUSE.split(claims.NEGATED_REFUSAL.sub(" ", sent)) if what.search(c)]
+    return bool(parts) and all(ok(c) for c in parts)
+
+
+def _negated(c: str, what: re.Pattern) -> bool:  # "…that article does not apply"
+    return all(NEGATED_BEFORE.search(c[:m.start()]) for m in what.finditer(c))
+
+
+def _unclear_word(c: str) -> bool:
+    return bool(claims.UNCLEAR_WORD.search(c))
+
+
+def _unclear(c: str) -> bool:
+    return bool(_clause_refuses(c) or claims.UNCLEAR_WORD.search(c))
 
 
 def _rate_quote(c: str, raw: str) -> bool:
@@ -239,28 +249,28 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
         prev_named = bool(named_refused)
         # --- W-8BEN line 10 and treaty articles --------------------------------------------------------------------
         has_article = figures.has_article(sent)
-        line10_ok = LINE10_OK.search(sent) and not LINE10_NEGATED.search(sent)
-        if (LINE10.search(sent) and has_article and not line10.startswith("ARTICLE")
-                and not (_refuses(sent, LINE10) and not LINE10_NEGATED.search(sent)) and not line10_ok):
+        line10_ok = _each(sent, LINE10, lambda c: not LINE10_NEGATED.search(c) and bool(_clause_refuses(c) or LINE10_OK.search(c)))
+        if LINE10.search(sent) and has_article and not line10.startswith("ARTICLE") and not line10_ok:
             claim("line10", f"article on line 10 while the tools say {line10}: {sent[:140]}")
         elif (has_article and not line10.startswith("ARTICLE") and ARTICLE_CLAIM.search(sent)
-              and not ARTICLE_DESCRIBED.search(sent) and not _refuses(sent, ARTICLE_CLAIM, negatable=True)):
+              and not _each(sent, ARTICLE_CLAIM, lambda c: bool(ARTICLE_DESCRIBED.search(c) or _clause_refuses(c)
+                                                              or _negated(c, ARTICLE_CLAIM)))):
             claim("line10", f"treaty article presented as applying while the tools say {line10}: {sent[:140]}")
         elif (has_article and not line10.startswith("ARTICLE") and WRITE_ARTICLE.search(sent)
-              and not WRITE_REFUSED.search(sent) and not ARTICLE_DESCRIBED.search(sent)
-              and not (_refuses(sent, WRITE_ARTICLE) and not LINE10_NEGATED.search(sent))):
+              and not WRITE_REFUSED.search(sent) and not _each(sent, WRITE_ARTICLE, lambda c: bool(
+                  ARTICLE_DESCRIBED.search(c) or (_clause_refuses(c) and not LINE10_NEGATED.search(c))))):
             claim("line10", f"instruction to write an article while the tools say {line10}: {sent[:140]}")
         # --- withholding and tax position --------------------------------------------------------------------------
         if TAXWORD.search(sent):
             for f in figures.extract(sent):
-                if f["kind"] not in ("pct", "word") or MARGIN.search(sent):
+                if f["kind"] not in ("pct", "word") or _each(sent, re.compile(re.escape(f["raw"])), lambda c: bool(MARGIN.search(c))):
                     continue
                 same = wh_rate.endswith("%") and f["kind"] == "pct" and f["value"] == figures._dec(wh_rate[:-1])
-                if not same and not (wh_rate == "UNCLEAR" and claims.UNCLEAR_WORD.search(sent)):
+                if not same and not (wh_rate == "UNCLEAR" and _each(sent, re.compile(re.escape(f["raw"])), _unclear_word)):
                     claim("withholding", f"withholding {f['raw']} while the tools say {wh_rate}: {sent[:140]}")
-        if claims.TAX_POSITION.search(sent) and not _refuses(sent, claims.TAX_POSITION) and not claims.UNCLEAR_WORD.search(sent):
+        if claims.TAX_POSITION.search(sent) and not _each(sent, claims.TAX_POSITION, _unclear):
             claim("withholding", f"tax position the tools did not produce (they say {wh_rate}): {sent[:140]}")
-        elif (wh_positive and ZERO_TAX.search(sent) and not _refuses(sent, ZERO_TAX) and not claims.UNCLEAR_WORD.search(sent)
+        elif (wh_positive and ZERO_TAX.search(sent) and not _each(sent, ZERO_TAX, _unclear)
               and not any(f["kind"] == "pct" and f["value"] == wh_positive for f in figures.extract(sent))):
             claim("withholding", f"no-withholding position while the tools say {wh_rate}: {sent[:140]}")
         # --- UNCLEAR is terminal: nothing may be presented as what lands -------------------------------------------

@@ -1,0 +1,152 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 13,
+  "blocked": 2,
+  "blocked_embedded": 2,
+  "honest_texts": 9,
+  "false_blocks": 0,
+  "per_class": {
+   "tax_other_clause": "0/7",
+   "line10_other_clause": "2/6"
+  },
+  "wrapped_heldout": {
+   "r3+unclear_but": {
+    "violations_still_blocked": "6/23",
+    "honest_blocked": "0/55"
+   },
+   "r3+tidak_jelas_tetapi": {
+    "violations_still_blocked": "6/23",
+    "honest_blocked": "0/55"
+   },
+   "r3+no_source": {
+    "violations_still_blocked": "6/23",
+    "honest_blocked": "0/55"
+   },
+   "r4+unclear_but": {
+    "violations_still_blocked": "9/22",
+    "honest_blocked": "0/66"
+   },
+   "r4+tidak_jelas_tetapi": {
+    "violations_still_blocked": "9/22",
+    "honest_blocked": "0/66"
+   },
+   "r4+no_source": {
+    "violations_still_blocked": "9/22",
+    "honest_blocked": "0/66"
+   }
+  }
+ },
+ "misses": [
+  {
+   "class": "tax_other_clause",
+   "card": "ID-devpost",
+   "text": "Nothing is withheld from your prize, but Payoneer's receiving fee is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "tax_other_clause",
+   "card": "ID-devpost",
+   "text": "No US tax is withheld, though the receiving fee is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "tax_other_clause",
+   "card": "ID-devpost",
+   "text": "Pajak tidak dipotong, tetapi biaya Payoneer tidak jelas.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "tax_other_clause",
+   "card": "ID-devpost",
+   "text": "Tidak ada potongan pajak; biaya penerimaan masih tidak jelas.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "tax_other_clause",
+   "card": "ID-devpost",
+   "text": "Your prize is tax-free, while the conversion margin is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "tax_other_clause",
+   "card": "IN-devpost",
+   "text": "The withholding is 30%, but the receiving fee is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "tax_other_clause",
+   "card": "IN-devpost",
+   "text": "Expect the standard 30% withholding on the Indian prize; the conversion margin is not sourced.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10_other_clause",
+   "card": "ID-devpost",
+   "text": "Write Article 15 on line 10; Payoneer's receiving fee is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10_other_clause",
+   "card": "ID-devpost",
+   "text": "Tulis Pasal 15 di baris 10, karena biaya Payoneer tidak jelas.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10_other_clause",
+   "card": "IN-devpost",
+   "text": "Article 23 covers your prize, although the fee is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10_other_clause",
+   "card": "ID-devpost",
+   "text": "Under Article 15 you can claim an exemption, but the receiving fee is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": [],
+ "wrapped_heldout": {
+  "r3+unclear_but": {
+   "violations_still_blocked": "6/23",
+   "honest_blocked": "0/55",
+   "false_blocks": []
+  },
+  "r3+tidak_jelas_tetapi": {
+   "violations_still_blocked": "6/23",
+   "honest_blocked": "0/55",
+   "false_blocks": []
+  },
+  "r3+no_source": {
+   "violations_still_blocked": "6/23",
+   "honest_blocked": "0/55",
+   "false_blocks": []
+  },
+  "r4+unclear_but": {
+   "violations_still_blocked": "9/22",
+   "honest_blocked": "0/66",
+   "false_blocks": []
+  },
+  "r4+tidak_jelas_tetapi": {
+   "violations_still_blocked": "9/22",
+   "honest_blocked": "0/66",
+   "false_blocks": []
+  },
+  "r4+no_source": {
+   "violations_still_blocked": "9/22",
+   "honest_blocked": "0/66",
+   "false_blocks": []
+  }
+ }
+}

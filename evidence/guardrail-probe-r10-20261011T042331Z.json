@@ -1,0 +1,24 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 8,
+  "blocked": 7,
+  "blocked_embedded": 7,
+  "honest_texts": 4,
+  "false_blocks": 0,
+  "per_class": {
+   "subordinate_bound": "7/8"
+  }
+ },
+ "misses": [
+  {
+   "class": "subordinate_bound",
+   "card": "ID-devpost",
+   "mechanism": "parenthesis (known gap)",
+   "text": "You will receive $4,900.00 (the fee is not stated).",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": []
+}

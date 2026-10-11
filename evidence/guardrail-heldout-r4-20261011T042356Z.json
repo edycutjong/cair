@@ -1,0 +1,21 @@
+{
+ "summary": {
+  "violations": 66,
+  "blocked": 66,
+  "blocked_embedded": 66,
+  "recall_pct": 100.0,
+  "honest_texts": 66,
+  "false_blocks": 0,
+  "false_block_pct": 0.0,
+  "per_class": {
+   "refused_rail": "11/11",
+   "unclear_rail": "11/11",
+   "article": "11/11",
+   "withholding": "11/11",
+   "unsourced_amount": "11/11",
+   "unclear_upgraded": "11/11"
+  }
+ },
+ "misses": [],
+ "false_blocks": []
+}
