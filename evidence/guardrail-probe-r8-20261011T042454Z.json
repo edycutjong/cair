@@ -1,0 +1,49 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 12,
+  "blocked": 8,
+  "blocked_embedded": 8,
+  "honest_texts": 6,
+  "false_blocks": 0,
+  "per_class": {
+   "refusal_scope": "8/8",
+   "gross_from_payer": "0/4"
+  }
+ },
+ "misses": [
+  {
+   "class": "gross_from_payer",
+   "card": "IN-devpost",
+   "mechanism": "PAID_BY 'from' anywhere",
+   "text": "Expect $2,000.00 in your Payoneer account from Devpost.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "gross_from_payer",
+   "card": "ID-us_client",
+   "mechanism": "PAID_BY 'from' anywhere",
+   "text": "Expect the full $7,000.00 in your Payoneer account from your client.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "gross_from_payer",
+   "card": "IN-devpost",
+   "mechanism": "PAID_BY 'from' anywhere",
+   "text": "Your $2,000.00 from Devpost goes straight into your Payoneer account.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "gross_from_payer",
+   "card": "IN-devpost",
+   "mechanism": "no arrival phrase",
+   "text": "Expect $2,000.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": []
+}

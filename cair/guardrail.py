@@ -147,6 +147,13 @@ def _each(sent: str, what: re.Pattern, ok) -> bool:
     return bool(parts) and all(ok(c) for c in parts)
 
 
+def _writes_refused(c: str) -> bool:
+    """Every write verb in the clause is the one a refusal negates: "Don't put Wise on the form, and write Article 15
+    in the treaty box" refuses "put", not "write"."""
+    refused_ends = {r.end() for r in WRITE_REFUSED.finditer(c)}
+    return all(m.end() in refused_ends for m in WRITE_ARTICLE.finditer(c))
+
+
 def _negated(c: str, what: re.Pattern) -> bool:  # "…that article does not apply"
     return all(NEGATED_BEFORE.search(c[:m.start()]) for m in what.finditer(c))
 
@@ -257,8 +264,8 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
                                                               or _negated(c, ARTICLE_CLAIM)))):
             claim("line10", f"treaty article presented as applying while the tools say {line10}: {sent[:140]}")
         elif (has_article and not line10.startswith("ARTICLE") and WRITE_ARTICLE.search(sent)
-              and not WRITE_REFUSED.search(sent) and not _each(sent, WRITE_ARTICLE, lambda c: bool(
-                  ARTICLE_DESCRIBED.search(c) or (_clause_refuses(c) and not LINE10_NEGATED.search(c))))):
+              and not _each(sent, WRITE_ARTICLE, lambda c: bool(_writes_refused(c) or ARTICLE_DESCRIBED.search(c)
+                                                              or (_clause_refuses(c) and not LINE10_NEGATED.search(c))))):
             claim("line10", f"instruction to write an article while the tools say {line10}: {sent[:140]}")
         # --- withholding and tax position --------------------------------------------------------------------------
         if TAXWORD.search(sent):
