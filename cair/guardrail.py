@@ -68,7 +68,10 @@ NEGATED_BEFORE = re.compile(r"(?:\bnot|n't|\bnever|\btidak|\bbukan)\s+(?:\w+\s+)
 # inside a list ("Articles 15, 16 and 17")
 _SUBJECT = r"(?:you|you'll|you're|your|it|it's|nothing|no|there|this|that|the|line|baris|anda|kamu|dana|uang|saya|I|we|tidak ada)\b"
 _MONEY_START = r"(?:US\$|\$|₹|₱|(?:USDC?|IDR|Rp\.?|INR|PHP)\s?\d)"
-CLAUSE = re.compile(rf";|,?\s+\b(?:but|however|although|though|tapi|tetapi|namun|meskipun|walaupun)\b|"
+# subordinators too ("You will receive $4,900.00 while the fee is UNCLEAR"), and a spaced dash; never "(" — a parenthesis
+# usually carries the bound of the amount before it ("$4,900.00 (before Payoneer's receiving fee)")
+CLAUSE = re.compile(rf";|\s+[-–—]\s+|,?\s+\b(?:but|however|although|though|tapi|tetapi|namun|meskipun|walaupun|while|whereas|"
+                    rf"since|because|karena|sebab|sedangkan|sementara|padahal)\b|"
                     rf",\s+(?:(?:and|dan|so|jadi|sehingga|maka|then|lalu)\s+)?(?={_SUBJECT})|\s+(?:and|dan)\s+(?={_SUBJECT})|"
                     rf",?\s+(?:and|dan|so|jadi|sehingga|maka)\s+(?={_MONEY_START})", re.I)  # "…UNCLEAR, and $4,900.00 lands"
 ALL_RAILS = list(rules.RAILS) + list(claims.EXTRA_RAILS) + [f"usdc:{c}" for c in rules.CHAINS] + list(rules.EXCHANGES) + ["usdc"]

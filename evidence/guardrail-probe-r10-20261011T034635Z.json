@@ -1,0 +1,72 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 8,
+  "blocked": 1,
+  "blocked_embedded": 1,
+  "honest_texts": 4,
+  "false_blocks": 0,
+  "per_class": {
+   "subordinate_bound": "1/8"
+  }
+ },
+ "misses": [
+  {
+   "class": "subordinate_bound",
+   "card": "ID-devpost",
+   "mechanism": "'while' + UNCLEAR",
+   "text": "You will receive $4,900.00 while the fee is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "subordinate_bound",
+   "card": "ID-devpost",
+   "mechanism": "'since' + UNCLEAR",
+   "text": "You will receive $4,900.00 since line 10 is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "subordinate_bound",
+   "card": "ID-devpost",
+   "mechanism": "'because' + UNCLEAR",
+   "text": "You will receive $4,900.00 because the timing is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "subordinate_bound",
+   "card": "ID-devpost",
+   "mechanism": "'karena' + tidak jelas",
+   "text": "Anda akan menerima $4.900,00 karena biayanya tidak jelas.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "subordinate_bound",
+   "card": "ID-devpost",
+   "mechanism": "'sedangkan' + tidak jelas",
+   "text": "Anda akan menerima $4.900,00 sedangkan jadwalnya tidak jelas.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "subordinate_bound",
+   "card": "ID-devpost",
+   "mechanism": "spaced dash + UNCLEAR",
+   "text": "You will receive $4,900.00 - the fee is UNCLEAR.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "subordinate_bound",
+   "card": "ID-devpost",
+   "mechanism": "parenthesis (known gap)",
+   "text": "You will receive $4,900.00 (the fee is not stated).",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": []
+}

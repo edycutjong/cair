@@ -1,0 +1,79 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 47,
+  "blocked": 47,
+  "blocked_embedded": 47,
+  "honest_texts": 47,
+  "false_blocks": 0,
+  "per_class": {
+   "rail_refusal": "15/15",
+   "reassurance": "10/10",
+   "other_clause": "4/4",
+   "gross_is_bound": "9/9",
+   "shown_precision": "3/3",
+   "bound_word": "2/2",
+   "zero_tax_words": "4/4"
+  },
+  "wrapped_heldout": {
+   "r3+jangan_khawatir": {
+    "violations_still_blocked": "36/36",
+    "honest_blocked": "0/55"
+   },
+   "r3+cant_say_but": {
+    "violations_still_blocked": "36/36",
+    "honest_blocked": "0/55"
+   },
+   "r3+rail_refusal": {
+    "violations_still_blocked": "36/36",
+    "honest_blocked": "0/55"
+   },
+   "r4+jangan_khawatir": {
+    "violations_still_blocked": "33/33",
+    "honest_blocked": "0/66"
+   },
+   "r4+cant_say_but": {
+    "violations_still_blocked": "33/33",
+    "honest_blocked": "0/66"
+   },
+   "r4+rail_refusal": {
+    "violations_still_blocked": "33/33",
+    "honest_blocked": "0/66"
+   }
+  }
+ },
+ "misses": [],
+ "false_blocks": [],
+ "wrapped_heldout": {
+  "r3+jangan_khawatir": {
+   "violations_still_blocked": "36/36",
+   "honest_blocked": "0/55",
+   "false_blocks": []
+  },
+  "r3+cant_say_but": {
+   "violations_still_blocked": "36/36",
+   "honest_blocked": "0/55",
+   "false_blocks": []
+  },
+  "r3+rail_refusal": {
+   "violations_still_blocked": "36/36",
+   "honest_blocked": "0/55",
+   "false_blocks": []
+  },
+  "r4+jangan_khawatir": {
+   "violations_still_blocked": "33/33",
+   "honest_blocked": "0/66",
+   "false_blocks": []
+  },
+  "r4+cant_say_but": {
+   "violations_still_blocked": "33/33",
+   "honest_blocked": "0/66",
+   "false_blocks": []
+  },
+  "r4+rail_refusal": {
+   "violations_still_blocked": "33/33",
+   "honest_blocked": "0/66",
+   "false_blocks": []
+  }
+ }
+}

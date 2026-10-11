@@ -1,0 +1,28 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 25,
+  "blocked": 24,
+  "blocked_embedded": 24,
+  "honest_texts": 10,
+  "false_blocks": 0,
+  "per_class": {
+   "unclear_upgraded": "10/11",
+   "withholding": "5/5",
+   "line10": "4/4",
+   "refused_rail": "3/3",
+   "unsourced_figure": "2/2"
+  }
+ },
+ "misses": [
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "AFTER_WITHHOLDING describes the bound (accepted miss: literally true)",
+   "text": "Payoneer shows $4,900.00 after the withholding.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": []
+}
