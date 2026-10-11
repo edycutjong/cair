@@ -106,3 +106,4 @@ Entire and cfo.ai. The submission is that quote post, posted by the builder insi
 - [The recovery story](https://x.com/edycutjong/status/2108938150072705311) — Sat 10 Oct 22:10 WIB: the FX tool fails twice, the agent falls back and the plan finishes.
 - [Shared in the neatHack Discord](https://discord.com/channels/1528866100207419472/1554463484752830504/1558498173591232603) — Sat 10 Oct ~22:15 WIB.
 - [Demo video on YouTube](https://youtu.be/UC7pSo3hUlk) — Sun 11 Oct.
+- [dev.to write-up: An agent that refuses](https://dev.to/edycutjong/an-agent-that-refuses-building-a-payout-agent-with-neatlogs-entire-and-cfoai-oo3) — Sun 11 Oct 17:15 WIB.
