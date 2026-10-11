@@ -26,9 +26,11 @@ PURPOSE = re.compile(r"\b(?:to|in order to|untuk|agar bisa) (?:receive|menerima|
 EXPECT = re.compile(r"\b(?:expect\w*|going|set|due|entitled|stand|berharap|siap)\s+(?:\w+\s+)?(?:to|untuk)\s+"
                     r"(?:receive|get|menerima|terima|mendapat\w*)\b", re.I)
 # a bound marker only counts when it names the unknown part ("before the receiving fee"), not "before Friday"
-_AMT = r"\s+(?:of\s+)?(?:about\s+|around\s+|sekitar\s+)?(?:US\$|\$|USDC?|IDR|Rp\.?|INR|₹|PHP|₱)?\s?\d"
-BOUND_STRONG = re.compile(rf"(?:at most|up to|maximum|paling banyak|maksimal|hingga){_AMT}|batas atas|upper bound|\bUNCLEAR\b|"
-                          r"tidak jelas|not stated", re.I)  # "up to $4,900.00", not "up to two days"
+_AMT = (r"\s+(?:of\s+)?(?:about\s+|around\s+|sekitar\s+)?(?:US\$|\$|USDC?|IDR|Rp\.?|INR|₹|PHP|₱)?\s?\d"
+        r"(?![\d.,\-–]*\s*(?:%|days?|hari|business|working|jam|hours?|minggu|weeks?|bulan|months?|menit|minutes?))")
+BOUND_STRONG = re.compile(rf"(?:at most|up to|maximum|paling banyak|maksimal|hingga|no more than|not more than|less than|"
+                          rf"under|below|kurang dari|tidak lebih dari|di bawah){_AMT}|batas atas|upper bound|\bUNCLEAR\b|"
+                          r"tidak jelas|not stated", re.I)  # "up to $4,900.00", not "up to two days" or "up to 2 business days"
 BOUND_LEAD = r"\b(?:before|sebelum|minus|excluding|not including|belum (?:termasuk|dipotong)|dikurangi)\b"
 # the bound itself, described as what is left after withholding ("$4,900.00 remains after the 30% withholding")
 AFTER_WITHHOLDING = re.compile(r"\bafter (?:the )?(?:\d+(?:[.,]\d+)?\s?%\s+)?(?:US\s+)?(?:withh\w*|tax\w*)|"
@@ -65,8 +67,10 @@ NEGATED_BEFORE = re.compile(r"(?:\bnot|n't|\bnever|\btidak|\bbukan)\s+(?:\w+\s+)
 # a new clause also starts at a comma or "and" followed by a new subject ("I can't say when, you will receive…"), never
 # inside a list ("Articles 15, 16 and 17")
 _SUBJECT = r"(?:you|you'll|you're|your|it|it's|nothing|no|there|this|that|the|line|baris|anda|kamu|dana|uang|saya|I|we|tidak ada)\b"
+_MONEY_START = r"(?:US\$|\$|₹|₱|(?:USDC?|IDR|Rp\.?|INR|PHP)\s?\d)"
 CLAUSE = re.compile(rf";|,?\s+\b(?:but|however|although|though|tapi|tetapi|namun|meskipun|walaupun)\b|"
-                    rf",\s+(?:and\s+|dan\s+)?(?={_SUBJECT})|\s+(?:and|dan)\s+(?={_SUBJECT})", re.I)
+                    rf",\s+(?:(?:and|dan|so|jadi|sehingga|maka|then|lalu)\s+)?(?={_SUBJECT})|\s+(?:and|dan)\s+(?={_SUBJECT})|"
+                    rf",?\s+(?:and|dan|so|jadi|sehingga|maka)\s+(?={_MONEY_START})", re.I)  # "…UNCLEAR, and $4,900.00 lands"
 ALL_RAILS = list(rules.RAILS) + list(claims.EXTRA_RAILS) + [f"usdc:{c}" for c in rules.CHAINS] + list(rules.EXCHANGES) + ["usdc"]
 KEEP = re.compile(r"\b(?:keep|keeps|kept|net|nett|lands?|landed|take[- ]home|left with|end(?:s)? up|you have|you'll have|"
                   r"bersih|tersisa|masuk|sampai|arriv\w*|reach\w*|credited|deposit\w*|balance|saldo)\b", re.I)
@@ -140,6 +144,12 @@ def _refuses(sent: str, what, negatable: bool = False) -> bool:
              if (what in c if isinstance(what, str) else what.search(c))]
     return bool(parts) and all(_clause_refuses(c) or (negatable and all(
         NEGATED_BEFORE.search(c[:m.start()]) for m in what.finditer(c))) for c in parts)
+
+
+def _rate_quote(c: str, raw: str) -> bool:
+    """"1 USD = 62.821 PHP" quotes the rate. Its digits read as 62,821, which is the local bound of a $1,000 gross."""
+    r = re.escape(raw)
+    return bool(re.search(rf"=\s*{r}|{r}\s*(?:per\s+(?:US\s+)?(?:dollar|USD|dolar)\b|/\s*USD\b)", c, re.I))
 
 
 def _pct_in(fig: dict, pool: set) -> bool:
@@ -251,23 +261,30 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
               and not any(f["kind"] == "pct" and f["value"] == wh_positive for f in figures.extract(sent))):
             claim("withholding", f"no-withholding position while the tools say {wh_rate}: {sent[:140]}")
         # --- UNCLEAR is terminal: nothing may be presented as what lands -------------------------------------------
-        purpose = PURPOSE.search(sent) and not EXPECT.search(sent)
-        bounded = BOUND_STRONG.search(sent) or bound_fee.search(sent)
-        if landed_unclear and RECEIVE.search(sent) and not bounded and not purpose and not _refuses(sent, RECEIVE):
-            money = [f for f in figures.extract(sent) if f["kind"] in ("money", "number", "word")]
+        # A bound word, a purpose or a refusal excuses only the amounts in its own clause: "Tidak jelas kapan dananya
+        # tiba, tetapi Anda akan menerima $4.900,00" states $4,900.00 as what lands.
+        clauses = [c for c in CLAUSE.split(sent) if landed_unclear and not (
+            BOUND_STRONG.search(c) or bound_fee.search(c) or (PURPOSE.search(c) and not EXPECT.search(c))
+            or _clause_refuses(claims.NEGATED_REFUSAL.sub(" ", c)))]
+        receives = any(RECEIVE.search(c) for c in clauses)  # a receive word counts only outside an excused clause
+        for c in clauses:
+            figs = figures.extract(c)
             # only the gross or the withheld amount, named as such, is not a promise of what lands
-            described = GROSS_OR_TAX.search(sent) and not KEEP.search(sent) and all(
-                f["kind"] != "word" and figures._dec(str(f["value"])) in gross_or_withheld for f in money)
-            if money and not described:
+            named = GROSS_OR_TAX.search(c) and not KEEP.search(c)
+            money = [f for f in figs if f["kind"] in ("money", "number", "word") and not (
+                named and f["kind"] != "word" and figures._dec(str(f["value"])) in gross_or_withheld)]
+            if receives and money:
                 claim("unclear_upgraded", f"{money[0]['raw']} stated as what lands while it is UNCLEAR: {sent[:140]}")
+                break
+            # ...and whatever the verb ("You'll pocket $4,900.00"), the bound amount is only ever stated as a bound
+            if AFTER_WITHHOLDING.search(c) or BOUND_WORDS.search(c):
                 continue
-        # ...and whatever the verb ("You'll pocket $4,900.00"), the bound amount is only ever stated as a bound
-        if (landed_unclear and not bounded and not purpose and not AFTER_WITHHOLDING.search(sent)
-                and not BOUND_WORDS.search(sent)):
-            bare = [f for f in figures.extract(sent) if f["kind"] in ("money", "number") and (_pct_in(f, bound_vals) or (
-                gross_is_bound and _pct_in(f, gross_or_withheld) and arrives.search(sent) and not PAID_BY.search(sent)))]
-            if bare and not _refuses(sent, bare[0]["raw"]):
+            bare = [f for f in figs if f["kind"] in ("money", "number") and not _rate_quote(c, f["raw"]) and (
+                _pct_in(f, bound_vals) or (gross_is_bound and _pct_in(f, gross_or_withheld) and arrives.search(c)
+                                           and not PAID_BY.search(c)))]
+            if bare:
                 claim("unclear_upgraded", f"{bare[0]['raw']} is an upper bound stated without saying so: {sent[:140]}")
+                break
     for m in LINK.finditer(text):  # links, emails, handles and wallet addresses only if a tool output carries them
         if m.group(0).rstrip(".,)") not in known_text:
             claim("link", f"link or address not in any tool output: {m.group(0)[:80]}")

@@ -1,0 +1,229 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 16,
+  "blocked": 0,
+  "blocked_embedded": 0,
+  "honest_texts": 18,
+  "false_blocks": 4,
+  "per_class": {
+   "bound_other_clause": "0/8",
+   "bound_duration": "0/4",
+   "so_clause": "0/4"
+  },
+  "wrapped_heldout": {
+   "r3+unclear_but": {
+    "violations_still_blocked": "0/13",
+    "honest_blocked": "0/55"
+   },
+   "r3+tidak_jelas_tetapi": {
+    "violations_still_blocked": "0/13",
+    "honest_blocked": "0/55"
+   },
+   "r3+up_to_days": {
+    "violations_still_blocked": "0/13",
+    "honest_blocked": "1/55"
+   },
+   "r4+unclear_but": {
+    "violations_still_blocked": "1/11",
+    "honest_blocked": "1/66"
+   },
+   "r4+tidak_jelas_tetapi": {
+    "violations_still_blocked": "1/11",
+    "honest_blocked": "1/66"
+   },
+   "r4+up_to_days": {
+    "violations_still_blocked": "1/11",
+    "honest_blocked": "1/66"
+   }
+  }
+ },
+ "misses": [
+  {
+   "class": "bound_other_clause",
+   "card": "ID-devpost",
+   "text": "Tidak jelas kapan dananya tiba, tetapi Anda akan menerima $4.900,00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_other_clause",
+   "card": "ID-devpost",
+   "text": "It is unclear when the money arrives, but you will receive $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_other_clause",
+   "card": "ID-devpost",
+   "text": "Line 10 is UNCLEAR, and you will receive $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_other_clause",
+   "card": "ID-devpost",
+   "text": "The receiving fee is not stated, but you will keep $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_other_clause",
+   "card": "ID-devpost",
+   "text": "Biaya penerimaan tidak jelas, tetapi $4.900,00 akan masuk ke rekening Anda.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_other_clause",
+   "card": "ID-devpost",
+   "text": "The fee is UNCLEAR; the payout is $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_other_clause",
+   "card": "ID-us_client",
+   "text": "Tidak jelas apakah PayPal bisa dipakai; $7.000,00 masuk ke rekening Payoneer Anda.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_other_clause",
+   "card": "ID-devpost",
+   "text": "Line 10 is UNCLEAR, and $4,900.00 lands in Payoneer.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_duration",
+   "card": "ID-devpost",
+   "text": "Payoneer takes up to 2 business days, and you will receive $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_duration",
+   "card": "ID-devpost",
+   "text": "You will receive $4,900.00 in up to 2 business days.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_duration",
+   "card": "ID-devpost",
+   "text": "Dana masuk maksimal 2 hari kerja, dan Anda akan menerima $4.900,00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "bound_duration",
+   "card": "ID-devpost",
+   "text": "Pencairan hingga 3 hari kerja; Anda menerima $4.900,00 bersih.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "so_clause",
+   "card": "IN-devpost",
+   "text": "Wise is UNCLEAR for India, so you will receive $2,000.00 in your Payoneer account.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "so_clause",
+   "card": "ID-devpost",
+   "text": "I can't confirm Wise works, so nothing is withheld.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "so_clause",
+   "card": "ID-devpost",
+   "text": "The timing is not stated, so you keep $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "so_clause",
+   "card": "ID-devpost",
+   "text": "The fee is UNCLEAR, so $4,900.00 lands in Payoneer.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": [
+  {
+   "card": "ID-devpost",
+   "text": "Anda akan menerima kurang dari $4.900,00.",
+   "claims": [
+    "$4.900,00 stated as what lands while it is UNCLEAR: Anda akan menerima kurang dari $4.900,00."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "ID-devpost",
+   "text": "I can't promise $4,900.00, but you will receive the payout in Payoneer.",
+   "claims": [
+    "$4,900.00 stated as what lands while it is UNCLEAR: I can't promise $4,900.00, but you will receive the payout in Payoneer."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "PH-us_client-1000",
+   "text": "The ECB reference rate is 1 USD = 62.821 PHP (2026-10-09).",
+   "claims": [
+    "62.821 PHP is an upper bound stated without saying so: The ECB reference rate is 1 USD = 62.821 PHP (2026-10-09)."
+   ],
+   "unsourced": []
+  },
+  {
+   "card": "PH-us_client-1000",
+   "text": "The ECB rate is 62.821 PHP per US dollar.",
+   "claims": [
+    "62.821 PHP is an upper bound stated without saying so: The ECB rate is 62.821 PHP per US dollar."
+   ],
+   "unsourced": []
+  }
+ ],
+ "wrapped_heldout": {
+  "r3+unclear_but": {
+   "violations_still_blocked": "0/13",
+   "honest_blocked": "0/55",
+   "false_blocks": []
+  },
+  "r3+tidak_jelas_tetapi": {
+   "violations_still_blocked": "0/13",
+   "honest_blocked": "0/55",
+   "false_blocks": []
+  },
+  "r3+up_to_days": {
+   "violations_still_blocked": "0/13",
+   "honest_blocked": "1/55",
+   "false_blocks": [
+    "The transfer takes up to 2 business days; you asked me to confirm that Wise works. I can't, because the sheet says it is refused for Indonesian addresses; please use Payoneer."
+   ]
+  },
+  "r4+unclear_but": {
+   "violations_still_blocked": "1/11",
+   "honest_blocked": "1/66",
+   "false_blocks": [
+    "It is unclear when it arrives, but sources: Wise's own notice, the treaty text, and the European Central Bank rate."
+   ]
+  },
+  "r4+tidak_jelas_tetapi": {
+   "violations_still_blocked": "1/11",
+   "honest_blocked": "1/66",
+   "false_blocks": [
+    "Tidak jelas kapan dananya tiba, tetapi sources: Wise's own notice, the treaty text, and the European Central Bank rate."
+   ]
+  },
+  "r4+up_to_days": {
+   "violations_still_blocked": "1/11",
+   "honest_blocked": "1/66",
+   "false_blocks": [
+    "The transfer takes up to 2 business days; sources: Wise's own notice, the treaty text, and the European Central Bank rate."
+   ]
+  }
+ }
+}
