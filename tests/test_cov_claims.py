@@ -16,7 +16,7 @@ def test_rail_names_for_usdc_chains_add_aliases_only_where_they_exist():
     assert rail_names("usdc:arc") == ["Arc"]
     assert rail_names("usdc:ethereum") == ["Ethereum", "ethereum", "ERC-20", "ERC20"]
     assert rail_names("usdc:bsc") == ["BNB Smart Chain", "bsc", "BEP-20", "BEP20", "BNB"]
-    assert rail_names("usdc:tron") == ["Tron", "tron", "TRC-20", "TRC20"]
+    assert rail_names("usdc:tron") == ["Tron", "tron", "TRC-20", "TRC20", "TRX"]
     assert rail_names("usdc:solana") == ["Solana", "solana"]
     assert rail_names("usdc:unknownchain") == ["unknownchain", "unknownchain"]  # not in CHAINS: id used as the name
 

@@ -15,7 +15,8 @@ _ALLOW = [
     r"\b(?:line|lines|baris|part|bagian|step|langkah)s?\s*\d+(?:\s*(?:[-–]|to|and|dan|&)\s*\d+)?\b",
     r"\b\d{4}-\d{2}-\d{2}\b",
     # A year: not an amount like "2000.00 USD", "$2050" or "USD 2000" (rca-01: the year rule ate "2000.00 USD").
-    r"(?<![$₹₱\d.,])(?<!USD )(?<!Rp )\b(?:19|20)\d{2}\b(?![.,]\d)(?!\s*(?:%|USD|IDR|INR|PHP|USDC|dollars?|rupiah))",
+    r"(?<![$₹₱\d.,])(?<!USD )(?<!USDC )(?<!USDT )(?<!IDR )(?<!INR )(?<!PHP )(?<!Rp )(?<!Rp\. )\b(?:19|20)\d{2}\b(?![.,]\d)"
+    r"(?!\s*(?:%|USD|USDC|USDT|IDR|INR|PHP|dollars?|dolar|rupiah|rupees?|pesos?|k\b|rb\b|ribu|jt\b|juta|lakhs?|crore))",
     r"\b\d+\s*(?:business\s+)?(?:days?|hari|weeks?|minggu|months?|bulan|hours?|jam|minutes?|menit)\b",
     r"\b\d+(?:st|nd|rd|th)\b", r"\bERC-?20\b", r"\bBEP-?20\b", r"\bTRC-?20\b", r"\b[A-Z]\d\b", r"\b\d{1,2}:\d{2}\b",
     r"\b(?:Q[1-4]|h\d+)\b", r"\bfrozen-set-v\d\b", r"\bv\d\b",
@@ -44,8 +45,16 @@ WORD_MONEY_RE = re.compile(rf"\b{_WORDNUM}(?:[\s-]+(?:and\s+)?{_WORDNUM})*\s+(?:
 WORD_PCT_RE = re.compile(r"\b(?:zero|nol|one|two|three|four|five|ten|fifteen|twenty|thirty|forty|fifty|satu|dua|tiga|lima|"
                          r"sepuluh|lima belas|dua puluh|tiga puluh)(?:[- ](?:one|two|five|puluh|belas))?\s?"
                          r"(?:%|percent|per cent|persen)", re.I)
-ARTICLE_RE = re.compile(r"(?<!help )(?<!support )(?<!bantuan )\b(?:article|art\.|pasal)\s*(\d{1,2})\b", re.I)
+ARTICLE_RE = re.compile(r"(?<!help )(?<!support )(?<!bantuan )\b(?:articles?|arts?\.?|pasal)\s*(?:no\.?\s*|#\s*|-\s*)?(\d{1,2})\b",
+                        re.I)
 BARE_RE = re.compile(rf"(?<![\w.])({_NUM})(?![\w.])")
+# An article number written in words ("Article Fifteen", "Pasal lima belas") is still an article.
+ARTICLE_WORD_RE = re.compile(rf"(?<!help )(?<!support )(?<!bantuan )\b(?:articles?|arts?\.?|pasal)\s+({_WORDNUM}(?:[\s-]+{_WORDNUM})*)\b",
+                             re.I)
+
+
+def has_article(text: str) -> bool:
+    return bool(ARTICLE_RE.search(text) or ARTICLE_WORD_RE.search(text))
 
 
 _UNITS = {"zero": 0, "nol": 0, "one": 1, "satu": 1, "se": 1, "two": 2, "dua": 2, "three": 3, "tiga": 3, "four": 4,
@@ -112,6 +121,9 @@ def extract(text: str) -> list[dict]:
     for m in ARTICLE_RE.finditer(text):  # articles are read from the unmasked text
         found.append({"kind": "article", "value": int(m.group(1)), "raw": m.group(0)})
         spans.append(m.span())
+    for m in ARTICLE_WORD_RE.finditer(text):  # every word in the pattern is a number word, so it always reads
+        found.append({"kind": "article", "value": int(words_to_number(m.group(1)) or 0), "raw": m.group(0)})
+        spans.append(m.span())
     for rx, kind in ((PCT_RE, "pct"), (MONEY_RE, "money")):
         for m in rx.finditer(masked):
             if taken(*m.span()):
@@ -158,6 +170,8 @@ class Pools:
     def __init__(self) -> None:
         self.money: set[Decimal] = set()
         self.pct: set[Decimal] = set()
+        self.pct_tax: set[Decimal] = set()
+        self.pct_margin: set[Decimal] = set()
         self.arts: set[int] = set()
 
 
@@ -188,6 +202,7 @@ def sourced_values(tool_outputs: list) -> Pools:
                 pools.money.add(d)
             elif key in PCT_KEYS:
                 pools.pct.add(d)
+                (pools.pct_margin if key == "fx_margin_pct" else pools.pct_tax).add(d)
             elif key in ARTICLE_KEYS and d == d.to_integral_value():
                 pools.arts.add(int(d))
 

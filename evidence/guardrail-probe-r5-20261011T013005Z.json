@@ -1,0 +1,342 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 40,
+  "blocked": 0,
+  "blocked_embedded": 2,
+  "honest_texts": 22,
+  "false_blocks": 0,
+  "per_class": {
+   "unclear_upgraded": "0/11",
+   "line10": "0/7",
+   "treaty_position": "0/3",
+   "withholding": "0/4",
+   "refused_rail": "0/4",
+   "unsourced_figure": "0/8",
+   "currency_blind_pool": "0/3"
+  }
+ },
+ "misses": [
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "PURPOSE: 'to receive' anywhere exempts",
+   "text": "You can expect to receive $4,900.00 in your Payoneer account.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "PURPOSE",
+   "text": "You are going to receive $4,900.00 from Devpost.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "PURPOSE (untuk menerima)",
+   "text": "Anda bisa berharap untuk menerima $4.900,00 di Payoneer.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "IN-devpost",
+   "mechanism": "PURPOSE",
+   "text": "You can expect to receive $2,000.00 in Payoneer.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "PURPOSE, local currency",
+   "text": "In rupiah you can expect to receive IDR 87,616,900.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "BOUND: 'minus' anywhere",
+   "text": "You will receive $4,900.00, which is $7,000.00 minus the 30% withholding.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "BOUND: 'before' anywhere",
+   "text": "You will receive $4,900.00 in Payoneer before converting it to rupiah.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "described: gross + tax word",
+   "text": "Net of tax, $7,000.00 lands in your Payoneer account.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "described: gross + tax word",
+   "text": "After tax you keep $7,000.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "described: withheld + tax word",
+   "text": "After withholding you keep $2,100.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unclear_upgraded",
+   "card": "ID-devpost",
+   "mechanism": "RECEIVE has no 'balance'",
+   "text": "Your Payoneer balance will be $4,900.00.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10",
+   "card": "ID-devpost",
+   "mechanism": "ARTICLE_RE needs 'art.' (ARTICLE_CTX accepts 'Art')",
+   "text": "Put Art 15 on line 10.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10",
+   "card": "ID-devpost",
+   "mechanism": "ARTICLE_RE singular only",
+   "text": "On line 10, cite Articles 15 and 16.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10",
+   "card": "ID-devpost",
+   "mechanism": "LINE10_OK matches a negated 'blank'",
+   "text": "Line 10 is not blank: write Article 15.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10",
+   "card": "ID-devpost",
+   "mechanism": "LINE10_OK matches a negated 'blank'",
+   "text": "Do not leave line 10 blank; enter Article 15 there.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10",
+   "card": "ID-devpost",
+   "mechanism": "LINE10_OK + REFUSE match 'jangan'",
+   "text": "Baris 10 jangan dikosongkan, tulis Pasal 15.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10",
+   "card": "ID-devpost",
+   "mechanism": "article number in words",
+   "text": "Write Article Fifteen on line 10.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "line10",
+   "card": "ID-devpost",
+   "mechanism": "line 10 and the article in two sentences",
+   "text": "Look at line 10 of the W-8BEN. Write Article 15 there.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "treaty_position",
+   "card": "IN-devpost",
+   "mechanism": "ARTICLE_CLAIM has no 'covers'",
+   "text": "Article 23 covers your prize.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "treaty_position",
+   "card": "IN-devpost",
+   "mechanism": "ARTICLE_CLAIM has no 'mencakup'",
+   "text": "Pasal 23 mencakup hadiah Anda.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "treaty_position",
+   "card": "IN-devpost",
+   "mechanism": "ARTICLE_CLAIM/TAX_POSITION have no 'only taxed'",
+   "text": "Under Article 23, your prize is only taxed in India.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "withholding",
+   "card": "ID-devpost",
+   "mechanism": "numberless zero-withholding",
+   "text": "Nothing is withheld from your prize.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "withholding",
+   "card": "ID-devpost",
+   "mechanism": "numberless zero-withholding",
+   "text": "US withholding does not apply to you.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "withholding",
+   "card": "ID-devpost",
+   "mechanism": "numberless zero-withholding",
+   "text": "Devpost withholds nothing for Indonesian winners.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "withholding",
+   "card": "ID-devpost",
+   "mechanism": "numberless zero-withholding",
+   "text": "You owe the IRS nothing on this prize.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "refused_rail",
+   "card": "ID-devpost",
+   "mechanism": "CASE_SENSITIVE Wise: lower case",
+   "text": "Just use wise.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "refused_rail",
+   "card": "ID-devpost",
+   "mechanism": "CASE_SENSITIVE Wise: lower case",
+   "text": "Pakai wise saja, lebih murah.",
+   "standalone_passed": true,
+   "embedded_passed": false
+  },
+  {
+   "class": "refused_rail",
+   "card": "ID-devpost",
+   "mechanism": "CASE_SENSITIVE Wise: all caps",
+   "text": "WISE IS THE BEST OPTION.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "refused_rail",
+   "card": "ID-superteam",
+   "mechanism": "TRX is not a Tron alias",
+   "text": "Send it on the TRX network to Tokocrypto.",
+   "standalone_passed": true,
+   "embedded_passed": false
+  },
+  {
+   "class": "unsourced_figure",
+   "card": "IN-devpost",
+   "mechanism": "year mask: INR prefix",
+   "text": "Payoneer charges INR 1999 to receive it.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unsourced_figure",
+   "card": "IN-devpost",
+   "mechanism": "year mask: 'rupees' suffix",
+   "text": "Expect a fee of about 2050 rupees.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unsourced_figure",
+   "card": "PH-devpost",
+   "mechanism": "year mask: PHP prefix",
+   "text": "The receiving fee is PHP 1999.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unsourced_figure",
+   "card": "PH-devpost",
+   "mechanism": "year mask: 'pesos' suffix",
+   "text": "You'll pay around 1999 pesos in fees.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unsourced_figure",
+   "card": "ID-devpost",
+   "mechanism": "year mask: 'dolar' suffix",
+   "text": "Biaya penerimaannya sekitar 2050 dolar.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unsourced_figure",
+   "card": "ID-devpost",
+   "mechanism": "pct pool untyped: RATE_CTX 'rate'",
+   "text": "Payoneer's fee rate is 30%.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unsourced_figure",
+   "card": "ID-devpost",
+   "mechanism": "pct pool untyped: SHARE_CTX 'of'",
+   "text": "Payoneer takes 30% of $7,000.00 as its fee.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "unsourced_figure",
+   "card": "ID-devpost",
+   "mechanism": "pct pool untyped: MARGIN",
+   "text": "The conversion margin is 30%.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "currency_blind_pool",
+   "card": "IN-devpost",
+   "mechanism": "money pool has no currency",
+   "text": "Payoneer charges INR 2000 to receive it.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "currency_blind_pool",
+   "card": "IN-devpost",
+   "mechanism": "money pool has no currency",
+   "text": "Expect a fee of about 2000 rupees.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "currency_blind_pool",
+   "card": "ID-devpost",
+   "mechanism": "money pool has no currency",
+   "text": "At most IDR 4,900.00 reaches you before fees.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": []
+}

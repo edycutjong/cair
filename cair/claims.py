@@ -49,7 +49,7 @@ TAX_POSITION = re.compile(
     r"(?:won't|will not|(?:is|are|do|does|did)?\s*not|n't) (?:be )?taxed|taxed at all|tidak dikenai pajak|"
     r"treaty (?:rate|benefit)s? (?:applies|apply)|"
     r"(?:won't|will not|do not|don't|not) (?:owe|pay) (?:any )?(?:us )?tax|(?:cuts|lowers|reduces) the (?:rate|withholding)|"
-    r"tarif (?:yang )?lebih rendah|taxable only", re.I)
+    r"tarif (?:yang )?lebih rendah|taxable only|\bonly taxed\b|\btaxed only\b|hanya dikenai pajak", re.I)
 EXTRA_RAILS = {"skrill": "Skrill", "western_union": "Western Union", "swift": "SWIFT", "bank_wire": "bank wire",
                "revolut": "Revolut", "usdt": "USDT", "remitly": "Remitly", "xoom": "Xoom", "cash_app": "Cash App",
                "paytm": "Paytm", "stripe": "Stripe", "moneygram": "MoneyGram", "worldremit": "WorldRemit",
@@ -66,15 +66,23 @@ def rail_names(rail: str) -> list[str]:
         if chain not in {"base", "arc"}:
             names.append(chain)
         names += {"ethereum": ["ERC-20", "ERC20"], "bsc": ["BEP-20", "BEP20", "BNB"],
-                  "tron": ["TRC-20", "TRC20"]}.get(chain, [])
+                  "tron": ["TRC-20", "TRC20", "TRX"]}.get(chain, [])
         return names
     return [RAILS.get(rail) or EXTRA_RAILS.get(rail, rail)]
+
+
+# "wise" in lower case is the rail only in a payout context ("use wise", "pakai wise", "wise account"), never the idiom.
+_CTX_BEFORE = r"(?:use|using|pakai|via|lewat|through|pick|choose|pilih|gunakan|select|with|to|ke|into|send|kirim|open|buka)"
+_CTX_AFTER = r"(?:account|akun|transfer|balance|saldo|card|kartu|app|works?|bisa|saja|aja|is (?:the|a) (?:best|good|cheapest))"
 
 
 def mentions(text: str, rail: str) -> bool:
     for n in rail_names(rail):
         flags = 0 if n in CASE_SENSITIVE else re.I
         if re.search(rf"\b{re.escape(n)}\b", text, flags):
+            return True
+        if n in CASE_SENSITIVE and (re.search(rf"\b{re.escape(n.upper())}\b", text) or (n == "Wise" and re.search(
+                rf"\b{_CTX_BEFORE}\s+wise\b|\bwise\s+{_CTX_AFTER}\b", text, re.I))):
             return True
     return False
 
