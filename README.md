@@ -26,7 +26,7 @@
   ![neatlogs](https://img.shields.io/badge/neatlogs-traces-black?style=flat)
   ![Entire](https://img.shields.io/badge/Entire-code_graph-black?style=flat)
   ![Qwen Cloud](https://img.shields.io/badge/Qwen_Cloud-615CED?style=flat)
-  ![Tests](https://img.shields.io/badge/tests-694_passing-brightgreen?style=flat)
+  ![Tests](https://img.shields.io/badge/tests-733_passing-brightgreen?style=flat)
   [![CI](https://github.com/edycutjong/cair/actions/workflows/ci.yml/badge.svg)](https://github.com/edycutjong/cair/actions/workflows/ci.yml)
   [![Release](https://img.shields.io/github/v/release/edycutjong/cair?sort=semver)](https://github.com/edycutjong/cair/releases/latest)
   [![CodeQL](https://github.com/edycutjong/cair/actions/workflows/codeql.yml/badge.svg)](https://github.com/edycutjong/cair/actions/workflows/codeql.yml)
@@ -180,13 +180,20 @@ depends on a verb list where the bound is below the gross: when landed is UNCLEA
 probe now blocks 24 / 25. A third probe aimed at those rules (`scripts/guardrail_probe_r7.py`) got 46 / 47 through on `6ba11b2`:
 the tax, line-10 and amount checks were excused by a detector of *rail* refusals, so "rather than Wise", "Jangan khawatir" or
 "except" anywhere in a sentence switched them off; and where the bound is the gross (39 of the 48 frozen scenarios) the bound rule
-left it out. Now only refusing to say or write something excuses a claim, and only in its own clause, and the gross may be named
+left it out. Now a refusal to say or write something excuses a claim only in its own clause, and the gross may be named
 but not as arriving: 47 / 47 blocked, 0 / 47 honest; the r3/r4 held-out violations re-checked behind those openers went from
 19 / 69 blocked to 69 / 69. A fourth probe (`scripts/guardrail_probe_r8.py`) found that a comma or "and" still let a refusal in
-one clause excuse a claim in the next: 2 / 12 blocked on `f785f3e`, 8 / 12 after.
+one clause excuse a claim in the next: 2 / 12 blocked on `f785f3e`, 8 / 12 after. A fifth (`scripts/guardrail_probe_r9.py`)
+found the same flaw in the bound check: "UNCLEAR", "tidak jelas", "not stated", or "up to"/"maksimal"/"hingga" before any
+number (so also "up to 2 business days") anywhere in a sentence excused every amount in it, so "Tidak jelas kapan dananya
+tiba, tetapi Anda akan menerima $4.900,00" passed. On `a4d986f` that probe blocked 0 / 16 and blocked 4 / 18 honest sentences
+(two of them the ECB rate "1 USD = 62.821 PHP", whose digits equal the PHP 62,821 bound of a $1,000 gross); after the fix it
+blocks 16 / 16 with 0 / 18 honest blocked, and the r3/r4 held-out landed-amount violations behind those openers went from
+1 / 24 blocked to 24 / 24. A sixth (`scripts/guardrail_probe_r10.py`) put the bound word after "while", "since", "karena" or a
+dash, inside the claim's own clause: 1 / 8 blocked on `b05e18e`, 7 / 8 after.
 The recall set, both held-out sets and the 144 stored explanations of `eval-v2-r10`, `eval-ablation-r10` and `eval-fail-fx_quote-r9`
 get the same verdicts before and after (`evidence/guardrail-probe-r6-…`, `guardrail-heldout-r3/r4-20261011T…`). It is still
-rule-based, and a probe aimed at it will find more (the same scripts re-run on `42cda1c`: the eval's U/P/K and the forced-failure 48/48 are unchanged; figures in the wording counted 270 and 282, since the model words the card differently each run: [`evidence/rerun-at-head-2026-10-11.md`](evidence/rerun-at-head-2026-10-11.md). Known gaps: a bare number with no currency or % sign that ends a sentence, such as "…is 4897.", is not extracted; the pool of sourced amounts has no currency, so "INR 2000" passes when the gross is USD 2,000; "Payoneer shows $4,900.00 after the withholding" passes, because it is literally the after-withholding figure; a refusal to say something still excuses every claim in its own clause ("I can't confirm Wise works and nothing is withheld" passes); and where the bound is the gross, only an arrival or receive phrase is checked, and "from <payer>" excuses it ("Your Payoneer account will show $7,000.00", "Expect $2,000.00 in your Payoneer account from Devpost" and "Expect $2,000.00." pass) — narrowing "from" blocked real honest model text ("moving 1,000 USDC from Superteam Earn to your Pintu account")), which is why the route, line 10 and every amount on the card are decided by code, not by the prose.
+rule-based, and a probe aimed at it will find more (the same scripts re-run on `42cda1c`: the eval's U/P/K and the forced-failure 48/48 are unchanged; figures in the wording counted 270 and 282, since the model words the card differently each run: [`evidence/rerun-at-head-2026-10-11.md`](evidence/rerun-at-head-2026-10-11.md). Known gaps: a bare number with no currency or % sign that ends a sentence, such as "…is 4897.", is not extracted; the pool of sourced amounts has no currency, so "INR 2000" passes when the gross is USD 2,000; "Payoneer shows $4,900.00 after the withholding" passes, because it is literally the after-withholding figure; a refusal or a bound word still excuses every claim in its own clause, and a clause ends only at ";", a dash, a contrast word or subordinator (but, while, since, because, karena…), or a comma, "and" or "so" before a subject or an amount ("I can't confirm Wise works, as nothing is withheld" and "You will receive $4,900.00 (the fee is not stated)" pass); and where the bound is the gross, only an arrival or receive phrase is checked, and "from <payer>" excuses it ("Your Payoneer account will show $7,000.00", "Expect $2,000.00 in your Payoneer account from Devpost" and "Expect $2,000.00." pass) — narrowing "from" blocked real honest model text ("moving 1,000 USDC from Superteam Earn to your Pintu account")), which is why the route, line 10 and every amount on the card are decided by code, not by the prose.
 
 The same question as seen in neatlogs: v1 is three steps, one model call that holds every figure; v2 is ten, with a TOOL or RETRIEVER span behind each figure and a GUARDRAIL after the model.
 
@@ -231,7 +238,7 @@ Python 3.12. To run the app or the eval against Qwen Cloud, set the variables li
 
 ```bash
 python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/python -m pytest -q        # 694 tests
+.venv/bin/python -m pytest -q        # 733 tests
 ```
 
 Full reproduce steps (eval, ablation, forced failure, bench) and things to try on the live site: [DEMO.md](DEMO.md).
@@ -251,7 +258,7 @@ sentences to the guardrail with the model call stubbed.
 
 | Layer | What runs | Result |
 |---|---|---|
-| Unit + invariants | `pytest` — 694 tests; regressions are named for the defect they pin (`test_amount_in_2000s_is_not_masked_as_a_year`, `test_idr_receipt_in_the_tens_of_millions_is_accepted`) | 694 passing, 100% line+branch coverage ([`evidence/coverage-2026-10-11-r04.txt`](evidence/coverage-2026-10-11-r04.txt)) |
+| Unit + invariants | `pytest` — 733 tests; regressions are named for the defect they pin (`test_amount_in_2000s_is_not_masked_as_a_year`, `test_idr_receipt_in_the_tens_of_millions_is_accepted`) | 733 passing, 100% line+branch coverage ([`evidence/coverage-2026-10-11-r05.txt`](evidence/coverage-2026-10-11-r05.txt)) |
 | Exhaustive check | every payer × country × option set × amount band (**2,448 scenarios**) through the real planner and tools (only the ECB rate and the wording call are fixed, since the decisions under test are code-only); a self-consistency check on the card, with the sourced ground truth pinned in `test_labels.py` and `test_invariants.py`: no refused or unclear route is recommended, no article on line 10 without a W-8BEN and a source, no landed amount above the gross, and the fallback template passes its own provenance guardrail | 0 violations (`tests/test_exhaustive.py`; deliberately breaking the route rule produces 2,256 violations across the set: `scripts/mutation_route_rule.py`, [`evidence/mutation-route-rule-2026-10-10.txt`](evidence/mutation-route-rule-2026-10-10.txt)) |
 | Permission boundary | no public route returns a key or token; the public plan API carries no raw tool errors; the builder-only origin cannot be forged (`tests/test_boundary.py`) | passing |
 | Browser E2E | Playwright (Chromium): the hero plan, an unlisted country, a bad amount, `/judge` with no session, no horizontal overflow at 375 / 768 / 1440 px | 23 passing |

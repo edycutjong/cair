@@ -88,6 +88,10 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   frozen scenarios, so the README's "whatever the verb" was false. Fixed with its patch (probe r7: 1/47 → 47/47); checking the fix
   found a comma or "and" still carried a refusal into the next clause (probe r8: 2/12 → 8/12). The docs now say where the rule
   applies and list what still passes. Published verdicts unchanged; 694 tests, 100% line+branch.
+- **2026-10-11 midday** — a2a round 5: the bound check was never clause-scoped ("Tidak jelas kapan dananya tiba, tetapi Anda akan
+  menerima $4.900,00" passed), and "up to 2 business days" counted as a bound. Fixed with the reviewer's patch (probe r9: 0/16 →
+  16/16, and an ECB rate quote no longer reads as the PHP bound); checking it found that "while", "since", "karena" or a dash
+  kept the bound word in the claim's clause (probe r10: 1/8 → 7/8). Published verdicts unchanged; 733 tests, 100% line+branch.
 - **2026-10-10 night** — landing page https://cair.edycu.dev and an 11-slide pitch deck https://cair.edycu.dev/pitch/ (GitHub Pages
   from `/docs`); every number on them is read from `evidence/`.
 - **2026-10-10 evening** — cfo.ai: the business plan is entered and shared (https://cfo.ai/s/PQ2HUGmiJl3P0RQB); export in `docs/cfo/Runway.xlsx`, rendered in
