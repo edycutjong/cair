@@ -77,6 +77,12 @@ Entire and cfo.ai. Outstanding: everything after the first commit.
   full history and pip-audit green, community profile 100%; an exhaustive 2,448-scenario check of the real planner found 0
   violations (breaking the route rule gives 2,256). Testing found one real defect, fixed: receipt amounts were capped at 10M for
   every currency, so IDR 87,616,900 was refused. A coverage pass then took the suite to 571 tests at 100% line+branch coverage.
+- **2026-10-11 morning** — an outside architecture review (a2a round 3) read the guardrail's code and wrote 40 sentences
+  aimed at it: the guardrail blocked none (`evidence/guardrail-probe-r5-…`). An exemption word anywhere in a sentence switched
+  a check off. Fixed: 37/40 blocked, 0/22 honest. Checking the fix with 25 new sentences got 12 through, so "UNCLEAR is
+  terminal" now keys on the bound amount, not on a verb list: 24/25. Also fixed: cents on the card did not add up
+  (`1000.05` gave $300.02 + $700.04), and the receipt trace showed 0 ms on every span. Published eval verdicts unchanged;
+  631 tests, 100% line+branch.
 - **2026-10-10 night** — landing page https://cair.edycu.dev and an 11-slide pitch deck https://cair.edycu.dev/pitch/ (GitHub Pages
   from `/docs`); every number on them is read from `evidence/`.
 - **2026-10-10 evening** — cfo.ai: the business plan is entered and shared (https://cfo.ai/s/PQ2HUGmiJl3P0RQB); export in `docs/cfo/Runway.xlsx`, rendered in
