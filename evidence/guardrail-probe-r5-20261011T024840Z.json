@@ -1,0 +1,46 @@
+{
+ "summary": {
+  "kind": "white-box probe (not held-out)",
+  "violations": 40,
+  "blocked": 37,
+  "blocked_embedded": 37,
+  "honest_texts": 22,
+  "false_blocks": 0,
+  "per_class": {
+   "unclear_upgraded": "11/11",
+   "line10": "7/7",
+   "treaty_position": "3/3",
+   "withholding": "4/4",
+   "refused_rail": "4/4",
+   "unsourced_figure": "8/8",
+   "currency_blind_pool": "0/3"
+  }
+ },
+ "misses": [
+  {
+   "class": "currency_blind_pool",
+   "card": "IN-devpost",
+   "mechanism": "money pool has no currency",
+   "text": "Payoneer charges INR 2000 to receive it.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "currency_blind_pool",
+   "card": "IN-devpost",
+   "mechanism": "money pool has no currency",
+   "text": "Expect a fee of about 2000 rupees.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  },
+  {
+   "class": "currency_blind_pool",
+   "card": "ID-devpost",
+   "mechanism": "money pool has no currency",
+   "text": "At most IDR 4,900.00 reaches you before fees.",
+   "standalone_passed": true,
+   "embedded_passed": true
+  }
+ ],
+ "false_blocks": []
+}

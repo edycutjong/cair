@@ -18,6 +18,7 @@ from . import claims, figures, rules
 FOLLOW_UP = re.compile(r"\b(it|that one|this one|that|itu|ini|tersebut|anyway|saja)\b", re.I)
 RECEIVE = re.compile(r"\b(receiv\w*|land\w*|arriv\w*|get|gets|got|deposit\w*|credit(?:ed|s)?|take[- ]home|keep|keeps|"
                      r"reach\w*|net|end(?:s)? up|you have|you'll have|leaves? you(?: with)?|left with|yours|balance|saldo|"
+                     r"pocket\w*|hits?|walk(?:s|ing)? away|"
                      r"in your (?:account|bank|wallet|balance)|menerima|diterima|terima|masuk|sampai|mendapat\w*|dapat|"
                      r"bersih|menghasilkan|untuk Anda|tersisa|setara)\b", re.I)
 PURPOSE = re.compile(r"\b(?:to|in order to|untuk|agar bisa) (?:receive|menerima|terima)\b", re.I)  # "to receive X, use…"
@@ -32,9 +33,37 @@ BOUND_LEAD = r"\b(?:before|sebelum|minus|excluding|not including|belum (?:termas
 # the bound itself, described as what is left after withholding ("$4,900.00 remains after the 30% withholding")
 AFTER_WITHHOLDING = re.compile(r"\bafter (?:the )?(?:\d+(?:[.,]\d+)?\s?%\s+)?(?:US\s+)?(?:withh\w*|tax\w*)|"
                                r"setelah (?:dipotong|pemotongan|potongan|pajak)", re.I)
-BOUND_WORDS = re.compile(r"\bceiling\b|\bthe most\b|\bmost (?:you|that)\b|\bcap(?:ped)?\b|upper limit|not a promise|"
+BOUND_WORDS = re.compile(r"\bceiling\b|\bthe most (?:you|that|it|which|can|could)\b|\bmost (?:you|that)\b|\bcapped\b|"
+                         r"\bcap (?:of|at)\b|\bat the (?:very )?most\b|\b(?:is|as) (?:the|a) cap\b|upper limit|not a promise|"
                          r"not guaranteed|no guarantee|bukan janji|tidak dijamin|paling besar|plafon", re.I)  # "a ceiling, not a promise"
 LINE10 = re.compile(r"\bline\s*(?:10|ten)\b|\bbaris\s*(?:10|sepuluh)\b", re.I)
+# where the W-8BEN position is UNCLEAR the bound IS the gross: naming the gross is fine, naming it as arriving is not
+ARRIVES = (r"\b(?:in|into|to|ke|di|masuk ke)\s+(?:your\s+|the\s+|Anda\s+)?(?:\w+\s+){0,2}?(?:account|wallet|bank|balance|hands|"
+           r"pocket|rekening|dompet|saldo)\b")
+PAID_BY = re.compile(r"\bfrom\b|\bdari\b|\bpaid\b|\bpays?\b|\bpaying\b|dibayar\w*|membayar|pembayar\w*|\bpayer\b", re.I)
+# Refusing to SAY or WRITE something ("I can't confirm…", "Article 15 must not go on line 10", "jangan tulis Pasal 15
+# di baris 10") excuses the tax, line-10 or amount statement in the same clause. Refusing a rail ("not Wise", "jangan
+# pakai Wise"), reassurance ("Jangan khawatir", "don't forget to"), "except" or "lose" does not, and neither does a
+# refusal in another clause ("I can't say how long it takes, but you will receive $4,900.00").
+_NOT = (r"(?:can(?:not|'t)|could(?:n't| not)|won't|will not|would(?:n't| not)|should(?:n't| not)|must not|may not|"
+        r"do(?:n't| not)|never|no need to|not able to|unable to|refuse to|declin(?:e|es|ed|ing)|jangan|"
+        r"tidak (?:bisa|dapat|akan|boleh|perlu|mampu)|tak (?:bisa|dapat|boleh|perlu|akan)|menolak(?: untuk)?)")
+_GAP = r"(?:(?!forget|lupa|hesitate|ragu|fail|lalai|worry|khawatir)\w+\s+){0,3}?"  # "don't forget to write" writes
+_SAY = (r"(?:say|confirm|promise|state|tell|guarantee|claim|cite|write|enter|fill|assume|katakan|mengatakan|nyatakan|"
+        r"menyatakan|konfirmasi|mengonfirmasi|janjikan|menjanjikan|pastikan|memastikan|jamin|menjamin|tulis|tuliskan|"
+        r"menulis|menuliskan|isi|isikan|mengisi|cantumkan|mencantumkan|masukkan|memasukkan|klaim|mengklaim|anggap|"
+        r"menganggap)")
+_USE = (r"(?:use|recommend|advise|count on|rely on|expect|go|pick|choose|list|include|add|place|put|pakai|memakai|gunakan|"
+        r"menggunakan|sarankan|menyarankan|rekomendasikan|merekomendasikan|andalkan|mengandalkan|percaya|berharap|"
+        r"mengharapkan|harapkan)")  # these take a rail as readily as a claim: "don't use Wise" refuses the rail
+REFUSES_SAY = re.compile(rf"\b{_NOT}\s+{_GAP}{_SAY}\b|tidak bisa saya penuhi", re.I)
+REFUSES_USE = re.compile(rf"\b{_NOT}\s+{_GAP}{_USE}\b", re.I)
+REFUSES_PASSIVE = re.compile(rf"\b{_NOT}\s+(?:be\s+(?:entered|written|listed|put|used|claimed|cited|filled|assumed|expected|"
+                             r"promised|guaranteed)|di(?:tulis|isi|cantumkan|masukkan|klaim|anggap|pakai|gunakan|janjikan|"
+                             r"jamin)\w*)\b", re.I)  # "Article 15 should not be entered…", "Wise tidak boleh dipakai"
+NEGATED_BEFORE = re.compile(r"(?:\bnot|n't|\bnever|\btidak|\bbukan)\s+(?:\w+\s+){0,2}$", re.I)  # "does not | apply"
+CLAUSE = re.compile(r";|,?\s+\b(?:but|however|although|though|tapi|tetapi|namun|meskipun|walaupun)\b", re.I)
+ALL_RAILS = list(rules.RAILS) + list(claims.EXTRA_RAILS) + [f"usdc:{c}" for c in rules.CHAINS] + list(rules.EXCHANGES) + ["usdc"]
 KEEP = re.compile(r"\b(?:keep|keeps|kept|net|nett|lands?|landed|take[- ]home|left with|end(?:s)? up|you have|you'll have|"
                   r"bersih|tersisa|masuk|sampai|arriv\w*|reach\w*|credited|deposit\w*|balance|saldo)\b", re.I)
 GROSS_OR_TAX = re.compile(r"\bgross\b|bruto|kotor|withh\w*|dipotong|potongan|pemotongan|\btax\w*|pajak", re.I)
@@ -53,7 +82,8 @@ LINK = re.compile(r"(?:https?|hxxps?)://\S+|\bwww\.\S+|\b[\w.+-]+@[\w-]+\.[\w.]+
                   r"\bbc1[0-9a-z]{20,}\b|\b[1-9A-HJ-NP-Za-km-z]{32,44}\b|"
                   r"\b[\w-]+(?:\.[\w-]+)*\.(?:com|io|dev|xyz|example|org|net|co|id|me|app|link|site|gg|to)\b(?:/\S*)?")
 MAX_CHARS = 1600
-LINE10_NEGATED = re.compile(r"(?:\bnot\b|n't\b|\bnever\b|\bjangan\b|\btidak\b|\bbukan\b)[^.;:]{0,30}?"
+LINE10_NEGATED = re.compile(r"(?:\bnot\b|n't\b(?!\s+(?:worry|forget))|\bnever\b|\bjangan\b(?!\s+(?:khawatir|lupa))|\btidak\b|"
+                            r"\bbukan\b)[^.;:]{0,30}?"
                             r"(?:\bblank\b|kosong|\bUNCLEAR\b)", re.I)  # "not blank", "jangan dikosongkan"
 _WRITE = (r"(?:write|enter|put|fill|insert|cite|claim|tulis\w*|menulis|isi|isikan|mengisi|masukkan|memasukkan|cantumkan|"
           r"mencantumkan|klaim)")
@@ -64,7 +94,9 @@ ZERO_TAX = re.compile(  # "nothing is withheld", "withholding does not apply", "
     r"\bnothing\s+(?:\w+\s+){0,2}(?:withheld|deducted|taxed|dipotong)\b|\b(?:withholds?|deducts?)\s+nothing\b|"
     r"\bwithh\w*\s+(?:\w+\s+){0,2}(?:does not|doesn't|do not|don't|will not|won't|is not|isn't|tidak)\s+"
     r"(?:apply|applies|berlaku)\b|\bowe\b(?:\s+\w+){0,3}\s+nothing\b|\btanpa\s+(?:potongan|pemotongan|pajak)\b|"
-    r"\b(?:withholding|tax|pajak|potongan)\s*(?:is|=|:|adalah)\s*(?:nothing|none|nil|zero|nol)\b|\btakes?\s+nothing\b|"
+    r"\b(?:withholding|tax|pajak|potongan)\s*(?:is|=|:|adalah)\s*(?:nothing|none|nil|zero|nol|tidak ada|nihil)\b|\btakes?\s+nothing\b|"
+    r"\blos(?:e|ing)\s+(?:nothing|anything)\s+(?:\w+\s+){0,2}?to\s+(?:\w+\s+){0,2}?(?:withh\w*|tax\w*|the IRS)\b|"
+    r"\btidak ada yang hilang\s+(?:ke|karena|untuk)\s+(?:pajak|potongan)\b|\btidak lagi\s+(?:dipotong|dikenakan)\b|"
     r"\b(?:withh\w*|tax\w*|pajak|potongan)\b[^.;]{0,30}\b(?:waived|dihapus|dibebaskan)\b", re.I)
 PLAN_CTX = re.compile(r"\bthe plan\b|rencana", re.I)
 FEE_WORD = re.compile(r"\bfees?\b|\bcharges?\b|biaya|komisi|margin|conversion|konversi", re.I)
@@ -79,6 +111,31 @@ def _strings(x) -> list[str]:
     if isinstance(x, (list, tuple)):
         return [s for v in x for s in _strings(v)]
     return [x] if isinstance(x, str) else []
+
+
+def _names_rail(words: str) -> bool:
+    return any(claims.mentions(words, r) for r in ALL_RAILS)
+
+
+def _clause_refuses(c: str) -> bool:
+    """The clause refuses to say something, not a rail: the rail would be the next words ("jangan pakai Wise") or,
+    in the passive, the words before ("Wise tidak boleh dipakai")."""
+    if REFUSES_SAY.search(c):
+        return True
+    if any(not _names_rail(" ".join(re.split(r"[,:.!?]", c[m.end():], maxsplit=1)[0].split()[:3]))
+           for m in REFUSES_USE.finditer(c)):
+        return True
+    return any(not _names_rail(" ".join(re.split(r"[,:.!?]", c[:m.start()])[-1].split()[-3:]))
+               for m in REFUSES_PASSIVE.finditer(c))
+
+
+def _refuses(sent: str, what, negatable: bool = False) -> bool:
+    """Every clause that says `what` (a pattern, or a figure as written) refuses to say it, or (negatable) says it
+    only negated ("…that article does not apply")."""
+    parts = [c for c in CLAUSE.split(claims.NEGATED_REFUSAL.sub(" ", sent))
+             if (what in c if isinstance(what, str) else what.search(c))]
+    return bool(parts) and all(_clause_refuses(c) or (negatable and all(
+        NEGATED_BEFORE.search(c[:m.start()]) for m in what.finditer(c))) for c in parts)
 
 
 def _pct_in(fig: dict, pool: set) -> bool:
@@ -112,6 +169,9 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
         return any(f["kind"] == "money" and figures.is_sourced(f, pools) for f in figures.extract(sent))
 
     gross_or_withheld = {figures._dec(v) for v in (ld.get("gross"), ld.get("withheld")) if v and v != "UNCLEAR"}
+    names = [r["name"] for r in card["rails"] if r.get("name")] + list(rules.RAILS.values()) + list(rules.EXCHANGES.values())
+    arrives = re.compile(ARRIVES + r"|\b(?:in|into|ke|di)\s+(?:your\s+)?(?:" + "|".join(re.escape(n) for n in names) + r")\b", re.I)
+    gross_is_bound = bool(ld.get("upper_bound_usd")) and ld.get("upper_bound_usd") == ld.get("gross")
     # the amounts a reader would take for "what lands": the bound in USD and local currency (the gross is its own thing)
     bound_vals = {figures._dec(v) for v in (ld.get("after_withholding"), ld.get("upper_bound_usd"), ld.get("upper_bound_local"))
                   if v and v != "UNCLEAR"} - gross_or_withheld
@@ -164,14 +224,14 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
         has_article = figures.has_article(sent)
         line10_ok = LINE10_OK.search(sent) and not LINE10_NEGATED.search(sent)
         if (LINE10.search(sent) and has_article and not line10.startswith("ARTICLE")
-                and not (claims.refuses(sent) and not LINE10_NEGATED.search(sent)) and not line10_ok):
+                and not (_refuses(sent, LINE10) and not LINE10_NEGATED.search(sent)) and not line10_ok):
             claim("line10", f"article on line 10 while the tools say {line10}: {sent[:140]}")
         elif (has_article and not line10.startswith("ARTICLE") and ARTICLE_CLAIM.search(sent)
-              and not ARTICLE_DESCRIBED.search(sent) and not claims.refuses(sent)):
+              and not ARTICLE_DESCRIBED.search(sent) and not _refuses(sent, ARTICLE_CLAIM, negatable=True)):
             claim("line10", f"treaty article presented as applying while the tools say {line10}: {sent[:140]}")
         elif (has_article and not line10.startswith("ARTICLE") and WRITE_ARTICLE.search(sent)
               and not WRITE_REFUSED.search(sent) and not ARTICLE_DESCRIBED.search(sent)
-              and not (claims.refuses(sent) and not LINE10_NEGATED.search(sent))):
+              and not (_refuses(sent, WRITE_ARTICLE) and not LINE10_NEGATED.search(sent))):
             claim("line10", f"instruction to write an article while the tools say {line10}: {sent[:140]}")
         # --- withholding and tax position --------------------------------------------------------------------------
         if TAXWORD.search(sent):
@@ -181,16 +241,15 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
                 same = wh_rate.endswith("%") and f["kind"] == "pct" and f["value"] == figures._dec(wh_rate[:-1])
                 if not same and not (wh_rate == "UNCLEAR" and claims.UNCLEAR_WORD.search(sent)):
                     claim("withholding", f"withholding {f['raw']} while the tools say {wh_rate}: {sent[:140]}")
-        if claims.TAX_POSITION.search(sent) and not claims.refuses(sent) and not claims.UNCLEAR_WORD.search(sent):
+        if claims.TAX_POSITION.search(sent) and not _refuses(sent, claims.TAX_POSITION) and not claims.UNCLEAR_WORD.search(sent):
             claim("withholding", f"tax position the tools did not produce (they say {wh_rate}): {sent[:140]}")
-        elif (wh_positive and ZERO_TAX.search(sent) and not claims.refuses(sent) and not claims.UNCLEAR_WORD.search(sent)
+        elif (wh_positive and ZERO_TAX.search(sent) and not _refuses(sent, ZERO_TAX) and not claims.UNCLEAR_WORD.search(sent)
               and not any(f["kind"] == "pct" and f["value"] == wh_positive for f in figures.extract(sent))):
             claim("withholding", f"no-withholding position while the tools say {wh_rate}: {sent[:140]}")
         # --- UNCLEAR is terminal: nothing may be presented as what lands -------------------------------------------
         purpose = PURPOSE.search(sent) and not EXPECT.search(sent)
         bounded = BOUND_STRONG.search(sent) or bound_fee.search(sent)
-        if (landed_unclear and RECEIVE.search(sent) and not bounded and not purpose
-                and not claims.refuses(sent)):
+        if landed_unclear and RECEIVE.search(sent) and not bounded and not purpose and not _refuses(sent, RECEIVE):
             money = [f for f in figures.extract(sent) if f["kind"] in ("money", "number", "word")]
             # only the gross or the withheld amount, named as such, is not a promise of what lands
             described = GROSS_OR_TAX.search(sent) and not KEEP.search(sent) and all(
@@ -199,10 +258,11 @@ def check(text: str, tool_outputs: list, card: dict, question: str = "") -> dict
                 claim("unclear_upgraded", f"{money[0]['raw']} stated as what lands while it is UNCLEAR: {sent[:140]}")
                 continue
         # ...and whatever the verb ("You'll pocket $4,900.00"), the bound amount is only ever stated as a bound
-        if (landed_unclear and not bounded and not purpose and not claims.refuses(sent)
-                and not AFTER_WITHHOLDING.search(sent) and not BOUND_WORDS.search(sent)):
-            bare = [f for f in figures.extract(sent) if f["kind"] in ("money", "number") and figures._dec(str(f["value"])) in bound_vals]
-            if bare:
+        if (landed_unclear and not bounded and not purpose and not AFTER_WITHHOLDING.search(sent)
+                and not BOUND_WORDS.search(sent)):
+            bare = [f for f in figures.extract(sent) if f["kind"] in ("money", "number") and (_pct_in(f, bound_vals) or (
+                gross_is_bound and _pct_in(f, gross_or_withheld) and arrives.search(sent) and not PAID_BY.search(sent)))]
+            if bare and not _refuses(sent, bare[0]["raw"]):
                 claim("unclear_upgraded", f"{bare[0]['raw']} is an upper bound stated without saying so: {sent[:140]}")
     for m in LINK.finditer(text):  # links, emails, handles and wallet addresses only if a tool output carries them
         if m.group(0).rstrip(".,)") not in known_text:
