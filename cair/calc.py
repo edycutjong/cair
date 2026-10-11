@@ -33,7 +33,7 @@ def fee_calc(gross_usd: str, unit: str, w8ben_applies: str, withholding_default:
 
     rate_pct = _num(withholding_default)
     if w8ben_applies == "YES" and rate_pct is not None:
-        withheld = gross * rate_pct / 100
+        withheld = Decimal(q(gross * rate_pct / 100, unit))  # round once; everything downstream uses the shown value
         out["withheld"] = q(withheld, unit)
         after = gross - withheld
         out["after_withholding"] = q(after, unit)
