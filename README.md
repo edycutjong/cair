@@ -1,8 +1,8 @@
 <div align="center">
-  <img src="docs/assets/icon.svg" alt="Cair icon" width="144">
+  <img src="docs/assets/icon-animated.svg" alt="Cair icon" width="144">
   <h1>Cair 💧</h1>
   <p><em>The payout route a chatbot can't get wrong.</em></p>
-  <img src="docs/assets/readme-hero.png" alt="Cair — Choose Wise: refused. Payoneer: at most $4,900, fee UNCLEAR" width="100%">
+  <img src="docs/assets/readme-hero-animated.svg" alt="Cair — Choose Wise: refused. Payoneer: at most $4,900, fee UNCLEAR" width="100%">
 
   <p>An agent that plans how a prize or client payment reaches your bank account: it refuses routes that can't deliver,
   fills W-8BEN line 10 only when a treaty article really applies, computes the most that can land, and shows the source of every
