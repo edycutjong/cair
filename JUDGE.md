@@ -41,7 +41,7 @@ scenario in them carries its neatlogs trace id. Definitions: [`docs/METRICS.md`]
 |---|---|
 | Forced failure of the FX tool (`--fail fx_quote`) | all 48 plans completed after retry and fallback; 350 / 350 figures sourced |
 | Provenance guardrail on sentences it was not tuned on (measured before the misses were fixed; that set is now in-sample) | blocks 62 / 66 violations; blocks 3 / 66 honest sentences |
-| Cost and speed per plan (bench on the builder's laptop at commit `0a8fc06`; later commits changed guardrail and claims sentence splitting; re-run on `42cda1c`: U/P/K unchanged, see [`evidence/rerun-at-head-2026-10-11.md`](evidence/rerun-at-head-2026-10-11.md)) | p50 5.50 s · p95 10.31 s · $0.0033 of LLM at list price |
+| Cost and speed per plan (bench on the builder's laptop at commit `0a8fc06`; later commits changed guardrail and claims sentence splitting; re-run on `42cda1c`: U/P/K unchanged, see [`evidence/rerun-at-head-2026-10-11.md`](https://github.com/edycutjong/cair/blob/main/evidence/rerun-at-head-2026-10-11.md)) | p50 5.50 s · p95 10.31 s · $0.0033 of LLM at list price |
 | Tests | 758 passing (100% line+branch coverage), no network or keys; many are named for the defect they pin (e.g. `test_amount_in_2000s_is_not_masked_as_a_year`) |
 | Exhaustive verification | 2,448 scenarios (every payer × country × option set × amount) run through the real planner against the protocol invariants: 0 violations |
 | cfo.ai business plan | entered and shared (5 pages): base scenario cost $18.887 / month, operating profit $81.113 on assumed revenue of $100, $25 AWS credit = 1.35 months before revenue; planned pricing (assumptions) $4 / month Freelancer Pro, $2 per winner for organisers ([cfo.ai/s/PQ2HUGmiJl3P0RQB](https://cfo.ai/s/PQ2HUGmiJl3P0RQB)) |
